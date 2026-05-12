@@ -22,6 +22,18 @@ Questa scelta mantiene il progetto neutro e pronto per branding/design system pe
 - `src/app/layout`: shell globale (header, sidebar, footer, content wrapper).
 - `src/app/features`: moduli funzionali di business (es. dashboard, users, settings), caricati in lazy loading.
 
+## Shared baseline
+
+La cartella `shared` contiene building block riusabili e indipendenti dal dominio:
+
+- `shared/components`: componenti riusabili e presentazionali.
+- `shared/directives`: directive standalone riusabili.
+- `shared/pipes`: pipe standalone riusabili.
+- `shared/utils`: funzioni pure, helper e utility senza dipendenze Angular quando possibile.
+
+Una UI library dedicata e intenzionalmente rimandata.
+In questa fase il progetto resta neutro: la library potra essere introdotta quando saranno chiari design system, API componenti e strategia di riuso.
+
 ## Direttive d'uso
 
 1. `core` non contiene componenti UI di business.
