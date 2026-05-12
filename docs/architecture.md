@@ -5,6 +5,16 @@
 Questa base progetto definisce una struttura enterprise chiara, scalabile e facilmente mantenibile.
 Le regole sotto sono il contratto d'uso consigliato per tutti i team che adottano lo starter.
 
+## Stato implementazione layout
+
+La shell e impostata in modalita **unstyled base**:
+
+- template minimali con placeholder testuali
+- nessuna classe CSS nei template layout
+- file SCSS layout intenzionalmente vuoti
+
+Questa scelta mantiene il progetto neutro e pronto per branding/design system personalizzati.
+
 ## Struttura base
 
 - `src/app/core`: infrastruttura applicativa singleton (config, auth, guards, interceptors, logger, error handling).
@@ -34,3 +44,14 @@ Le regole sotto sono il contratto d'uso consigliato per tutti i team che adottan
 - Naming componenti: `feature-name-page`, `feature-name-card`, `feature-name-form`.
 - Naming file: `kebab-case`.
 - Preferire componenti standalone e API Angular moderne.
+
+## Layout baseline corrente
+
+I componenti layout correnti sono:
+
+- `app-shell`
+- `app-header`
+- `app-sidebar`
+- `app-footer`
+
+La shell monta i blocchi nell'ordine: header, sidebar, main, footer.
