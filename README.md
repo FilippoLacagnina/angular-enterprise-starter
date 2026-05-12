@@ -10,6 +10,8 @@ Il progetto e volutamente in una fase **unstyled base**:
 - nessuna classe CSS nei template layout
 - file SCSS layout vuoti per massima personalizzazione futura
 - struttura cartelle enterprise gia pronta (`core`, `shared`, `layout`, `features`)
+- routing root con redirect a `/dashboard`
+- prima feature lazy disponibile in `features/dashboard`
 
 Per il dettaglio completo:
 
