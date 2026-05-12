@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+.angular
+.idea
+.vscode
+package-lock.json
+docs/*.pdf
