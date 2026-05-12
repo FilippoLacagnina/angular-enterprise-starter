@@ -1,5 +1,20 @@
 # Angular Enterprise Starter - Architecture Guidelines
 
+## Index
+
+- [Obiettivo](#obiettivo)
+- [Stato implementazione layout](#stato-implementazione-layout)
+- [Struttura base](#struttura-base)
+- [Shared baseline](#shared-baseline)
+- [Core baseline](#core-baseline)
+- [Feature baseline](#feature-baseline)
+- [Direttive d'uso](#direttive-duso)
+- [Convenzioni consigliate](#convenzioni-consigliate)
+- [Structural pattern for files and tests](#structural-pattern-for-files-and-tests)
+- [Routing baseline corrente](#routing-baseline-corrente)
+- [Pattern route feature con child routes](#pattern-route-feature-con-child-routes)
+- [Layout baseline corrente](#layout-baseline-corrente)
+
 ## Obiettivo
 
 Questa base progetto definisce una struttura enterprise chiara, scalabile e facilmente mantenibile.
