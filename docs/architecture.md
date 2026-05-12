@@ -47,6 +47,30 @@ La cartella `core` contiene infrastruttura applicativa singleton e cross-cutting
 `core` non deve contenere componenti UI, view di routing o logica specifica di una singola feature.
 Le feature possono dipendere da `core`, ma `core` non deve importare feature.
 
+## Feature baseline
+
+Ogni feature rappresenta un'area funzionale autonoma.
+La struttura consigliata e:
+
+```text
+features/<feature-name>/
+  <feature-name>.routes.ts
+  views/
+  components/
+  services/
+  models/
+```
+
+Uso consigliato:
+
+- `views`: componenti collegati direttamente al routing della feature.
+- `components`: componenti interni alla feature, non condivisi globalmente.
+- `services`: service specifici della feature.
+- `models`: tipi, interfacce e model specifici della feature.
+
+Un service specifico della dashboard, ad esempio, vive in `features/dashboard/services`.
+Non va inserito in `core/services`, perche `core/services` e riservato a servizi globali e trasversali.
+
 ## Direttive d'uso
 
 1. `core` non contiene componenti UI di business.
