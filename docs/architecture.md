@@ -34,6 +34,19 @@ La cartella `shared` contiene building block riusabili e indipendenti dal domini
 Una UI library dedicata e intenzionalmente rimandata.
 In questa fase il progetto resta neutro: la library potra essere introdotta quando saranno chiari design system, API componenti e strategia di riuso.
 
+## Core baseline
+
+La cartella `core` contiene infrastruttura applicativa singleton e cross-cutting concern:
+
+- `core/config`: configurazioni applicative, loader e adapter di configurazione.
+- `core/guards`: route guard e logiche di protezione accesso.
+- `core/interceptors`: interceptor HTTP globali.
+- `core/services`: servizi singleton trasversali.
+- `core/tokens`: injection token e provider condivisi.
+
+`core` non deve contenere componenti UI, view di routing o logica specifica di una singola feature.
+Le feature possono dipendere da `core`, ma `core` non deve importare feature.
+
 ## Direttive d'uso
 
 1. `core` non contiene componenti UI di business.
@@ -58,6 +71,38 @@ In questa fase il progetto resta neutro: la library potra essere introdotta quan
 - Preferire componenti standalone e API Angular moderne.
 - Le view di routing vivono in `features/<feature-name>/views/<view-name>/<view-name>.component.*`.
 - Ogni feature espone le proprie route tramite `features/<feature-name>/<feature-name>.routes.ts`.
+
+## Structural pattern for files and tests
+
+La struttura interna resta flat quando un elemento e composto da un singolo file sorgente piu eventuale test.
+Quando invece un elemento richiede piu file correlati, va creata una directory dedicata.
+
+Questa regola si applica a `core`, `shared` e `features`.
+I test unitari restano sempre vicino al sorgente testato.
+
+Esempio flat:
+
+```text
+core/guards/
+  auth.guard.ts
+  auth.guard.spec.ts
+```
+
+Esempio con directory dedicata:
+
+```text
+core/services/logger/
+  logger.service.ts
+  logger.service.spec.ts
+  logger.model.ts
+  logger.adapter.ts
+```
+
+Regola pratica:
+
+- 1 file sorgente + eventuale `.spec.ts`: struttura flat.
+- N file correlati: directory dedicata con nome del blocco.
+- Test accanto al file o al blocco testato.
 
 ## Routing baseline corrente
 
