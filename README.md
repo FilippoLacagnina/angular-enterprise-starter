@@ -46,21 +46,7 @@ v0.1.0-alpha.0 - First public alpha
 
 ## Architecture Preview
 
-```mermaid
-flowchart TB
-  App["Angular Application"]
-
-  App --> Core["core<br/>Config, API routes, guards, interceptors, services, tokens"]
-  App --> Shared["shared<br/>Reusable components, directives, pipes, utils"]
-  App --> Layout["layout<br/>Shell, header, sidebar, footer"]
-  App --> Features["features<br/>Lazy business areas"]
-
-  Features --> Dashboard["dashboard<br/>Routes, views, components, services, models"]
-
-  Core -. "used by" .-> Features
-  Shared -. "used by" .-> Features
-  Layout -. "hosts" .-> Features
-```
+![Angular Enterprise Starter Architecture](./docs/assets/angular-enterprise-architecture.png)
 
 ```text
 src/app/
