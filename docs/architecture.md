@@ -219,6 +219,9 @@ In questo pattern:
 - `features/<feature>/services` contiene le chiamate HTTP e la logica specifica della feature.
 - la versione API e esplicita nel punto di utilizzo (`dashboardApiRoutes.v1`, `dashboardApiRoutes.v2`).
 
+Il progetto registra `HttpClient` in `app.config.ts` tramite `provideHttpClient(withFetch())`.
+`withFetch()` e la baseline consigliata per applicazioni Angular con SSR/hybrid rendering.
+
 ## Feature baseline
 
 Ogni feature rappresenta un'area funzionale autonoma.
