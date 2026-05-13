@@ -2,9 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-The project is currently private and pre-release. Version `0.0.0` represents active foundation work before the first public alpha.
+The project is currently private and in alpha pre-release.
 
 ## Unreleased
+
+No unreleased changes yet.
+
+## 0.1.0-alpha.0
+
+Initial alpha baseline for the Angular Enterprise Starter.
 
 ### Added
 
@@ -27,7 +33,5 @@ The project is currently private and pre-release. Version `0.0.0` represents act
 
 ### Planned
 
-- First public alpha version (`0.1.0-alpha.0`).
-- License decision before public release.
 - Testing strategy.
 - Optional UI/design system baseline.

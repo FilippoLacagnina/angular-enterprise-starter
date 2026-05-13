@@ -1,6 +1,6 @@
 {
   "name": "angular-enterprise-starter",
-  "version": "0.0.0",
+  "version": "0.1.0-alpha.0",
   "description": "Pre-release Angular enterprise starter with modular architecture and unstyled layout baseline.",
   "author": "Filippo Lacagnina",
   "repository": {
