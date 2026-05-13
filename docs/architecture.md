@@ -10,6 +10,7 @@
 - [Feature baseline](#feature-baseline)
 - [Direttive d'uso](#direttive-duso)
 - [Convenzioni consigliate](#convenzioni-consigliate)
+- [Import aliases](#import-aliases)
 - [Structural pattern for files and tests](#structural-pattern-for-files-and-tests)
 - [Routing baseline corrente](#routing-baseline-corrente)
 - [Pattern route feature con child routes](#pattern-route-feature-con-child-routes)
@@ -110,6 +111,27 @@ Non va inserito in `core/services`, perche `core/services` e riservato a servizi
 - Preferire componenti standalone e API Angular moderne.
 - Le view di routing vivono in `features/<feature-name>/views/<view-name>/<view-name>.component.*`.
 - Ogni feature espone le proprie route tramite `features/<feature-name>/<feature-name>.routes.ts`.
+
+## Import aliases
+
+Il progetto espone alias TypeScript per evitare import relativi lunghi tra layer applicativi:
+
+- `@core/*`: infrastruttura applicativa singleton.
+- `@shared/*`: building block riusabili.
+- `@features/*`: feature lazy e logica di dominio.
+- `@layout/*`: shell e componenti layout globali.
+
+Uso consigliato:
+
+- usare gli alias quando si importa da un layer applicativo diverso o da una cartella distante;
+- preferire import relativi brevi per file molto vicini nello stesso blocco;
+- non usare gli alias per aggirare i boundary architetturali.
+
+Esempio:
+
+```ts
+import { ShellComponent } from '@layout/shell/shell';
+```
 
 ## Structural pattern for files and tests
 

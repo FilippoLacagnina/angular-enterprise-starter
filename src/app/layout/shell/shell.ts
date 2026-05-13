@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-
-import { FooterComponent } from '../footer/footer';
-import { HeaderComponent } from '../header/header';
-import { SidebarComponent } from '../sidebar/sidebar';
+import { FooterComponent } from '@layout/footer/footer';
+import { HeaderComponent } from '@layout/header/header';
+import { SidebarComponent } from '@layout/sidebar/sidebar';
 
 @Component({
   selector: 'app-shell',
