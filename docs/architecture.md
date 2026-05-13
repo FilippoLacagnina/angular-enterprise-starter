@@ -16,6 +16,7 @@
 - [Import aliases](#import-aliases)
 - [Structural pattern for files and tests](#structural-pattern-for-files-and-tests)
 - [Route guards pattern](#route-guards-pattern)
+- [State management guidelines](#state-management-guidelines)
 - [Routing baseline corrente](#routing-baseline-corrente)
 - [Pattern route feature con child routes](#pattern-route-feature-con-child-routes)
 - [SSR render modes](#ssr-render-modes)
@@ -395,6 +396,66 @@ Regole consigliate:
 - `permission.guard.ts`: verifica ruoli, permessi o capability.
 - i guard devono orchestrare servizi di auth/sessione, non contenere business logic pesante.
 - logiche specifiche di una feature possono vivere nella feature, se non sono riusabili globalmente.
+
+## State management guidelines
+
+Lo starter non include una libreria di state management globale.
+La scelta e intenzionale: lo stato deve crescere in base alla complessita reale dell'applicazione.
+
+Uso consigliato:
+
+- usare Angular Signals per stato UI locale e sincrono;
+- usare `computed` per stato derivato;
+- usare `effect` solo per side effect espliciti e controllati;
+- usare RxJS per flussi asincroni, HTTP, websocket, polling, debounce e stream complessi;
+- valutare `httpResource` per letture HTTP direttamente consumate dal template e integrate con Signals;
+- usare service di feature per orchestrare stato e chiamate dati della feature;
+- introdurre uno store globale solo quando il dominio lo richiede davvero.
+
+Regola pratica:
+
+```text
+Signals for state.
+RxJS for streams.
+httpResource for signal-based HTTP reads.
+Feature services for orchestration.
+Global store only when justified.
+```
+
+Esempio:
+
+- uno stato di apertura/chiusura UI vive bene in un `signal`;
+- una chiamata HTTP resta un `Observable`;
+- una lettura HTTP orientata alla UI puo usare `httpResource`;
+- una lista caricata via HTTP puo essere convertita in signal solo quando serve direttamente al template;
+- un workflow condiviso tra piu feature puo motivare uno store globale.
+
+Esempio `httpResource`:
+
+```ts
+import { httpResource } from '@angular/common/http';
+import { inject } from '@angular/core';
+import { dashboardApiRoutes } from '@core/api/dashboard-api.routes';
+import { APP_CONFIG } from '@core/config/app-config.token';
+
+const config = inject(APP_CONFIG);
+
+export const dashboardSummaryResource = httpResource(() => {
+  return `${config.api.dashboard}${dashboardApiRoutes.v2.summary}`;
+});
+```
+
+Regola pratica:
+
+- usare `HttpClient` + RxJS per workflow, comandi, mutation, retry avanzati e stream complessi;
+- usare `httpResource` per query read-oriented che devono esporre stato reattivo alla UI;
+- evitare di sostituire ogni `Observable` con `httpResource` in modo automatico.
+
+Opzioni future:
+
+- Angular Signal Store;
+- NgRx;
+- altro state manager, se richiesto dal progetto reale.
 
 ## Routing baseline corrente
 
