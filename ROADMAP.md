@@ -14,9 +14,10 @@ Goal: provide a coherent private alpha that can be reviewed before publication.
 
 - Confirm base architecture and routing conventions.
 - Keep layout intentionally unstyled and easy to customize.
-- Add at least one additional feature example to validate the feature pattern.
-- Define shared conventions for reusable components and utilities.
-- Review README, architecture docs and changelog before publication.
+- Keep demonstrative dashboard examples clearly documented.
+- Confirm configuration strategy for `local`, `dev`, `test` and `prod`.
+- Confirm API route contracts and interceptor baseline.
+- Review README, technical docs and changelog before publication.
 
 ## Before Public Release
 
@@ -24,10 +25,12 @@ Goal: provide a coherent private alpha that can be reviewed before publication.
 - Decide first stable version target.
 - Add contribution guidelines if external collaboration is expected.
 - Review repository metadata, topics and GitHub visibility.
+- Remove or adapt demonstrative dashboard API/service examples.
 
 ## Later
 
 - Add optional CI template.
 - Add optional design system baseline.
 - Add optional i18n baseline.
-- Add optional core services examples for guards, interceptors and logging.
+- Add optional testing strategy.
+- Add optional auth/session examples.

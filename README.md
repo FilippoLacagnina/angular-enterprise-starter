@@ -1,35 +1,60 @@
 # Angular Enterprise Starter
 
-Starter Angular pubblico con approccio enterprise-first e struttura modulare.
+Angular starter project for enterprise applications, currently in private pre-release.
 
-## Stato attuale
+The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
 
-Il progetto e volutamente in una fase **unstyled base**:
+## Current Status
 
-- layout minimale con soli placeholder testuali (`Header`, `Sidebar`, `Main`, `Footer`)
-- nessuna classe CSS nei template layout
-- file SCSS layout vuoti per massima personalizzazione futura
-- struttura cartelle enterprise gia pronta (`core`, `shared`, `layout`, `features`)
-- routing root con redirect a `/dashboard`
-- prima feature lazy disponibile in `features/dashboard`
+This project is intentionally minimal and unstyled:
 
-Per il dettaglio completo:
+- layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
+- no layout CSS classes in templates
+- empty layout SCSS files for future customization
+- enterprise folders already scaffolded (`core`, `shared`, `layout`, `features`)
+- root route redirects to `/dashboard`
+- dashboard feature is lazy-loaded
+- application config supports `local`, `dev`, `test` and `prod`
 
-- [Architecture Guidelines](./docs/architecture.md)
-- [Current Status](./docs/current-status.md)
-
-## Avvio rapido
+## Quick Start
 
 ```bash
 npm install
 npm run start
 ```
 
-## Comandi principali
+By default, `npm run start` uses the `local` environment.
+
+## Scripts
 
 ```bash
-npm run lint
-npm run format:check
+npm run start
 npm run build
 npm run test
+npm run lint
+npm run lint:fix
+npm run format
+npm run format:check
 ```
+
+## Documentation
+
+- [Architecture Guidelines](./docs/architecture.md)
+- [Configuration](./docs/configuration.md)
+- [API Contracts](./docs/api.md)
+- [Routing and SSR](./docs/routing.md)
+- [State Management](./docs/state-management.md)
+- [Current Status](./docs/current-status.md)
+- [Roadmap](./ROADMAP.md)
+- [Changelog](./CHANGELOG.md)
+
+## Pre-release Notes
+
+The repository is still private and the package version is `0.0.0`.
+
+Before making it public:
+
+- decide and add a license
+- review documentation and examples
+- decide the first public alpha version
+- remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`

@@ -1,49 +1,64 @@
 # Current Status
 
-## Data
+## Date
 
-12 maggio 2026
+May 13, 2026
 
-## Cosa e stato fatto
+## Completed
 
-1. Setup quality baseline
+1. Quality baseline
 
-- ESLint configurato con Angular ESLint e regole strict.
-- Prettier rinforzato con script dedicati (`format`, `format:check`).
+- ESLint configured with Angular ESLint and strict rules.
+- Prettier configured with `format` and `format:check` scripts.
 
-2. Struttura enterprise iniziale
+2. Enterprise structure
 
-- Create le directory:
-  - `src/app/core`
-  - `src/app/shared`
-  - `src/app/layout`
-  - `src/app/features`
+- Added `core`, `shared`, `layout` and `features` layers.
+- Added baseline folders for `core`, `shared` and the dashboard feature.
+- Added TypeScript path aliases for application layers.
 
-3. Layout base scaffold
+3. Layout baseline
 
-- Creati componenti standalone:
-  - `layout/shell`
-  - `layout/header`
-  - `layout/sidebar`
-  - `layout/footer`
-- Collegamento in `App` tramite `app-shell`.
+- Added standalone layout components: shell, header, sidebar and footer.
+- Kept templates intentionally minimal and unstyled.
+- Left layout SCSS files empty for future customization.
 
-4. Reset per personalizzazione massima
+4. Routing baseline
 
-- Rimossa la UI strutturata precedente.
-- Mantenuti solo placeholder testuali nei template layout.
-- Rimossi stili e classi CSS dai layout.
+- Added root redirect from `/` to `/dashboard`.
+- Added lazy dashboard feature.
+- Added dashboard view under `features/dashboard/views/dashboard`.
 
-5. Routing e dashboard baseline
+5. Configuration and API baseline
 
-- Aggiunto redirect root da `/` a `/dashboard`.
-- Aggiunta feature lazy `features/dashboard`.
-- Aggiunta view standalone `features/dashboard/views/dashboard/dashboard.component.*`.
+- Added application config model, token and provider.
+- Added `local`, `dev`, `test` and `prod` environment files.
+- Added Angular file replacements for environment selection.
+- Added dashboard API routes example.
+- Added dashboard service example.
 
-## Scelta progettuale corrente
+6. HTTP baseline
 
-Il repository resta neutro lato design per permettere a chi lo adotta di:
+- Registered `HttpClient` with `provideHttpClient(withFetch())`.
+- Added correlation id and error HTTP interceptors.
 
-- applicare il proprio design system
-- scegliere liberamente struttura CSS/SCSS
-- introdurre tema/layout senza vincoli preimpostati
+7. Documentation
+
+- Reorganized technical documentation by topic.
+- Refreshed README.
+- Added architecture, configuration, API, routing/SSR and state management guides.
+
+## Current Design Choice
+
+The starter remains design-neutral so adopters can bring their own:
+
+- design system
+- CSS/SCSS strategy
+- UI component library
+- branding and layout implementation
+
+## Current Verification
+
+- `npm run lint` passes
+- `npm run format:check` passes
+- `npx tsc -p tsconfig.app.json --noEmit` passes

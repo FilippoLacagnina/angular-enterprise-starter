@@ -12,15 +12,22 @@ The project is currently private and pre-release. Version `0.0.0` represents act
 - Enterprise folder structure: `core`, `shared`, `layout`, `features`.
 - Minimal unstyled layout shell with header, sidebar, main and footer placeholders.
 - Lazy dashboard feature with root redirect from `/` to `/dashboard`.
-- Architecture and current status documentation.
+- Application config baseline with `local`, `dev`, `test` and `prod` environments.
+- Dashboard API routes and dashboard service examples.
+- HTTP client provider with `withFetch()`.
+- Correlation id and error HTTP interceptors.
+- Technical documentation split by topic.
+- Architecture, configuration, API, routing/SSR and state management documentation.
 
 ### Changed
 
 - Removed Angular default starter template.
 - Kept layout templates intentionally unstyled for future customization.
+- Refreshed README as the project entrypoint.
 
 ### Planned
 
 - First public alpha version (`0.1.0-alpha.0`).
-- Shared UI and utility conventions.
-- Additional feature example to validate the architecture pattern.
+- License decision before public release.
+- Testing strategy.
+- Optional UI/design system baseline.
