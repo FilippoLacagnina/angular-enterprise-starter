@@ -16,6 +16,7 @@
 - [Structural pattern for files and tests](#structural-pattern-for-files-and-tests)
 - [Routing baseline corrente](#routing-baseline-corrente)
 - [Pattern route feature con child routes](#pattern-route-feature-con-child-routes)
+- [SSR render modes](#ssr-render-modes)
 - [Layout baseline corrente](#layout-baseline-corrente)
 
 ## Obiettivo
@@ -394,6 +395,60 @@ In questo pattern:
 - `/dashboard/analytics` carica una view figlia della feature.
 - `/dashboard/reports` carica una view figlia della feature.
 - Le view figlie devono essere renderizzate da un `router-outlet` presente nella view padre.
+
+## SSR render modes
+
+Il progetto include la configurazione Angular SSR in `src/app/app.routes.server.ts`.
+Il default corrente dello starter e `RenderMode.Prerender`.
+
+Angular supporta questi render mode:
+
+- `RenderMode.Server`: Server-Side Rendering (SSR), contenuto renderizzato sul server per ogni request.
+- `RenderMode.Client`: Client-Side Rendering (CSR), contenuto renderizzato nel browser.
+- `RenderMode.Prerender`: Static Site Generation (SSG), contenuto pre-renderizzato a build time e servito come file statico.
+
+Hybrid rendering non e un quarto valore di `RenderMode`.
+E la strategia complessiva dell'applicazione ottenuta combinando render mode diversi sulle singole server routes.
+
+Esempio hybrid rendering:
+
+```ts
+export const serverRoutes: ServerRoute[] = [
+  {
+    path: '',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'dashboard',
+    renderMode: RenderMode.Prerender,
+  },
+  {
+    path: 'profile',
+    renderMode: RenderMode.Server,
+  },
+  {
+    path: '**',
+    renderMode: RenderMode.Server,
+  },
+];
+```
+
+Baseline corrente:
+
+```ts
+export const serverRoutes: ServerRoute[] = [
+  {
+    path: '**',
+    renderMode: RenderMode.Prerender,
+  },
+];
+```
+
+Regola consigliata:
+
+- usare `Prerender` per route statiche o prevedibili;
+- usare `Server` per route che richiedono rendering per request;
+- usare `Client` quando la route deve essere gestita solo nel browser.
 
 ## Layout baseline corrente
 
