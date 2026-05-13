@@ -30,11 +30,19 @@ By default, `npm run start` uses the `local` environment.
 ```bash
 npm run start
 npm run build
+npm run serve:ssr
 npm run test
 npm run lint
 npm run lint:fix
 npm run format
 npm run format:check
+```
+
+To test the generated SSR/server bundle locally:
+
+```bash
+npm run build
+npm run serve:ssr
 ```
 
 ## Documentation

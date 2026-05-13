@@ -141,6 +141,15 @@ export const serverRoutes: ServerRoute[] = [
 ];
 ```
 
+After building the application, the generated server bundle can be tested locally with:
+
+```bash
+npm run build
+npm run serve:ssr
+```
+
+The `serve:ssr` script runs `dist/angular-enterprise-starter/server/server.mjs`.
+
 ### When to use RenderMode.Server
 
 `RenderMode.Server` should be introduced when a route needs to be rendered on the server for every request.

@@ -24,7 +24,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "test": "ng test",
-    "serve:ssr:angular-enterprise-starter": "node dist/angular-enterprise-starter/server/server.mjs"
+    "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
