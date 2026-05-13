@@ -32,6 +32,22 @@ Angular replaces that file through `fileReplacements` for `local`, `development`
 
 ## Environment mapping
 
+Preferred npm scripts:
+
+```text
+npm run start                         -> local
+npm run start:local                   -> local
+npm run start:dev                     -> dev
+npm run start:test                    -> test
+npm run build                         -> prod
+npm run build:local                   -> local
+npm run build:dev                     -> dev
+npm run build:test                    -> test
+npm run build:prod                    -> prod
+```
+
+Equivalent Angular CLI commands:
+
 ```text
 ng serve                              -> local
 ng serve --configuration test         -> test

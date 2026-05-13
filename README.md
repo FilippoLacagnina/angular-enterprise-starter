@@ -29,7 +29,14 @@ By default, `npm run start` uses the `local` environment.
 
 ```bash
 npm run start
+npm run start:local
+npm run start:dev
+npm run start:test
 npm run build
+npm run build:local
+npm run build:dev
+npm run build:test
+npm run build:prod
 npm run serve:ssr
 npm run test
 npm run lint
@@ -37,6 +44,17 @@ npm run lint:fix
 npm run format
 npm run format:check
 ```
+
+Environment scripts:
+
+- `npm run start` and `npm run start:local`: start the app with the `local` environment.
+- `npm run start:dev`: start the app with the shared `dev` environment.
+- `npm run start:test`: start the app with the `test` environment.
+- `npm run build`: build using Angular's default production configuration.
+- `npm run build:local`: build with the `local` environment.
+- `npm run build:dev`: build with the shared `dev` environment.
+- `npm run build:test`: build with the `test` environment.
+- `npm run build:prod`: build with the `prod` environment.
 
 To test the generated SSR/server bundle locally:
 
