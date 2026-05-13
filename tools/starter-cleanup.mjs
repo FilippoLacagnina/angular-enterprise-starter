@@ -8,6 +8,7 @@ const removablePaths = [
   'ROADMAP.md',
   'CHANGELOG.md',
   'docs/current-status.md',
+  '.github/pull_request_template.md',
 ];
 
 const args = new Set(process.argv.slice(2));

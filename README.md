@@ -101,6 +101,7 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 - [Contributing Guidelines](./CONTRIBUTING.md)
 - [Security Policy](./SECURITY.md)
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
+- [Pull Request Template](./.github/pull_request_template.md)
 
 ## Pre-release Notes
 
