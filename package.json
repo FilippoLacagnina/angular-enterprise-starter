@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+ssh://git@github.com/FilippoLacagnina/angular-enterprise-starter.git"
   },
+  "bugs": {
+    "url": "https://github.com/FilippoLacagnina/angular-enterprise-starter/issues"
+  },
+  "homepage": "https://github.com/FilippoLacagnina/angular-enterprise-starter#readme",
   "keywords": [
     "angular",
     "starter",
