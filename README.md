@@ -43,6 +43,7 @@ npm run lint
 npm run lint:fix
 npm run format
 npm run format:check
+npm run starter:cleanup
 ```
 
 Environment scripts:
@@ -62,6 +63,26 @@ To test the generated SSR/server bundle locally:
 npm run build
 npm run serve:ssr
 ```
+
+## After Cloning
+
+This repository is a starter template.
+After cloning it for a real product, review and adapt project metadata, documentation, license and examples.
+
+Use the cleanup script to preview starter-only files that can be removed from a product repository:
+
+```bash
+npm run starter:cleanup
+```
+
+Apply the cleanup explicitly:
+
+```bash
+npm run starter:cleanup -- --yes
+```
+
+The cleanup script removes starter community and planning files only.
+It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
 
 ## Documentation
 
@@ -86,7 +107,6 @@ The repository is still private and the package version is `0.0.0`.
 
 Before making it public:
 
-- decide and add a license
 - review documentation and examples
 - decide the first public alpha version
 - remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`

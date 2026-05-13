@@ -34,6 +34,7 @@
     "lint:fix": "ng lint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
+    "starter:cleanup": "node tools/starter-cleanup.mjs",
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs"
   },
