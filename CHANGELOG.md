@@ -8,7 +8,7 @@ The project is currently private and in alpha pre-release.
 
 No unreleased changes yet.
 
-## 0.1.0-alpha.0
+## 0.1.0-alpha.0 - 2026-05-13
 
 Initial alpha baseline for the Angular Enterprise Starter.
 

@@ -4,6 +4,12 @@ Angular starter project for enterprise applications, currently in alpha pre-rele
 
 The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
 
+Current release:
+
+```text
+v0.1.0-alpha.0 - First public alpha
+```
+
 ## Current Status
 
 This project is intentionally minimal and unstyled:
@@ -107,8 +113,9 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 
 The repository is still private and the package version is `0.1.0-alpha.0`.
 The package remains marked as `private` to prevent accidental npm publication.
+The first alpha tag and GitHub Release have been published.
 
-Before making it public:
+Before making the repository public:
 
 - review documentation and examples
 - remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`

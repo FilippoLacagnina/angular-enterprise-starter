@@ -21,11 +21,25 @@ Current package version:
 The package remains marked as private:
 
 ```json
-"private": true
+{
+  "private": true
+}
 ```
 
 This does not prevent the GitHub repository from becoming public.
 It only prevents accidental publication to npm.
+
+Current Git tag:
+
+```text
+v0.1.0-alpha.0
+```
+
+Current GitHub Release:
+
+```text
+v0.1.0-alpha.0 - First public alpha
+```
 
 ## Version strategy
 
@@ -57,17 +71,23 @@ Use `1.0.0` when the starter can be safely reused as a stable public baseline.
 
 Create Git tags only for meaningful public milestones.
 
-Example:
+The first alpha release has already been published:
+
+```text
+v0.1.0-alpha.0 - First public alpha
+```
+
+For future releases, create and push a new tag:
 
 ```bash
-git tag v0.1.0-alpha.0
-git push origin v0.1.0-alpha.0
+git tag v0.1.0-alpha.1
+git push origin v0.1.0-alpha.1
 ```
 
 Suggested GitHub release title:
 
 ```text
-v0.1.0-alpha.0 - First public alpha
+v0.1.0-alpha.1 - Alpha update
 ```
 
 ## npm publication
