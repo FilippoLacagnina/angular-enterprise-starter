@@ -7,6 +7,8 @@
 - [Struttura base](#struttura-base)
 - [Shared baseline](#shared-baseline)
 - [Core baseline](#core-baseline)
+- [Application config and environments](#application-config-and-environments)
+- [API routes baseline](#api-routes-baseline)
 - [Feature baseline](#feature-baseline)
 - [Direttive d'uso](#direttive-duso)
 - [Convenzioni consigliate](#convenzioni-consigliate)
@@ -55,6 +57,7 @@ In questa fase il progetto resta neutro: la library potra essere introdotta quan
 La cartella `core` contiene infrastruttura applicativa singleton e cross-cutting concern:
 
 - `core/config`: configurazioni applicative, loader e adapter di configurazione.
+- `core/api`: path endpoint organizzati per microservizio.
 - `core/guards`: route guard e logiche di protezione accesso.
 - `core/interceptors`: interceptor HTTP globali.
 - `core/services`: servizi singleton trasversali.
@@ -62,6 +65,158 @@ La cartella `core` contiene infrastruttura applicativa singleton e cross-cutting
 
 `core` non deve contenere componenti UI, view di routing o logica specifica di una singola feature.
 Le feature possono dipendere da `core`, ma `core` non deve importare feature.
+
+## Application config and environments
+
+La configurazione applicativa globale vive in `core/config` ed e registrata tramite dependency injection.
+Il progetto prevede quattro ambienti:
+
+- `local`
+- `dev`
+- `test`
+- `prod`
+
+Struttura corrente:
+
+```text
+core/config/
+  app-environment.type.ts
+  app-config.model.ts
+  app-config.provider.ts
+  app-config.token.ts
+
+environments/
+  environment.ts
+  environment.local.ts
+  environment.dev.ts
+  environment.test.ts
+  environment.prod.ts
+```
+
+Il codice applicativo importa sempre `src/environments/environment.ts`.
+Angular sostituisce questo file tramite `fileReplacements` nelle configurazioni `local`, `development`, `test` e `production`.
+
+Mapping consigliato:
+
+```text
+ng serve                         -> local
+ng serve --configuration test    -> test
+ng build --configuration local   -> local
+ng build --configuration development -> dev
+ng build --configuration test    -> test
+ng build --configuration production -> prod
+```
+
+Uso ambienti:
+
+- `local`: macchina dello sviluppatore, backend locali o mock locali.
+- `dev`: ambiente condiviso di sviluppo.
+- `test`: ambiente QA/integration.
+- `prod`: produzione.
+
+Esempio model:
+
+```ts
+export type AppEnvironment = 'local' | 'dev' | 'test' | 'prod';
+
+export interface AppApiEndpoints {
+  dashboard: string;
+}
+
+export interface AppConfig {
+  appName: string;
+  environment: AppEnvironment;
+  api: AppApiEndpoints;
+}
+```
+
+Esempio environment:
+
+```ts
+export const environment = {
+  appName: 'Angular Enterprise Starter',
+  environment: 'local',
+  api: {
+    dashboard: 'http://localhost:3000',
+  },
+} satisfies AppConfig;
+```
+
+Uso consigliato:
+
+- aggiungere in `AppApiEndpoints` una chiave per ogni microservizio necessario;
+- mantenere nei file environment solo base URL e valori dipendenti dall'ambiente;
+- non inserire path endpoint REST negli environment.
+
+## API routes baseline
+
+I base URL dei microservizi appartengono alla configurazione applicativa (`core/config`).
+I path degli endpoint appartengono a `core/api`.
+
+La regola consigliata e: **un file per microservizio**, con eventuali versioni gestite dentro l'oggetto esportato.
+Questo evita mega-file centralizzati e rende piu chiara l'ownership quando piu team lavorano su API diverse.
+
+Esempio struttura:
+
+```text
+core/api/
+  dashboard-api.routes.ts
+```
+
+Il progetto include `dashboard-api.routes.ts` come esempio baseline.
+Ogni nuovo microservizio dovrebbe avere un file dedicato con lo stesso pattern.
+Gli esempi `dashboard-api.routes.ts` e `DashboardService` sono volutamente dimostrativi: dopo il clone del progetto vanno modificati o rimossi in base ai microservizi reali.
+
+Esempio base URL nella config:
+
+```ts
+export interface AppApiEndpoints {
+  dashboard: string;
+}
+```
+
+Esempio path versionati per microservizio:
+
+```ts
+export const dashboardApiRoutes = {
+  v1: {
+    summary: '/v1/dashboard/summary',
+  },
+  v2: {
+    summary: '/v2/dashboard/summary',
+    detail: (id: string) => `/v2/dashboard/${id}`,
+  },
+} as const;
+```
+
+Esempio utilizzo in un service di feature:
+
+```ts
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { dashboardApiRoutes } from '@core/api/dashboard-api.routes';
+import { APP_CONFIG } from '@core/config/app-config.token';
+
+@Injectable()
+export class DashboardService {
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
+
+  getDashboardDetail(id: string) {
+    return this.http.get(`${this.config.api.dashboard}${dashboardApiRoutes.v2.detail(id)}`);
+  }
+}
+```
+
+Il progetto include questo esempio in `features/dashboard/services/dashboard.service.ts`.
+Il service non e collegato alla UI: serve solo come riferimento strutturale per mostrare come combinare `APP_CONFIG` e `dashboardApiRoutes`.
+
+In questo pattern:
+
+- `core/config` definisce quale base URL usare per ambiente (`local`, `dev`, `test`, `prod`).
+- `core/api` definisce i path endpoint per microservizio.
+- `features/<feature>/services` contiene le chiamate HTTP e la logica specifica della feature.
+- la versione API e esplicita nel punto di utilizzo (`dashboardApiRoutes.v1`, `dashboardApiRoutes.v2`).
 
 ## Feature baseline
 
