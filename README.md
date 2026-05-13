@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://angular.dev/" aria-label="Angular">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Angular_icon.svg" alt="Angular logo" width="96" />
+  </a>
+</p>
+
 # Angular Enterprise Starter
 
 [![CI](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml)
@@ -15,11 +21,21 @@ Current release:
 v0.1.0-alpha.0 - First public alpha
 ```
 
-## Current Status
+## Why This Starter
 
-This project is intentionally minimal and unstyled:
+- Enterprise-oriented architecture without UI library lock-in.
+- Angular 21 baseline with standalone APIs and modern application setup.
+- SSR, prerender and hydration strategy documented from the beginning.
+- Environment configuration for `local`, `dev`, `test` and `prod`.
+- API route conventions designed for multiple microservices and versioned endpoints.
+- Simple, detailed documentation focused on Angular and enterprise best practices.
+- Post-clone cleanup workflow for adapting the starter to a real product repository.
 
+## Current Baseline
+
+- public alpha release: `v0.1.0-alpha.0`
 - based on Angular 21
+- intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
 - no layout CSS classes in templates
 - empty layout SCSS files for future customization
@@ -29,6 +45,22 @@ This project is intentionally minimal and unstyled:
 - application config supports `local`, `dev`, `test` and `prod`
 
 ## Architecture Preview
+
+```mermaid
+flowchart TB
+  App["Angular Application"]
+
+  App --> Core["core<br/>Config, API routes, guards, interceptors, services, tokens"]
+  App --> Shared["shared<br/>Reusable components, directives, pipes, utils"]
+  App --> Layout["layout<br/>Shell, header, sidebar, footer"]
+  App --> Features["features<br/>Lazy business areas"]
+
+  Features --> Dashboard["dashboard<br/>Routes, views, components, services, models"]
+
+  Core -. "used by" .-> Features
+  Shared -. "used by" .-> Features
+  Layout -. "hosts" .-> Features
+```
 
 ```text
 src/app/
@@ -51,14 +83,31 @@ features/orders/
 
 See [Architecture Guidelines](./docs/architecture.md) for the full recommended structure.
 
-## Quick Start
+## Getting Started
 
 ```bash
+git clone git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+cd angular-enterprise-starter
 npm install
 npm run start
 ```
 
 By default, `npm run start` uses the `local` environment.
+
+After cloning it for a real product, preview starter-only files that can be removed:
+
+```bash
+npm run starter:cleanup
+```
+
+Apply cleanup only when you are ready:
+
+```bash
+npm run starter:cleanup -- --yes
+```
+
+The cleanup script removes starter community and planning files only.
+It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
 
 ## Scripts
 
@@ -99,26 +148,6 @@ npm run build
 npm run serve:ssr
 ```
 
-## After Cloning
-
-This repository is a starter template.
-After cloning it for a real product, review and adapt project metadata, documentation, license and examples.
-
-Use the cleanup script to preview starter-only files that can be removed from a product repository:
-
-```bash
-npm run starter:cleanup
-```
-
-Apply the cleanup explicitly:
-
-```bash
-npm run starter:cleanup -- --yes
-```
-
-The cleanup script removes starter community and planning files only.
-It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
-
 ## Documentation
 
 - [Architecture Guidelines](./docs/architecture.md)
@@ -141,11 +170,15 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 ## Alpha Notes
 
 The repository is public and currently in alpha pre-release.
-The package version is `0.1.0-alpha.0`.
 The package remains marked as `private` to prevent accidental npm publication.
-The first alpha tag and GitHub Release have been published.
 
 Before the first stable release:
 
 - review documentation and examples
 - remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`
+
+## Trademark Notice
+
+Angular and the Angular logo are trademarks of Google LLC.
+The Angular logo is used from the official Angular Press Kit under CC BY 4.0.
+This project is not affiliated with or endorsed by Google or the Angular team.
