@@ -74,6 +74,12 @@ npm run serve:ssr
 - [Roadmap](./ROADMAP.md)
 - [Changelog](./CHANGELOG.md)
 
+## Community
+
+- [Contributing Guidelines](./CONTRIBUTING.md)
+- [Security Policy](./SECURITY.md)
+- [Code of Conduct](./CODE_OF_CONDUCT.md)
+
 ## Pre-release Notes
 
 The repository is still private and the package version is `0.0.0`.
