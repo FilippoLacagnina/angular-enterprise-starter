@@ -15,6 +15,7 @@
 - [Convenzioni consigliate](#convenzioni-consigliate)
 - [Import aliases](#import-aliases)
 - [Structural pattern for files and tests](#structural-pattern-for-files-and-tests)
+- [Route guards pattern](#route-guards-pattern)
 - [Routing baseline corrente](#routing-baseline-corrente)
 - [Pattern route feature con child routes](#pattern-route-feature-con-child-routes)
 - [SSR render modes](#ssr-render-modes)
@@ -351,6 +352,49 @@ Regola pratica:
 - 1 file sorgente + eventuale `.spec.ts`: struttura flat.
 - N file correlati: directory dedicata con nome del blocco.
 - Test accanto al file o al blocco testato.
+
+## Route guards pattern
+
+I guard globali vivono in `core/guards` quando rappresentano regole trasversali, come autenticazione o permessi.
+Lo starter non implementa guard reali per evitare logica finta: auth, sessione e ruoli dipendono dal progetto che clona questa base.
+
+Pattern consigliato:
+
+```text
+core/guards/
+  auth.guard.ts
+  permission.guard.ts
+```
+
+Esempio shape:
+
+```ts
+import { type CanActivateFn } from '@angular/router';
+
+export const authGuard: CanActivateFn = () => {
+  return true;
+};
+```
+
+Esempio uso route:
+
+```ts
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.routes').then((routes) => routes.dashboardRoutes),
+  },
+];
+```
+
+Regole consigliate:
+
+- `auth.guard.ts`: verifica se l'utente e autenticato.
+- `permission.guard.ts`: verifica ruoli, permessi o capability.
+- i guard devono orchestrare servizi di auth/sessione, non contenere business logic pesante.
+- logiche specifiche di una feature possono vivere nella feature, se non sono riusabili globalmente.
 
 ## Routing baseline corrente
 
