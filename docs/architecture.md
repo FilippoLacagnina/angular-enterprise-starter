@@ -9,6 +9,7 @@
 - [Core baseline](#core-baseline)
 - [Application config and environments](#application-config-and-environments)
 - [API routes baseline](#api-routes-baseline)
+- [HTTP interceptors baseline](#http-interceptors-baseline)
 - [Feature baseline](#feature-baseline)
 - [Direttive d'uso](#direttive-duso)
 - [Convenzioni consigliate](#convenzioni-consigliate)
@@ -221,6 +222,33 @@ In questo pattern:
 
 Il progetto registra `HttpClient` in `app.config.ts` tramite `provideHttpClient(withFetch())`.
 `withFetch()` e la baseline consigliata per applicazioni Angular con SSR/hybrid rendering.
+
+## HTTP interceptors baseline
+
+Gli interceptor HTTP globali vivono in `core/interceptors` e sono registrati in `app.config.ts` tramite `withInterceptors`.
+
+Baseline corrente:
+
+- `correlation-id.interceptor.ts`: aggiunge header `X-Correlation-Id` a ogni request.
+- `error.interceptor.ts`: punto centralizzato per intercettare errori HTTP e rilanciarli.
+
+Il correlation id serve a tracciare una request end-to-end tra frontend, backend e microservizi.
+Backend, API gateway e servizi distribuiti possono loggare lo stesso valore per ricostruire il flusso di una chiamata durante debug, supporto o incident analysis.
+
+Esempio header:
+
+```http
+X-Correlation-Id: 8f2b7c4e-1a2b-4c3d-9e0f-123456789abc
+```
+
+In progetti reali il correlation id puo anche essere generato o normalizzato da backend, API gateway o piattaforme di observability.
+
+Uso consigliato:
+
+- tenere negli interceptor solo logica infrastrutturale e cross-cutting;
+- non inserire business logic negli interceptor;
+- aggiungere interceptor globali solo quando valgono per tutta l'applicazione;
+- valutare con attenzione eventuali interceptor specifici di feature.
 
 ## Feature baseline
 
