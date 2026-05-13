@@ -57,6 +57,20 @@ setup/github/ci-workflow
 release/first-public-alpha
 ```
 
+## Repository workflow
+
+Recommended workflow:
+
+- Create a branch using the documented branch naming pattern.
+- Open a pull request against `main`.
+- Use the pull request template.
+- Wait for CI checks to pass.
+- Use squash merge for completed pull requests.
+- Avoid direct pushes to `main` for regular work.
+
+Maintainers may bypass the pull request flow for repository setup, small documentation fixes or urgent maintenance.
+Architectural changes and application code changes should go through pull requests.
+
 ## Pull requests
 
 Pull requests should explain:

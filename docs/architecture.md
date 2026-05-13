@@ -4,10 +4,12 @@
 
 - [Goal](#goal)
 - [Current layout baseline](#current-layout-baseline)
+- [Recommended project structure](#recommended-project-structure)
 - [Application layers](#application-layers)
 - [Core baseline](#core-baseline)
 - [Shared baseline](#shared-baseline)
 - [Feature baseline](#feature-baseline)
+- [Recommended feature structure](#recommended-feature-structure)
 - [Dependency rules](#dependency-rules)
 - [Naming and structure conventions](#naming-and-structure-conventions)
 - [Import aliases](#import-aliases)
@@ -26,6 +28,53 @@ The shell is intentionally unstyled:
 - empty layout SCSS files for future customization
 
 This keeps the starter neutral and ready for custom branding or design systems.
+
+## Recommended project structure
+
+The starter is organized around explicit application layers.
+The goal is to keep global infrastructure, reusable building blocks and business features separated.
+
+```text
+src/
+  app/
+    core/
+      api/
+      config/
+      guards/
+      interceptors/
+      services/
+      tokens/
+    shared/
+      components/
+      directives/
+      pipes/
+      utils/
+    layout/
+      shell/
+      header/
+      sidebar/
+      footer/
+    features/
+      dashboard/
+        dashboard.routes.ts
+        views/
+          dashboard/
+            dashboard.component.ts
+            dashboard.component.html
+            dashboard.component.scss
+        components/
+        models/
+        services/
+  environments/
+    environment.ts
+    environment.local.ts
+    environment.dev.ts
+    environment.test.ts
+    environment.prod.ts
+```
+
+This structure is intentionally a baseline.
+Projects should add folders only when they represent a real architectural boundary or recurring pattern.
 
 ## Application layers
 
@@ -81,6 +130,57 @@ Usage:
 - `models`: feature-specific types and models.
 
 A dashboard-specific service, for example, belongs in `features/dashboard/services`, not in `core/services`.
+
+## Recommended feature structure
+
+For larger features, use a predictable internal structure:
+
+```text
+features/orders/
+  orders.routes.ts
+  views/
+    orders-list/
+      orders-list.component.ts
+      orders-list.component.html
+      orders-list.component.scss
+    order-detail/
+      order-detail.component.ts
+      order-detail.component.html
+      order-detail.component.scss
+  components/
+    order-card/
+      order-card.component.ts
+      order-card.component.html
+      order-card.component.scss
+    order-filters/
+      order-filters.component.ts
+      order-filters.component.html
+      order-filters.component.scss
+  services/
+    orders.service.ts
+  models/
+    order.model.ts
+```
+
+For small features, keep the structure flat until more files are needed:
+
+```text
+features/profile/
+  profile.routes.ts
+  views/
+    profile/
+      profile.component.ts
+      profile.component.html
+      profile.component.scss
+```
+
+Recommended rule:
+
+- one source file plus an optional `.spec.ts`: keep it flat
+- multiple related files for the same concept: create a dedicated folder
+- routed components: place them under `views`
+- feature-internal reusable components: place them under `components`
+- feature-specific services and models: keep them inside the feature
 
 ## Dependency rules
 

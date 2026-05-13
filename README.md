@@ -1,6 +1,11 @@
 # Angular Enterprise Starter
 
-Angular starter project for enterprise applications, currently in alpha pre-release.
+[![CI](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/FilippoLacagnina/angular-enterprise-starter?include_prereleases)](https://github.com/FilippoLacagnina/angular-enterprise-starter/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
+
+Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
 
 The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
 
@@ -14,6 +19,7 @@ v0.1.0-alpha.0 - First public alpha
 
 This project is intentionally minimal and unstyled:
 
+- based on Angular 21
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
 - no layout CSS classes in templates
 - empty layout SCSS files for future customization
@@ -21,6 +27,29 @@ This project is intentionally minimal and unstyled:
 - root route redirects to `/dashboard`
 - dashboard feature is lazy-loaded
 - application config supports `local`, `dev`, `test` and `prod`
+
+## Architecture Preview
+
+```text
+src/app/
+  core/       # singleton infrastructure and cross-cutting concerns
+  shared/     # reusable building blocks
+  layout/     # global shell components
+  features/   # lazy business areas
+```
+
+Feature example:
+
+```text
+features/orders/
+  orders.routes.ts
+  views/
+  components/
+  services/
+  models/
+```
+
+See [Architecture Guidelines](./docs/architecture.md) for the full recommended structure.
 
 ## Quick Start
 
@@ -109,13 +138,14 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [Pull Request Template](./.github/pull_request_template.md)
 
-## Pre-release Notes
+## Alpha Notes
 
-The repository is still private and the package version is `0.1.0-alpha.0`.
+The repository is public and currently in alpha pre-release.
+The package version is `0.1.0-alpha.0`.
 The package remains marked as `private` to prevent accidental npm publication.
 The first alpha tag and GitHub Release have been published.
 
-Before making the repository public:
+Before the first stable release:
 
 - review documentation and examples
 - remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`
