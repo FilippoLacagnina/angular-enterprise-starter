@@ -6,6 +6,7 @@
 - [Feature child routes](#feature-child-routes)
 - [Route guards](#route-guards)
 - [SSR render modes](#ssr-render-modes)
+- [Hydration](#hydration)
 
 ## Routing baseline
 
@@ -139,3 +140,73 @@ export const serverRoutes: ServerRoute[] = [
   },
 ];
 ```
+
+### When to use RenderMode.Server
+
+`RenderMode.Server` should be introduced when a route needs to be rendered on the server for every request.
+It is not the starter default because the current dashboard route is static and does not require request-aware rendering.
+
+Good candidates:
+
+- user-specific pages;
+- pages that depend on cookies, headers or request context;
+- dynamic SEO content that must be fresh on each request;
+- routes with frequently changing server data;
+- routes that cannot be pre-rendered safely at build time.
+
+Before using `RenderMode.Server`, review:
+
+- browser-only APIs such as `window`, `document` and `localStorage`;
+- server-safe auth/session access;
+- cookie and header handling;
+- cache strategy;
+- API latency and timeout behavior;
+- observability for server-rendered requests.
+
+Example:
+
+```ts
+export const serverRoutes: ServerRoute[] = [
+  {
+    path: 'profile',
+    renderMode: RenderMode.Server,
+  },
+];
+```
+
+Recommended approach:
+
+- keep `Prerender` for static or predictable routes;
+- use `Server` only for routes with real request-time requirements;
+- document why a route needs SSR when changing its render mode.
+
+## Hydration
+
+Hydration is the phase where Angular takes the HTML already rendered by the server or produced at build time and attaches the client-side application behavior to it.
+
+The starter enables hydration in `src/app/app.config.ts`:
+
+```ts
+provideClientHydration(withEventReplay());
+```
+
+Flow:
+
+```text
+server/prerender output -> browser receives HTML -> Angular boots on client -> existing DOM is hydrated -> user interactions continue
+```
+
+`withEventReplay()` captures user events that happen before Angular finishes bootstrapping on the client and replays them after hydration is ready.
+This improves perceived responsiveness during SSR/prerender startup.
+
+When working with hydrated routes:
+
+- avoid changing server-rendered DOM before Angular hydrates it;
+- guard browser-only APIs such as `window`, `document` and `localStorage`;
+- keep generated IDs deterministic when they affect rendered markup;
+- avoid side effects during component construction;
+- move browser-only logic to lifecycle hooks or platform-safe services;
+- test pages both after direct refresh and after client-side navigation.
+
+Hydration applies to both `RenderMode.Server` and `RenderMode.Prerender` outputs.
+Pure `RenderMode.Client` routes are rendered in the browser and do not reuse pre-rendered HTML in the same way.
