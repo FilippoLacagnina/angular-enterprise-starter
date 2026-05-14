@@ -96,10 +96,13 @@ Common shared files that may become merge points:
 
 ## Implemented evolution branches
 
-| Branch                        | Area          | Description                                                          | Compatible baseline | Expected merge points                                                | Status      |
-| ----------------------------- | ------------- | -------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------- | ----------- |
-| `evo/i18n/transloco`          | i18n          | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts` | Implemented |
-| `evo/design-system/bootstrap` | design system | Bootstrap-based styling baseline.                                    | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`               | Implemented |
+> [!IMPORTANT]
+> Implemented evolution branches are available optional baselines and should be reviewed before starting a new project.
+
+| Branch                                                                                                                           | Area          | Description                                                          | Compatible baseline | Expected merge points                                                | Status      |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------- | ----------- |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                   | i18n          | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts` | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap) | design system | Bootstrap-based styling baseline.                                    | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`               | Implemented |
 
 ## Planned evolution branches
 

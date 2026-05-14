@@ -31,6 +31,9 @@ Angular Enterprise Starter is an enterprise-ready Angular 21 starter template fo
 
 The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, state management and authentication.
 
+> [!IMPORTANT]
+> See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
+
 The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
 
 Current release:
