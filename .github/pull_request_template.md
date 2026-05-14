@@ -19,6 +19,7 @@ Explain why this change is needed.
 
 - [ ] `npm run format:check`
 - [ ] `npm run lint`
+- [ ] `npm run test -- --watch=false`
 - [ ] `npx tsc -p tsconfig.app.json --noEmit`
 - [ ] `npm run build`
 

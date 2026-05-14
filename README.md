@@ -141,6 +141,7 @@ npm run serve:ssr
 - [API Contracts](./docs/api.md)
 - [Routing and SSR](./docs/routing.md)
 - [State Management](./docs/state-management.md)
+- [Testing Strategy](./docs/testing.md)
 - [Versioning](./docs/versioning.md)
 - [Current Status](./docs/current-status.md)
 - [Roadmap](./ROADMAP.md)

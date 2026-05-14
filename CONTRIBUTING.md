@@ -14,6 +14,7 @@ Run the following checks:
 ```bash
 npm run format:check
 npm run lint
+npm run test
 npx tsc -p tsconfig.app.json --noEmit
 npm run build
 ```
@@ -26,6 +27,7 @@ npm run build
 - Prefer documented examples over hidden conventions.
 - Keep feature examples easy to remove after cloning.
 - Update documentation when architecture, scripts or conventions change.
+- Keep tests close to the source under test.
 
 ## Branch naming
 
