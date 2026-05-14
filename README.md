@@ -42,6 +42,13 @@ Current release:
 v0.1.0-alpha.0 - First public alpha
 ```
 
+Current evolution branches:
+
+| Branch                        | Description                     |
+| ----------------------------- | ------------------------------- |
+| `evo/i18n/transloco`          | Transloco runtime i18n baseline |
+| `evo/design-system/bootstrap` | Bootstrap styling baseline      |
+
 ## Why This Starter
 
 - Enterprise-oriented architecture without UI library lock-in.
