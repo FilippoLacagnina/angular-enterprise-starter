@@ -119,6 +119,7 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 The `main` branch is the minimal, non-opinionated baseline.
 
 Optional capabilities are provided or planned as dedicated evolution branches, so consumers can start from a richer variant when they need a specific setup.
+These branches are an important part of the starter strategy and should be reviewed before choosing the baseline for a new project.
 
 Examples:
 
@@ -135,7 +136,9 @@ Evolution branches are not versioned independently.
 Each implemented evolution declares the `main` baseline version it is compatible with.
 
 Some evolution branches are still work in progress and should be reviewed before being used as a production baseline.
-See [Evolutions](./docs/evolutions.md) for the planned branch catalog and maintenance rules.
+
+> [!IMPORTANT]
+> See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
 
 ## Scripts
 
