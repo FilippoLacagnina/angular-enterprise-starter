@@ -13,11 +13,12 @@
 
 **Available Evolutions**
 
-![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-22c55e)
+![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
 
 **WIP Evolutions**
 
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
+![Config Runtime Config](https://img.shields.io/badge/evo%2Fconfig-runtime--config-0891b2)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
@@ -27,6 +28,8 @@
 ![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-2563eb)
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
+
+The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, state management and authentication.
 
 The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
 
@@ -43,6 +46,7 @@ v0.1.0-alpha.0 - First public alpha
 - SSR, prerender and hydration strategy documented from the beginning.
 - Environment configuration for `local`, `dev`, `test` and `prod`.
 - API route conventions designed for multiple microservices and versioned endpoints.
+- Optional `evo/*` branches for composable add-ons without forcing every project into the same stack.
 - Simple, detailed documentation focused on Angular and enterprise best practices.
 - Post-clone cleanup workflow for adapting the starter to a real product repository.
 
@@ -126,6 +130,9 @@ git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/a
 
 Evolution branches are designed to be composable when possible.
 For example, a project can start from a design system branch and later merge an i18n evolution branch.
+
+Evolution branches are not versioned independently.
+Each implemented evolution declares the `main` baseline version it is compatible with.
 
 Some evolution branches are still work in progress and should be reviewed before being used as a production baseline.
 See [Evolutions](./docs/evolutions.md) for the planned branch catalog and maintenance rules.

@@ -4,6 +4,7 @@
 
 - [Current status](#current-status)
 - [Version strategy](#version-strategy)
+- [Evolution branches](#evolution-branches)
 - [Pre-release phases](#pre-release-phases)
 - [GitHub releases](#github-releases)
 - [npm publication](#npm-publication)
@@ -53,6 +54,22 @@ Recommended flow:
 0.1.0-beta.0    -> structure mostly stable, feedback phase
 1.0.0           -> stable starter baseline
 ```
+
+## Evolution branches
+
+Evolution branches do not have independent semantic versions while the starter is in alpha.
+
+The `main` branch owns the public version, Git tag and GitHub Release.
+Each implemented evolution branch declares which `main` baseline it is compatible with.
+
+Example:
+
+```text
+main                  -> v0.1.0-alpha.0
+evo/i18n/transloco    -> compatible with v0.1.0-alpha.0
+```
+
+This avoids maintaining separate release lifecycles for optional variants before the starter baseline is stable.
 
 ## Pre-release phases
 
