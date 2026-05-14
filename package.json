@@ -48,6 +48,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "starter:cleanup": "node tools/starter-cleanup.mjs",
+    "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs"
   },

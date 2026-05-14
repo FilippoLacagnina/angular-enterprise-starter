@@ -101,7 +101,7 @@ npm run starter:cleanup
 Apply cleanup only when you are ready:
 
 ```bash
-npm run starter:cleanup -- --yes
+npm run starter:cleanup:apply
 ```
 
 The cleanup script removes starter community and planning files only.
@@ -146,6 +146,7 @@ npm run lint:fix
 npm run format
 npm run format:check
 npm run starter:cleanup
+npm run starter:cleanup:apply
 ```
 
 Environment scripts:

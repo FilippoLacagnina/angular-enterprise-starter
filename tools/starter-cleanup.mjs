@@ -21,11 +21,10 @@ Starter cleanup
 
 Usage:
   npm run starter:cleanup
-  npm run starter:cleanup -- --dry-run
-  npm run starter:cleanup -- --yes
+  npm run starter:cleanup:apply
 
 Default behavior is a dry run.
-Use --yes to remove starter-only files after cloning the project.
+Use starter:cleanup:apply to remove starter-only files after cloning the project.
 `);
 };
 
@@ -46,7 +45,7 @@ for (const relativePath of removablePaths) {
 
 if (!shouldApply) {
   console.log('\nNo files were removed.');
-  console.log('Run `npm run starter:cleanup -- --yes` to apply this cleanup.');
+  console.log('Run `npm run starter:cleanup:apply` to apply this cleanup.');
 }
 
 if (shouldApply) {
