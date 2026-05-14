@@ -11,6 +11,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 
+**WIP Evolutions**
+
+![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-orange)
+![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-orange)
+![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-orange)
+![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-orange)
+![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-orange)
+![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-orange)
+![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-orange)
+![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-orange)
+![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-orange)
+
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
 
 The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
@@ -94,6 +106,26 @@ npm run starter:cleanup -- --yes
 
 The cleanup script removes starter community and planning files only.
 It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
+
+## Optional Evolutions
+
+The `main` branch is the minimal, non-opinionated baseline.
+
+Optional capabilities are planned as dedicated WIP evolution branches, so consumers can start from a richer variant when they need a specific setup.
+
+Examples:
+
+```bash
+git clone --branch evo/i18n/transloco git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/design-system/tailwind git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+```
+
+Evolution branches are designed to be composable when possible.
+For example, a project can start from a design system branch and later merge an i18n evolution branch.
+
+Evolution branches are currently work in progress and should be reviewed before being used as a production baseline.
+See [Evolutions](./docs/evolutions.md) for the planned branch catalog and maintenance rules.
 
 ## Scripts
 

@@ -35,8 +35,8 @@ evo/<area>/<solution>
 Examples:
 
 ```text
-evo/i18n/angular-localize
 evo/i18n/transloco
+evo/i18n/angular-localize
 evo/testing/playwright
 evo/design-system/tailwind
 evo/design-system/angular-material
@@ -59,8 +59,8 @@ Each evolution branch should:
 
 | Branch                               | Area          | Description                                                                         | Status |
 | ------------------------------------ | ------------- | ----------------------------------------------------------------------------------- | ------ |
-| `evo/i18n/angular-localize`          | i18n          | Angular built-in i18n baseline with compile-time translations.                      | WIP    |
 | `evo/i18n/transloco`                 | i18n          | Runtime translation baseline for applications that need dynamic language switching. | WIP    |
+| `evo/i18n/angular-localize`          | i18n          | Angular built-in i18n baseline with compile-time translations.                      | WIP    |
 | `evo/testing/playwright`             | testing       | End-to-end testing baseline.                                                        | WIP    |
 | `evo/design-system/tailwind`         | design system | Tailwind-based styling baseline.                                                    | WIP    |
 | `evo/design-system/angular-material` | design system | Angular Material baseline.                                                          | WIP    |
@@ -78,11 +78,21 @@ Consumers can start from an evolution branch when they want a specific optional 
 Example:
 
 ```bash
-git clone --branch evo/i18n/angular-localize git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/i18n/transloco git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 ```
 
-Evolution branches are not intended to be merged all together.
-Each branch represents a focused optional path.
+Evolution branches are designed to be composable when possible.
+For example, a project can start from a design system branch and later merge an i18n branch.
+
+Example:
+
+```bash
+git checkout evo/design-system/bootstrap
+git merge evo/i18n/transloco
+```
+
+Each branch still represents a focused optional path.
+When combining branches, review the diff carefully and resolve conflicts explicitly.
 
 ## Contribution model
 
@@ -106,5 +116,6 @@ compare: feature/i18n/add-locale-docs
 - Keep each evolution branch focused.
 - Rebase or refresh evolution branches from `main` after relevant baseline changes.
 - Document what each evolution branch adds.
+- Prefer composable changes that can be merged with other evolution branches.
 - Mark branches as WIP until their setup, documentation and quality checks are validated.
 - Avoid creating too many branches without maintenance capacity.

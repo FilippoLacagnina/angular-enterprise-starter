@@ -55,7 +55,7 @@ feature/dashboard/base-route
 fix/routing/dashboard-redirect
 docs/architecture/folder-guidelines
 docs/configuration/environment-scripts
-evo/i18n/angular-localize
+evo/i18n/transloco
 evo/design-system/tailwind
 evo/design-system/bootstrap
 refactor/layout/remove-default-styles
