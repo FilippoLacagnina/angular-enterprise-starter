@@ -96,9 +96,15 @@ Common shared files that may become merge points:
 
 ## Implemented evolution branches
 
-| Branch               | Area | Description                                                          | Compatible baseline | Expected merge points                                                | Status      |
-| -------------------- | ---- | -------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------- | ----------- |
-| `evo/i18n/transloco` | i18n | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts` | Implemented |
+| Branch                        | Area          | Description                                                          | Compatible baseline | Expected merge points                                                | Status      |
+| ----------------------------- | ------------- | -------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------- | ----------- |
+| `evo/i18n/transloco`          | i18n          | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts` | Implemented |
+| `evo/design-system/bootstrap` | design system | Bootstrap-based styling baseline.                                    | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`               | Implemented |
+
+Guides:
+
+- `evo/i18n/transloco`: available in the `evo/i18n/transloco` branch
+- `evo/design-system/bootstrap`: available in the `evo/design-system/bootstrap` branch
 
 ## Planned evolution branches
 
@@ -109,7 +115,6 @@ Common shared files that may become merge points:
 | `evo/testing/playwright`             | testing       | End-to-end testing baseline.                                             | WIP    |
 | `evo/design-system/tailwind`         | design system | Tailwind-based styling baseline.                                         | WIP    |
 | `evo/design-system/angular-material` | design system | Angular Material baseline.                                               | WIP    |
-| `evo/design-system/bootstrap`        | design system | Bootstrap-based styling baseline.                                        | WIP    |
 | `evo/state/signal-store`             | state         | Signal-based state management baseline.                                  | WIP    |
 | `evo/auth/oidc`                      | auth          | OIDC authentication baseline.                                            | WIP    |
 | `evo/docker/basic`                   | deployment    | Docker baseline for local and deployment workflows.                      | WIP    |

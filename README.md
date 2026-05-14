@@ -14,6 +14,7 @@
 **Available Evolutions**
 
 ![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
+![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 
 **WIP Evolutions**
 
@@ -22,7 +23,6 @@
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
-![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 ![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-2563eb)
