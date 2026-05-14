@@ -13,15 +13,15 @@
 
 **WIP Evolutions**
 
-![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-orange)
-![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-orange)
-![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-orange)
-![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-orange)
-![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-orange)
-![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-orange)
-![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-orange)
-![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-orange)
-![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-orange)
+![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
+![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
+![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
+![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
+![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
+![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
+![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
+![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
+![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-2563eb)
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
 
