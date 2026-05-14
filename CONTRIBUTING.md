@@ -42,6 +42,7 @@ Allowed branch types:
 - `feature`: application or starter capabilities.
 - `fix`: bug fixes or regressions.
 - `docs`: documentation-only changes.
+- `evo`: optional starter evolutions.
 - `refactor`: internal restructuring without behavior changes.
 - `setup`: tooling, repository or configuration setup.
 - `release`: versioning and release preparation.
@@ -54,10 +55,17 @@ feature/dashboard/base-route
 fix/routing/dashboard-redirect
 docs/architecture/folder-guidelines
 docs/configuration/environment-scripts
+evo/i18n/angular-localize
+evo/design-system/tailwind
+evo/design-system/bootstrap
 refactor/layout/remove-default-styles
 setup/github/ci-workflow
 release/first-public-alpha
 ```
+
+Evolution branches are currently work in progress.
+Use `evo/<area>/<solution>` only for optional starter variants that are intentionally kept outside the minimal `main` baseline.
+Evolution branches follow the same contribution model as `main`: maintainer direct pushes are allowed for controlled maintenance, while external contributors should use pull requests.
 
 ## Repository workflow
 

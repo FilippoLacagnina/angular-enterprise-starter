@@ -142,6 +142,7 @@ npm run serve:ssr
 - [Routing and SSR](./docs/routing.md)
 - [State Management](./docs/state-management.md)
 - [Testing Strategy](./docs/testing.md)
+- [Evolutions](./docs/evolutions.md)
 - [Versioning](./docs/versioning.md)
 - [Current Status](./docs/current-status.md)
 - [Roadmap](./ROADMAP.md)
