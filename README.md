@@ -11,9 +11,12 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 
+**Available Evolutions**
+
+![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-22c55e)
+
 **WIP Evolutions**
 
-![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
@@ -111,7 +114,7 @@ It does not remove `LICENSE`, `README.md`, `package.json` or technical documenta
 
 The `main` branch is the minimal, non-opinionated baseline.
 
-Optional capabilities are planned as dedicated WIP evolution branches, so consumers can start from a richer variant when they need a specific setup.
+Optional capabilities are provided or planned as dedicated evolution branches, so consumers can start from a richer variant when they need a specific setup.
 
 Examples:
 
@@ -124,7 +127,7 @@ git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/a
 Evolution branches are designed to be composable when possible.
 For example, a project can start from a design system branch and later merge an i18n evolution branch.
 
-Evolution branches are currently work in progress and should be reviewed before being used as a production baseline.
+Some evolution branches are still work in progress and should be reviewed before being used as a production baseline.
 See [Evolutions](./docs/evolutions.md) for the planned branch catalog and maintenance rules.
 
 ## Scripts
