@@ -34,7 +34,10 @@ The starter keeps `main` minimal and provides optional `evo/*` branches for addi
 > [!IMPORTANT]
 > See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
 
-The goal is to provide a clean, documented baseline with modern Angular APIs, lazy feature routing, strict tooling, environment configuration and clear architectural boundaries.
+> [!IMPORTANT]
+> Start from `main` or from any implemented `evo/*` branch, then merge additional compatible evolutions to compose your own project baseline.
+
+The goal is to provide a clean, documented and composable Angular baseline with modern APIs, lazy feature routing, strict tooling, environment configuration, clear architectural boundaries and optional evolutions for project-specific needs.
 
 Current release:
 
@@ -130,6 +133,7 @@ The `main` branch is the minimal, non-opinionated baseline.
 
 Optional capabilities are provided or planned as dedicated evolution branches, so consumers can start from a richer variant when they need a specific setup.
 These branches are an important part of the starter strategy and should be reviewed before choosing the baseline for a new project.
+Teams can choose one implemented evolution branch as a starting point and merge other compatible evolutions later, instead of adopting a fixed all-in-one starter.
 
 Examples:
 
