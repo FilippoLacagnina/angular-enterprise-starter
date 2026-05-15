@@ -16,6 +16,7 @@
 ![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
 ![Design System PrimeNG](https://img.shields.io/badge/evo%2Fdesign--system-primeng-7c3aed)
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
+![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 
 **WIP Evolutions**
@@ -23,9 +24,7 @@
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
 ![Config Runtime Config](https://img.shields.io/badge/evo%2Fconfig-runtime--config-0891b2)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
-![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
-![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 ![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-2563eb)
@@ -50,12 +49,13 @@ v0.1.0-alpha.0 - First public alpha
 
 Current evolution branches:
 
-| Branch                        | Description                     |
-| ----------------------------- | ------------------------------- |
-| `evo/i18n/transloco`          | Transloco runtime i18n baseline |
-| `evo/design-system/tailwind`  | Tailwind CSS styling baseline   |
-| `evo/design-system/primeng`   | PrimeNG component baseline      |
-| `evo/design-system/bootstrap` | Bootstrap styling baseline      |
+| Branch                               | Description                         |
+|--------------------------------------|-------------------------------------|
+| `evo/i18n/transloco`                 | Transloco runtime i18n baseline     |
+| `evo/design-system/tailwind`         | Tailwind CSS styling baseline       |
+| `evo/design-system/primeng`          | PrimeNG component baseline          |
+| `evo/design-system/angular-material` | Angular Material component baseline |
+| `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
 
 ## Why This Starter
 
@@ -218,6 +218,7 @@ npm run serve:ssr
 - [Transloco Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/i18n/transloco/docs/i18n-transloco.md)
 - [PrimeNG Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/primeng/docs/primeng.md)
 - [Tailwind Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/tailwind/docs/tailwind.md)
+- [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
 
 ## Community
