@@ -99,11 +99,13 @@ Common shared files that may become merge points:
 > [!IMPORTANT]
 > Implemented evolution branches are available optional baselines and should be reviewed before starting a new project.
 
-| Branch                                                                                                                           | Area          | Description                                                          | Compatible baseline | Expected merge points                                                           | Status      |
-| -------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- | ----------- |
-| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                   | i18n          | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
-| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)     | design system | PrimeNG component baseline.                                          | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
-| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap) | design system | Bootstrap-based styling baseline.                                    | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| Branch                                                                                                                                         | Area          | Description                                                          | Compatible baseline | Expected merge points                                                           | Status      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- | ----------- |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | i18n          | Runtime translation baseline with Transloco, static assets and docs. | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
+| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | design system | Angular Material component baseline.                                 | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | design system | PrimeNG component baseline.                                          | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
+| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | design system | Tailwind CSS styling baseline.                                       | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`       | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | design system | Bootstrap-based styling baseline.                                    | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
 
 ## Planned evolution branches
 
@@ -112,9 +114,7 @@ Common shared files that may become merge points:
 | `evo/i18n/angular-localize`          | i18n          | Angular built-in i18n baseline with compile-time translations.           | WIP    |
 | `evo/config/runtime-config`          | config        | Runtime configuration loaded from deployable `assets/config/values.yml`. | WIP    |
 | `evo/testing/playwright`             | testing       | End-to-end testing baseline.                                             | WIP    |
-| `evo/design-system/tailwind`         | design system | Tailwind-based styling baseline.                                         | WIP    |
 | `evo/design-system/primeng-tailwind` | design system | PrimeNG and Tailwind CSS integrated baseline.                            | WIP    |
-| `evo/design-system/angular-material` | design system | Angular Material baseline.                                               | WIP    |
 | `evo/state/signal-store`             | state         | Signal-based state management baseline.                                  | WIP    |
 | `evo/auth/oidc`                      | auth          | OIDC authentication baseline.                                            | WIP    |
 | `evo/docker/basic`                   | deployment    | Docker baseline for local and deployment workflows.                      | WIP    |
