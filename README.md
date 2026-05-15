@@ -15,6 +15,7 @@
 
 ![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
 ![Design System PrimeNG](https://img.shields.io/badge/evo%2Fdesign--system-primeng-7c3aed)
+![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 
 **WIP Evolutions**
@@ -52,6 +53,7 @@ Current evolution branches:
 | Branch                        | Description                     |
 | ----------------------------- | ------------------------------- |
 | `evo/i18n/transloco`          | Transloco runtime i18n baseline |
+| `evo/design-system/tailwind`  | Tailwind CSS styling baseline   |
 | `evo/design-system/primeng`   | PrimeNG component baseline      |
 | `evo/design-system/bootstrap` | Bootstrap styling baseline      |
 
@@ -215,6 +217,7 @@ npm run serve:ssr
 
 - [Transloco Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/i18n/transloco/docs/i18n-transloco.md)
 - [PrimeNG Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/primeng/docs/primeng.md)
+- [Tailwind Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/tailwind/docs/tailwind.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
 
 ## Community
