@@ -5,6 +5,8 @@ import { provideRouter } from '@angular/router';
 import { provideAppConfig } from '@core/config/app-config.provider';
 import { correlationIdInterceptor } from '@core/interceptors/correlation-id.interceptor';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
+import Aura from '@primeuix/themes/aura';
+import { providePrimeNG } from 'primeng/config';
 
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
@@ -16,5 +18,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([correlationIdInterceptor, errorInterceptor])),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      },
+    }),
   ],
 };
