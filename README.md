@@ -18,6 +18,7 @@
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
+![Deployment Docker SSR](https://img.shields.io/badge/evo%2Fdeployment-docker--ssr-2563eb)
 
 **WIP Evolutions**
 
@@ -27,11 +28,10 @@
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
-![Docker Basic](https://img.shields.io/badge/evo%2Fdocker-basic-2563eb)
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
 
-The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, state management and authentication.
+The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, state management and authentication.
 
 > [!IMPORTANT]
 > See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
@@ -56,6 +56,7 @@ Current evolution branches:
 | `evo/design-system/primeng`          | PrimeNG component baseline          |
 | `evo/design-system/angular-material` | Angular Material component baseline |
 | `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
+| `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
 
 ## Why This Starter
 
@@ -220,6 +221,7 @@ npm run serve:ssr
 - [Tailwind Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/tailwind/docs/tailwind.md)
 - [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
+- [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/deployment/docker-ssr/docs/docker-ssr.md)
 
 ## Community
 
