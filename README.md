@@ -50,7 +50,7 @@ v0.1.0-alpha.0 - First public alpha
 Current evolution branches:
 
 | Branch                               | Description                         |
-|--------------------------------------|-------------------------------------|
+| ------------------------------------ | ----------------------------------- |
 | `evo/i18n/transloco`                 | Transloco runtime i18n baseline     |
 | `evo/design-system/tailwind`         | Tailwind CSS styling baseline       |
 | `evo/design-system/primeng`          | PrimeNG component baseline          |
