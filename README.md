@@ -22,6 +22,7 @@
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 ![Deployment Docker SSR](https://img.shields.io/badge/evo%2Fdeployment-docker--ssr-2563eb)
+![Tooling Dependency Monitoring](https://img.shields.io/badge/evo%2Ftooling-dependency--monitoring-475569)
 
 **WIP Evolutions**
 
@@ -35,7 +36,7 @@
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration or runtime configuration, API patterns, CI and documentation-first conventions.
 
-The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, state management and authentication.
+The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, tooling, state management and authentication.
 
 > [!IMPORTANT]
 > See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
@@ -65,6 +66,7 @@ Current evolution branches:
 | `evo/design-system/angular-material` | Angular Material component baseline |
 | `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
 | `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
+| `evo/tooling/dependency-monitoring`  | Dependency monitoring report        |
 
 ## Why This Starter
 
@@ -75,7 +77,7 @@ Current evolution branches:
 - Runtime configuration through deployable `assets/config/values.yml`.
 - API route conventions designed for multiple microservices and versioned endpoints.
 - Optional `evo/*` branches for composable add-ons without forcing every project into the same stack.
-- Dependency monitoring across `main` and optional `evo/*` branches.
+- Optional maintenance tooling for monitoring dependencies across `main` and evolution branches.
 - Simple, detailed documentation focused on Angular and enterprise best practices.
 - Post-clone cleanup workflow for adapting the starter to a real product repository.
 
@@ -171,6 +173,7 @@ Examples:
 git clone --branch evo/i18n/transloco git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/tailwind git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/tooling/dependency-monitoring git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 ```
 
 Evolution branches are designed to be composable when possible.
@@ -241,7 +244,6 @@ npm run serve:ssr
 - [Routing and SSR](./docs/routing.md)
 - [State Management](./docs/state-management.md)
 - [Testing Strategy](./docs/testing.md)
-- [Dependency Monitoring](./docs/dependency-monitoring.md)
 - [Evolutions](./docs/evolutions.md)
 - [Versioning](./docs/versioning.md)
 - [Current Status](./docs/current-status.md)
@@ -267,6 +269,7 @@ Use these guides when choosing `evo/config/runtime-config`.
 - [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
 - [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/deployment/docker-ssr/docs/docker-ssr.md)
+- [Dependency Monitoring Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/tooling/dependency-monitoring/docs/dependency-monitoring.md)
 
 ## Community
 
