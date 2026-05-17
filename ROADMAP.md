@@ -4,7 +4,19 @@ This roadmap tracks the work needed before making the repository public.
 
 ## Current Phase
 
-Private pre-release foundation work.
+Public alpha evolution work.
+
+## Milestone 0.2.0-alpha.0
+
+Goal: document and validate the optional evolution branch model.
+
+### Scope
+
+- Keep `main` minimal and documented.
+- Document implemented `evo/*` branches.
+- Add runtime configuration as an optional baseline.
+- Add design system and Docker SSR evolution references.
+- Clarify environment configuration vs runtime configuration strategy.
 
 ## Milestone 0.1.0-alpha.0
 

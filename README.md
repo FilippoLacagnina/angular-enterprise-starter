@@ -6,6 +6,8 @@
 
 # Angular Enterprise Starter
 
+![Angular Enterprise Starter Architecture](./docs/assets/angular-enterprise-starter-banner.png)
+
 [![CI](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/FilippoLacagnina/angular-enterprise-starter?include_prereleases)](https://github.com/FilippoLacagnina/angular-enterprise-starter/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -20,18 +22,23 @@
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 ![Deployment Docker SSR](https://img.shields.io/badge/evo%2Fdeployment-docker--ssr-2563eb)
+![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
+![Tooling Dependency Monitoring](https://img.shields.io/badge/evo%2Ftooling-dependency--monitoring-475569)
 
 **WIP Evolutions**
 
+![API GraphQL](https://img.shields.io/badge/evo%2Fapi-graphql-0f766e)
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
+![Testing Cypress](https://img.shields.io/badge/evo%2Ftesting-cypress-16a34a)
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
-![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
+![Deployment Docker Compose](https://img.shields.io/badge/evo%2Fdeployment-docker--compose-2563eb)
+![State NgRx Store](https://img.shields.io/badge/evo%2Fstate-ngrx--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration or runtime configuration, API patterns, CI and documentation-first conventions.
 
-The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, state management and authentication.
+The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, tooling, state management and authentication.
 
 > [!IMPORTANT]
 > See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
@@ -47,7 +54,7 @@ The goal is to provide a clean, documented and composable Angular baseline with 
 Current release:
 
 ```text
-v0.1.0-alpha.0 - First public alpha
+v0.2.0-alpha.0 - Evolution branches and runtime configuration baseline
 ```
 
 Current evolution branches:
@@ -61,6 +68,8 @@ Current evolution branches:
 | `evo/design-system/angular-material` | Angular Material component baseline |
 | `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
 | `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
+| `evo/state/signal-store`             | NgRx SignalStore state baseline     |
+| `evo/tooling/dependency-monitoring`  | Dependency monitoring report        |
 
 ## Why This Starter
 
@@ -71,6 +80,7 @@ Current evolution branches:
 - Runtime configuration through deployable `assets/config/values.yml`.
 - API route conventions designed for multiple microservices and versioned endpoints.
 - Optional `evo/*` branches for composable add-ons without forcing every project into the same stack.
+- Optional maintenance tooling for monitoring dependencies across `main` and evolution branches.
 - Simple, detailed documentation focused on Angular and enterprise best practices.
 - Post-clone cleanup workflow for adapting the starter to a real product repository.
 
@@ -88,7 +98,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.1.0-alpha.0`
+- public alpha release: `v0.2.0-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
@@ -166,6 +176,8 @@ Examples:
 git clone --branch evo/i18n/transloco git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/tailwind git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/state/signal-store git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/tooling/dependency-monitoring git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 ```
 
 Evolution branches are designed to be composable when possible.
@@ -256,6 +268,8 @@ Use these guides when choosing `evo/config/runtime-config`.
 - [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
 - [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/deployment/docker-ssr/docs/docker-ssr.md)
+- [Signal Store Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/state/signal-store/docs/signal-store.md)
+- [Dependency Monitoring Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/tooling/dependency-monitoring/docs/dependency-monitoring.md)
 
 ## Community
 
