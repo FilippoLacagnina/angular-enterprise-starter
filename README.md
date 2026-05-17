@@ -22,16 +22,18 @@
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 ![Deployment Docker SSR](https://img.shields.io/badge/evo%2Fdeployment-docker--ssr-2563eb)
+![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Tooling Dependency Monitoring](https://img.shields.io/badge/evo%2Ftooling-dependency--monitoring-475569)
 
 **WIP Evolutions**
 
+![API GraphQL](https://img.shields.io/badge/evo%2Fapi-graphql-0f766e)
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
 ![Testing Cypress](https://img.shields.io/badge/evo%2Ftesting-cypress-16a34a)
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
 ![Deployment Docker Compose](https://img.shields.io/badge/evo%2Fdeployment-docker--compose-2563eb)
-![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
+![State NgRx Store](https://img.shields.io/badge/evo%2Fstate-ngrx--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration or runtime configuration, API patterns, CI and documentation-first conventions.
@@ -66,6 +68,7 @@ Current evolution branches:
 | `evo/design-system/angular-material` | Angular Material component baseline |
 | `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
 | `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
+| `evo/state/signal-store`             | NgRx SignalStore state baseline     |
 | `evo/tooling/dependency-monitoring`  | Dependency monitoring report        |
 
 ## Why This Starter
@@ -173,6 +176,7 @@ Examples:
 git clone --branch evo/i18n/transloco git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/tailwind git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/design-system/bootstrap git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+git clone --branch evo/state/signal-store git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 git clone --branch evo/tooling/dependency-monitoring git@github.com:FilippoLacagnina/angular-enterprise-starter.git
 ```
 
@@ -264,6 +268,7 @@ Use these guides when choosing `evo/config/runtime-config`.
 - [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
 - [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/bootstrap/docs/bootstrap.md)
 - [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/deployment/docker-ssr/docs/docker-ssr.md)
+- [Signal Store Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/state/signal-store/docs/signal-store.md)
 - [Dependency Monitoring Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/tooling/dependency-monitoring/docs/dependency-monitoring.md)
 
 ## Community
