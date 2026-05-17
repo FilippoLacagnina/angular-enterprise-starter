@@ -6,6 +6,8 @@
 
 # Angular Enterprise Starter
 
+![Angular Enterprise Starter Architecture](./docs/assets/angular-enterprise-starter-banner.png)
+
 [![CI](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/FilippoLacagnina/angular-enterprise-starter?include_prereleases)](https://github.com/FilippoLacagnina/angular-enterprise-starter/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
@@ -25,7 +27,9 @@
 
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
+![Testing Cypress](https://img.shields.io/badge/evo%2Ftesting-cypress-16a34a)
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
+![Deployment Docker Compose](https://img.shields.io/badge/evo%2Fdeployment-docker--compose-2563eb)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 
@@ -47,7 +51,7 @@ The goal is to provide a clean, documented and composable Angular baseline with 
 Current release:
 
 ```text
-v0.1.0-alpha.0 - First public alpha
+v0.2.0-alpha.0 - Evolution branches and runtime configuration baseline
 ```
 
 Current evolution branches:
@@ -88,7 +92,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.1.0-alpha.0`
+- public alpha release: `v0.2.0-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)

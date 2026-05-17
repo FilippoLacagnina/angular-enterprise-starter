@@ -42,10 +42,12 @@ evo/i18n/transloco
 evo/i18n/angular-localize
 evo/config/runtime-config
 evo/testing/playwright
+evo/testing/cypress
 evo/design-system/tailwind
 evo/design-system/angular-material
 evo/design-system/bootstrap
 evo/deployment/docker-ssr
+evo/deployment/docker-compose
 evo/state/signal-store
 evo/auth/oidc
 ```
@@ -69,8 +71,8 @@ Each implemented evolution branch declares the `main` baseline version it is com
 Example:
 
 ```text
-main                  -> v0.1.0-alpha.0
-evo/i18n/transloco    -> compatible with v0.1.0-alpha.0
+main                  -> v0.2.0-alpha.0
+evo/i18n/transloco    -> compatible with v0.2.0-alpha.0
 ```
 
 This keeps versioning simple while the starter is still in alpha and avoids creating separate release lifecycles for optional variants.
@@ -101,13 +103,13 @@ Common shared files that may become merge points:
 
 | Branch                                                                                                                                         | Area          | Description                                                           | Compatible baseline | Expected merge points                                                              | Status      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------- | ----------- |
-| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | i18n          | Runtime translation baseline with Transloco, static assets and docs.  | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`               | Implemented |
-| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | config        | Runtime YAML configuration loaded from deployable assets.             | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config files | Implemented |
-| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | design system | Angular Material component baseline.                                  | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | design system | PrimeNG component baseline.                                           | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss`    | Implemented |
-| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | design system | Tailwind CSS styling baseline.                                        | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`          | Implemented |
-| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | design system | Bootstrap-based styling baseline.                                     | `v0.1.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | deployment    | Docker SSR baseline for running the Angular Node server in container. | `v0.1.0-alpha.0`    | `Dockerfile`, `.dockerignore`, root documentation files                            | Implemented |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | i18n          | Runtime translation baseline with Transloco, static assets and docs.  | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`               | Implemented |
+| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | config        | Runtime YAML configuration loaded from deployable assets.             | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config files | Implemented |
+| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | design system | Angular Material component baseline.                                  | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
+| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | design system | PrimeNG component baseline.                                           | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss`    | Implemented |
+| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | design system | Tailwind CSS styling baseline.                                        | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`          | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | design system | Bootstrap-based styling baseline.                                     | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
+| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | deployment    | Docker SSR baseline for running the Angular Node server in container. | `v0.2.0-alpha.0`    | `Dockerfile`, `.dockerignore`, root documentation files                            | Implemented |
 
 ## Planned evolution branches
 
@@ -115,7 +117,9 @@ Common shared files that may become merge points:
 | ------------------------------------ | ------------- | -------------------------------------------------------------- | ------ |
 | `evo/i18n/angular-localize`          | i18n          | Angular built-in i18n baseline with compile-time translations. | WIP    |
 | `evo/testing/playwright`             | testing       | End-to-end testing baseline.                                   | WIP    |
+| `evo/testing/cypress`                | testing       | Cypress end-to-end testing baseline.                           | WIP    |
 | `evo/design-system/primeng-tailwind` | design system | PrimeNG and Tailwind CSS integrated baseline.                  | WIP    |
+| `evo/deployment/docker-compose`      | deployment    | Docker Compose baseline for SSR and runtime config mounting.   | WIP    |
 | `evo/state/signal-store`             | state         | Signal-based state management baseline.                        | WIP    |
 | `evo/auth/oidc`                      | auth          | OIDC authentication baseline.                                  | WIP    |
 
