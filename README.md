@@ -14,6 +14,7 @@
 **Available Evolutions**
 
 ![i18n Transloco](https://img.shields.io/badge/evo%2Fi18n-transloco-0ea5e9)
+![Config Runtime Config](https://img.shields.io/badge/evo%2Fconfig-runtime--config-0891b2)
 ![Design System PrimeNG](https://img.shields.io/badge/evo%2Fdesign--system-primeng-7c3aed)
 ![Design System Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-tailwind-7c3aed)
 ![Design System Angular Material](https://img.shields.io/badge/evo%2Fdesign--system-angular--material-7c3aed)
@@ -23,13 +24,12 @@
 **WIP Evolutions**
 
 ![i18n Angular Localize](https://img.shields.io/badge/evo%2Fi18n-angular--localize-0ea5e9)
-![Config Runtime Config](https://img.shields.io/badge/evo%2Fconfig-runtime--config-0891b2)
 ![Testing Playwright](https://img.shields.io/badge/evo%2Ftesting-playwright-16a34a)
 ![Design System PrimeNG Tailwind](https://img.shields.io/badge/evo%2Fdesign--system-primeng--tailwind-7c3aed)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
 ![Auth OIDC](https://img.shields.io/badge/evo%2Fauth-oidc-be185d)
 
-Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration, API patterns, CI and documentation-first conventions.
+Angular Enterprise Starter is an enterprise-ready Angular 21 starter template for building scalable Angular applications with modular architecture, SSR support, environment configuration or runtime configuration, API patterns, CI and documentation-first conventions.
 
 The starter keeps `main` minimal and provides optional `evo/*` branches for additional capabilities such as i18n, runtime configuration, testing, design systems, deployment, state management and authentication.
 
@@ -39,7 +39,10 @@ The starter keeps `main` minimal and provides optional `evo/*` branches for addi
 > [!IMPORTANT]
 > Start from `main` or from any implemented `evo/*` branch, then merge additional compatible evolutions to compose your own project baseline.
 
-The goal is to provide a clean, documented and composable Angular baseline with modern APIs, lazy feature routing, strict tooling, environment configuration, clear architectural boundaries and optional evolutions for project-specific needs.
+> [!IMPORTANT]
+> Choose the configuration strategy early: start from `main` for Angular environment files, or start from `evo/config/runtime-config` for deployable runtime configuration through `assets/config/values.yml`.
+
+The goal is to provide a clean, documented and composable Angular baseline with modern APIs, lazy feature routing, strict tooling, environment or runtime configuration, clear architectural boundaries and optional evolutions for project-specific needs.
 
 Current release:
 
@@ -52,6 +55,7 @@ Current evolution branches:
 | Branch                               | Description                         |
 | ------------------------------------ | ----------------------------------- |
 | `evo/i18n/transloco`                 | Transloco runtime i18n baseline     |
+| `evo/config/runtime-config`          | Runtime YAML configuration baseline |
 | `evo/design-system/tailwind`         | Tailwind CSS styling baseline       |
 | `evo/design-system/primeng`          | PrimeNG component baseline          |
 | `evo/design-system/angular-material` | Angular Material component baseline |
@@ -64,10 +68,23 @@ Current evolution branches:
 - Angular 21 baseline with standalone APIs and modern application setup.
 - SSR, prerender and hydration strategy documented from the beginning.
 - Environment configuration for `local`, `dev`, `test` and `prod`.
+- Runtime configuration through deployable `assets/config/values.yml`.
 - API route conventions designed for multiple microservices and versioned endpoints.
 - Optional `evo/*` branches for composable add-ons without forcing every project into the same stack.
 - Simple, detailed documentation focused on Angular and enterprise best practices.
 - Post-clone cleanup workflow for adapting the starter to a real product repository.
+
+## Configuration Strategy
+
+Choose the configuration model before starting a real project.
+
+| Strategy                           | Recommended starting point  | Best for                                                                 |
+| ---------------------------------- | --------------------------- | ------------------------------------------------------------------------ |
+| Angular environment files          | `main`                      | build-time configuration, simpler apps, projects that rebuild per target |
+| Runtime `assets/config/values.yml` | `evo/config/runtime-config` | deploy-time configuration, Docker, CI/CD, build-once deploy-many flows   |
+
+Both approaches are documented and visible on purpose.
+Avoid keeping both strategies active for the same values unless there is a clear architectural reason.
 
 ## Current Baseline
 
@@ -117,6 +134,8 @@ npm run start
 ```
 
 By default, `npm run start` uses the `local` environment.
+
+If you start from `evo/config/runtime-config`, the app loads `/assets/config/values.yml` instead of Angular environment files.
 
 After cloning it for a real product, preview starter-only files that can be removed:
 
@@ -193,6 +212,10 @@ Environment scripts:
 - `npm run build:test`: build with the `test` environment.
 - `npm run build:prod`: build with the `prod` environment.
 
+Runtime configuration:
+
+- `evo/config/runtime-config`: deploy-time values are selected by replacing `assets/config/values.yml`, not by Angular environment file replacements.
+
 To test the generated SSR/server bundle locally:
 
 ```bash
@@ -214,9 +237,20 @@ npm run serve:ssr
 - [Roadmap](./ROADMAP.md)
 - [Changelog](./CHANGELOG.md)
 
+## Runtime Config Documentation
+
+Use these guides when choosing `evo/config/runtime-config`.
+
+- [Architecture](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config/architecture.md)
+- [Configuration](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config/configuration.md)
+- [Flow](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config/flow.md)
+- [API Usage](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config/api.md)
+- [State Usage](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config/state-management.md)
+
 ## Evolution Documentation
 
 - [Transloco Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/i18n/transloco/docs/i18n-transloco.md)
+- [Runtime Config Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/config/runtime-config/docs/runtime-config.md)
 - [PrimeNG Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/primeng/docs/primeng.md)
 - [Tailwind Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/tailwind/docs/tailwind.md)
 - [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/evo/design-system/angular-material/docs/angular-material.md)
