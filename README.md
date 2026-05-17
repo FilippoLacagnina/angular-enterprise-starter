@@ -75,6 +75,7 @@ Current evolution branches:
 - Runtime configuration through deployable `assets/config/values.yml`.
 - API route conventions designed for multiple microservices and versioned endpoints.
 - Optional `evo/*` branches for composable add-ons without forcing every project into the same stack.
+- Dependency monitoring across `main` and optional `evo/*` branches.
 - Simple, detailed documentation focused on Angular and enterprise best practices.
 - Post-clone cleanup workflow for adapting the starter to a real product repository.
 
@@ -201,6 +202,7 @@ npm run lint
 npm run lint:fix
 npm run format
 npm run format:check
+npm run deps:check
 npm run starter:cleanup
 npm run starter:cleanup:apply
 ```
@@ -220,6 +222,10 @@ Runtime configuration:
 
 - `evo/config/runtime-config`: deploy-time values are selected by replacing `assets/config/values.yml`, not by Angular environment file replacements.
 
+Maintenance scripts:
+
+- `npm run deps:check`: print a read-only dependency update report for `main` and available `evo/*` branches.
+
 To test the generated SSR/server bundle locally:
 
 ```bash
@@ -235,6 +241,7 @@ npm run serve:ssr
 - [Routing and SSR](./docs/routing.md)
 - [State Management](./docs/state-management.md)
 - [Testing Strategy](./docs/testing.md)
+- [Dependency Monitoring](./docs/dependency-monitoring.md)
 - [Evolutions](./docs/evolutions.md)
 - [Versioning](./docs/versioning.md)
 - [Current Status](./docs/current-status.md)

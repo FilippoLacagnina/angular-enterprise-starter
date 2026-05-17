@@ -47,6 +47,7 @@
     "lint:fix": "ng lint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
+    "deps:check": "node tools/dependency-update-report.mjs",
     "starter:cleanup": "node tools/starter-cleanup.mjs",
     "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
     "test": "ng test",
