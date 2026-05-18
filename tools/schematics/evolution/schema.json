@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "AngularEnterpriseStarterEvolution",
+  "title": "Angular Enterprise Starter Evolution",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Evolution to install.",
+      "enum": [
+        "transloco",
+        "runtime-config",
+        "signal-store",
+        "docker-ssr",
+        "bootstrap",
+        "tailwind"
+      ],
+      "x-prompt": {
+        "message": "Which evolution do you want to add?",
+        "type": "list",
+        "items": [
+          {
+            "value": "transloco",
+            "label": "Transloco i18n"
+          },
+          {
+            "value": "runtime-config",
+            "label": "Runtime config"
+          },
+          {
+            "value": "signal-store",
+            "label": "SignalStore"
+          },
+          {
+            "value": "docker-ssr",
+            "label": "Docker SSR"
+          },
+          {
+            "value": "bootstrap",
+            "label": "Bootstrap"
+          },
+          {
+            "value": "tailwind",
+            "label": "Tailwind"
+          }
+        ]
+      }
+    },
+    "preview": {
+      "type": "boolean",
+      "description": "Show what the selected evolution would do without changing files.",
+      "default": false
+    }
+  },
+  "required": ["name"]
+}
