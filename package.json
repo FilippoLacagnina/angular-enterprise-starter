@@ -51,7 +51,7 @@
     "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs",
-    "schematics:build": "tsc -p tools/schematics/tsconfig.json",
+    "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics-copy-assets.mjs",
     "schematics:test": "vitest run tools/schematics"
   },
   "private": true,

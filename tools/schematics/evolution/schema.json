@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "AngularEnterpriseStarterEvolution",
+  "$id": "AngularEnterpriseStarterEvolution",
   "title": "Angular Enterprise Starter Evolution",
   "type": "object",
   "properties": {
