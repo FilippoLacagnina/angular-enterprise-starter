@@ -5,12 +5,13 @@ import {
   type Tree,
 } from '@angular-devkit/schematics';
 
+import { type EvolutionDefinition } from '../evolutions/evolution-definition';
+import { getEvolutionDefinition } from '../evolutions/evolution-registry';
 import {
   readStarterMetadata,
   validateStarterBaseline,
   writeStarterMetadata,
 } from '../shared/starter-baseline';
-import { getEvolutionDefinition } from '../evolutions/evolution-registry';
 import { type EvolutionOptions } from './schema';
 
 export function evolution(options: EvolutionOptions): Rule {
@@ -30,7 +31,11 @@ export function evolution(options: EvolutionOptions): Rule {
       return tree;
     }
 
-    definition.install?.(tree, context, definition);
+    try {
+      definition.install?.(tree, context, definition);
+    } catch (error) {
+      throw createEvolutionInstallException(definition, error);
+    }
 
     writeStarterMetadata(tree, {
       ...metadata,
@@ -50,16 +55,37 @@ export function evolution(options: EvolutionOptions): Rule {
   };
 }
 
-function printEvolutionPreview(
-  context: SchematicContext,
-  definition: ReturnType<typeof getEvolutionDefinition>,
-): void {
+function printEvolutionPreview(context: SchematicContext, definition: EvolutionDefinition): void {
   context.logger.info(`Evolution preview: ${definition.label}`);
   printSection(context, 'Dependencies', definition.dependencies);
   printSection(context, 'Files to create', definition.creates);
   printSection(context, 'Files to update', definition.updates);
   printSection(context, 'Notes', definition.notes);
   context.logger.info('No files were changed because preview mode is enabled.');
+}
+
+function createEvolutionInstallException(
+  definition: EvolutionDefinition,
+  error: unknown,
+): SchematicsException {
+  const reason = error instanceof Error ? error.message : String(error);
+
+  return new SchematicsException(`Unable to safely install the ${definition.label} evolution.
+
+Reason:
+- ${reason}
+
+You can still inspect or merge the reference evolution branch manually.
+
+Branch:
+${definition.referenceBranch}
+
+GitHub:
+${definition.referenceUrl}
+
+Suggested manual flow:
+git fetch origin
+git merge origin/${definition.referenceBranch}`);
 }
 
 function printSection(context: SchematicContext, title: string, values: readonly string[]): void {

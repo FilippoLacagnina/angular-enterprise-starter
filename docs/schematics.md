@@ -10,6 +10,7 @@
 - [Starter evolution CLI](#starter-evolution-cli)
 - [Evolution wizard](#evolution-wizard)
 - [Preview mode](#preview-mode)
+- [Blocking errors and evo branch fallback](#blocking-errors-and-evo-branch-fallback)
 - [Current scaffold](#current-scaffold)
 - [Supported evolutions](#supported-evolutions)
 - [Guardrails](#guardrails)
@@ -271,6 +272,33 @@ No files were changed because preview mode is enabled.
 Preview mode is a readable impact summary owned by this starter.
 Dry-run remains the technical Angular CLI simulation mode for file operations.
 
+## Blocking errors and evo branch fallback
+
+If an installer cannot safely complete, the generator returns a blocking error with the related reference branch.
+
+Example:
+
+```text
+Unable to safely install the Docker SSR evolution.
+
+Reason:
+- Cannot create /Dockerfile. File already exists.
+
+You can still inspect or merge the reference evolution branch manually.
+
+Branch:
+evo/deployment/docker-ssr
+
+GitHub:
+https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr
+
+Suggested manual flow:
+git fetch origin
+git merge origin/evo/deployment/docker-ssr
+```
+
+This keeps the CLI safe while preserving the `evo/*` branches as a transparent manual fallback.
+
 ## Current scaffold
 
 This branch introduces the first schematics scaffold:
@@ -355,6 +383,7 @@ Current tests cover:
 - overwrite protection for generated SignalStore files
 - Docker SSR file generation
 - overwrite protection for generated Docker SSR files
+- reference branch fallback on blocking installer errors
 - Bootstrap dependency registration
 - Bootstrap global style import without duplication
 - metadata update after evolution selection

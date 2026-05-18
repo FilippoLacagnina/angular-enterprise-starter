@@ -15,5 +15,7 @@ export interface EvolutionDefinition {
   readonly creates: readonly string[];
   readonly updates: readonly string[];
   readonly notes: readonly string[];
+  readonly referenceBranch: string;
+  readonly referenceUrl: string;
   readonly install?: EvolutionInstaller;
 }

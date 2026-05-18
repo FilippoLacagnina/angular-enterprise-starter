@@ -142,9 +142,7 @@ describe('Angular Enterprise Starter schematics', () => {
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
-    ).rejects.toThrow(
-      'Cannot create /src/app/features/dashboard/state/dashboard.state.ts. File already exists.',
-    );
+    ).rejects.toThrow(/evo\/state\/signal-store/);
   });
 
   it('evolution fails before overwriting existing Docker SSR files', async () => {
@@ -153,7 +151,18 @@ describe('Angular Enterprise Starter schematics', () => {
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
-    ).rejects.toThrow('Cannot create /Dockerfile. File already exists.');
+    ).rejects.toThrow(/evo\/deployment\/docker-ssr/);
+  });
+
+  it('evolution blocking errors include the reference branch URL', async () => {
+    const tree = createStarterTree();
+    tree.create('/Dockerfile', '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
+    ).rejects.toThrow(
+      'https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr',
+    );
   });
 
   it('evolution registry exposes one definition for each supported evolution', () => {

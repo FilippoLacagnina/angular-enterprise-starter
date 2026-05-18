@@ -4,6 +4,8 @@ import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
 import { installSignalStoreEvolution } from './signal-store/signal-store.installer';
 
+const GITHUB_REPOSITORY_URL = 'https://github.com/FilippoLacagnina/angular-enterprise-starter';
+
 const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   transloco: {
     name: 'transloco',
@@ -18,6 +20,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
       '.angular-enterprise-starter.json',
     ],
     notes: ['Adds a runtime i18n baseline without changing existing feature texts.'],
+    referenceBranch: 'evo/i18n/transloco',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/i18n/transloco`,
   },
   'runtime-config': {
     name: 'runtime-config',
@@ -30,6 +34,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     ],
     updates: ['angular.json', 'src/app/app.config.ts', '.angular-enterprise-starter.json'],
     notes: ['Changes the configuration strategy, so it should be selected early.'],
+    referenceBranch: 'evo/config/runtime-config',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/config/runtime-config`,
   },
   'signal-store': {
     name: 'signal-store',
@@ -41,6 +47,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     ],
     updates: ['package.json', '.angular-enterprise-starter.json'],
     notes: ['Adds a feature-scoped SignalStore example and state management conventions.'],
+    referenceBranch: 'evo/state/signal-store',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/state/signal-store`,
     install: installSignalStoreEvolution,
   },
   'docker-ssr': {
@@ -50,6 +58,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     creates: ['Dockerfile', '.dockerignore'],
     updates: ['.angular-enterprise-starter.json'],
     notes: ['Adds an SSR-oriented container baseline for production delivery.'],
+    referenceBranch: 'evo/deployment/docker-ssr',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/deployment/docker-ssr`,
     install: installDockerSsrEvolution,
   },
   bootstrap: {
@@ -62,6 +72,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
       'Adds Bootstrap as an optional design-system baseline.',
       'Preserves existing global styles and adds the Bootstrap import only if missing.',
     ],
+    referenceBranch: 'evo/design-system/bootstrap',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/bootstrap`,
     install: installBootstrapEvolution,
   },
   tailwind: {
@@ -76,6 +88,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
       '.angular-enterprise-starter.json',
     ],
     notes: ['Adds Tailwind CSS as an optional utility-first styling baseline.'],
+    referenceBranch: 'evo/design-system/tailwind',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/tailwind`,
   },
 };
 
