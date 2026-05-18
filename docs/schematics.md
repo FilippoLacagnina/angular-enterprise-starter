@@ -173,6 +173,8 @@ npm run starter:evolution
 ```
 
 The CLI asks which supported evolution to add and whether to run in preview or apply mode.
+Preview is the recommended default.
+Apply mode asks for confirmation before changing the workspace.
 
 Current installable evolutions:
 
@@ -191,7 +193,7 @@ npm run starter:evolution -- --name signal-store --preview
 Apply from terminal without interactive prompts:
 
 ```bash
-npm run starter:evolution -- --name signal-store --apply
+npm run starter:evolution -- --name signal-store --apply --yes
 ```
 
 The CLI performs two steps:
@@ -200,6 +202,13 @@ The CLI performs two steps:
 2. Runs Angular CLI against `./dist/schematics/collection.json:evolution`.
 
 This keeps the user-facing command short while preserving Angular CLI schematics as the underlying implementation.
+
+CLI UX rules:
+
+- preview is recommended before apply
+- apply requires explicit confirmation unless `--yes` is passed
+- after preview, the CLI reminds the user that no files were changed
+- after apply, the CLI prints recommended quality checks
 
 ## Evolution wizard
 
