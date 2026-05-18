@@ -7,6 +7,7 @@
 - [Target developer experience](#target-developer-experience)
 - [Baseline validation](#baseline-validation)
 - [Starter metadata](#starter-metadata)
+- [Starter evolution CLI](#starter-evolution-cli)
 - [Evolution wizard](#evolution-wizard)
 - [Preview mode](#preview-mode)
 - [Current scaffold](#current-scaffold)
@@ -162,6 +163,41 @@ This allows the tooling to:
 - suggest next steps
 - warn about known conflicts
 
+## Starter evolution CLI
+
+The local developer entry point is:
+
+```bash
+npm run starter:evolution
+```
+
+The CLI asks which supported evolution to add and whether to run in preview or apply mode.
+
+Current installable evolutions:
+
+| Evolution   | Status      |
+| ----------- | ----------- |
+| SignalStore | installable |
+
+Preview from terminal without interactive prompts:
+
+```bash
+npm run starter:evolution -- --name signal-store --preview
+```
+
+Apply from terminal without interactive prompts:
+
+```bash
+npm run starter:evolution -- --name signal-store --apply
+```
+
+The CLI performs two steps:
+
+1. Builds the local schematics package with `npm run schematics:build`.
+2. Runs Angular CLI against `./dist/schematics/collection.json:evolution`.
+
+This keeps the user-facing command short while preserving Angular CLI schematics as the underlying implementation.
+
 ## Evolution wizard
 
 The main generator should be:
@@ -249,6 +285,7 @@ tools/schematics/
     schema.ts
   shared/
     starter-baseline.ts
+  starter-evolution.mjs
 ```
 
 Current behavior:
@@ -276,6 +313,12 @@ npm run schematics:build
 ```
 
 The compiled output is generated under `dist/schematics`, which is ignored by Git.
+The build also copies schematic assets required by Angular CLI:
+
+```text
+collection.json
+evolution/schema.json
+```
 
 Run the schematics unit tests with:
 
