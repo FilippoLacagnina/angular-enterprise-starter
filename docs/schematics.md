@@ -178,6 +178,7 @@ Current installable evolutions:
 | Evolution   | Status      |
 | ----------- | ----------- |
 | SignalStore | installable |
+| Docker SSR  | installable |
 
 Preview from terminal without interactive prompts:
 
@@ -306,6 +307,14 @@ The SignalStore installer is intentionally conservative:
 
 After running it, manually review the generated documentation and decide where the store should be provided.
 
+The Docker SSR installer is intentionally additive:
+
+- it creates `Dockerfile`
+- it creates `.dockerignore`
+- it does not modify Angular source files
+- it does not modify `package.json`
+- it fails before overwriting existing Docker files
+
 Build the schematics TypeScript sources with:
 
 ```bash
@@ -336,6 +345,8 @@ Current tests cover:
 - SignalStore file generation
 - SignalStore dependency registration
 - overwrite protection for generated SignalStore files
+- Docker SSR file generation
+- overwrite protection for generated Docker SSR files
 - metadata update after evolution selection
 - deterministic ordering of enabled evolutions
 

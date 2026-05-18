@@ -43,6 +43,20 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(metadata.enabledEvolutions).toEqual(['signal-store']);
   });
 
+  it('evolution installs Docker SSR files and updates starter metadata', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree));
+    const metadata = readMetadata(result);
+
+    expect(result.exists('/Dockerfile')).toBe(true);
+    expect(result.exists('/.dockerignore')).toBe(true);
+    expect(result.readText('/Dockerfile')).toContain(
+      'CMD ["node", "dist/angular-enterprise-starter/server/server.mjs"]',
+    );
+    expect(metadata.enabledEvolutions).toEqual(['docker-ssr']);
+  });
+
   it('evolution fails when the selected evolution is already enabled', async () => {
     const tree = createStarterTree(['signal-store']);
 
@@ -84,6 +98,15 @@ describe('Angular Enterprise Starter schematics', () => {
     ).rejects.toThrow(
       'Cannot create /src/app/features/dashboard/state/dashboard.state.ts. File already exists.',
     );
+  });
+
+  it('evolution fails before overwriting existing Docker SSR files', async () => {
+    const tree = createStarterTree();
+    tree.create('/Dockerfile', '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
+    ).rejects.toThrow('Cannot create /Dockerfile. File already exists.');
   });
 
   it('evolution registry exposes one definition for each supported evolution', () => {

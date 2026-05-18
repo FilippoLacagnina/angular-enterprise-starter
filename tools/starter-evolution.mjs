@@ -8,6 +8,11 @@ const EVOLUTIONS = [
     label: 'SignalStore',
     description: 'Feature-scoped NgRx SignalStore baseline.',
   },
+  {
+    name: 'docker-ssr',
+    label: 'Docker SSR',
+    description: 'SSR-oriented Docker deployment baseline.',
+  },
 ];
 
 const args = parseArgs(process.argv.slice(2));

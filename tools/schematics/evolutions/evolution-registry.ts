@@ -1,4 +1,5 @@
 import { type EvolutionName } from '../evolution/schema';
+import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
 import { installSignalStoreEvolution } from './signal-store/signal-store.installer';
 
@@ -45,9 +46,10 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     name: 'docker-ssr',
     label: 'Docker SSR',
     dependencies: [],
-    creates: ['Dockerfile', '.dockerignore', 'docs/docker-ssr.md'],
+    creates: ['Dockerfile', '.dockerignore'],
     updates: ['.angular-enterprise-starter.json'],
     notes: ['Adds an SSR-oriented container baseline for production delivery.'],
+    install: installDockerSsrEvolution,
   },
   bootstrap: {
     name: 'bootstrap',
