@@ -179,6 +179,7 @@ Current installable evolutions:
 | ----------- | ----------- |
 | SignalStore | installable |
 | Docker SSR  | installable |
+| Bootstrap   | installable |
 
 Preview from terminal without interactive prompts:
 
@@ -315,6 +316,13 @@ The Docker SSR installer is intentionally additive:
 - it does not modify `package.json`
 - it fails before overwriting existing Docker files
 
+The Bootstrap installer is additive and idempotent:
+
+- it adds `bootstrap` to `package.json` only if missing
+- it adds the Bootstrap import to `src/styles.scss` only if missing
+- it preserves existing global styles
+- it does not generate documentation files
+
 Build the schematics TypeScript sources with:
 
 ```bash
@@ -347,6 +355,8 @@ Current tests cover:
 - overwrite protection for generated SignalStore files
 - Docker SSR file generation
 - overwrite protection for generated Docker SSR files
+- Bootstrap dependency registration
+- Bootstrap global style import without duplication
 - metadata update after evolution selection
 - deterministic ordering of enabled evolutions
 

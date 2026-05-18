@@ -1,4 +1,5 @@
 import { type EvolutionName } from '../evolution/schema';
+import { installBootstrapEvolution } from './bootstrap/bootstrap.installer';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
 import { installSignalStoreEvolution } from './signal-store/signal-store.installer';
@@ -55,14 +56,13 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     name: 'bootstrap',
     label: 'Bootstrap',
     dependencies: ['bootstrap'],
-    creates: ['docs/bootstrap.md'],
-    updates: [
-      'package.json',
-      'package-lock.json',
-      'src/styles.scss',
-      '.angular-enterprise-starter.json',
+    creates: [],
+    updates: ['package.json', 'src/styles.scss', '.angular-enterprise-starter.json'],
+    notes: [
+      'Adds Bootstrap as an optional design-system baseline.',
+      'Preserves existing global styles and adds the Bootstrap import only if missing.',
     ],
-    notes: ['Adds Bootstrap as an optional design-system baseline.'],
+    install: installBootstrapEvolution,
   },
   tailwind: {
     name: 'tailwind',

@@ -13,6 +13,11 @@ const EVOLUTIONS = [
     label: 'Docker SSR',
     description: 'SSR-oriented Docker deployment baseline.',
   },
+  {
+    name: 'bootstrap',
+    label: 'Bootstrap',
+    description: 'Bootstrap design-system baseline.',
+  },
 ];
 
 const args = parseArgs(process.argv.slice(2));
