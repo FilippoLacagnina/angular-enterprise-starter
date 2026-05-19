@@ -14,6 +14,13 @@ import {
 } from '../shared/starter-baseline';
 import { type EvolutionOptions } from './schema';
 
+const color = {
+  bold: (value: string) => `\x1b[1m${value}\x1b[0m`,
+  cyan: (value: string) => `\x1b[36m${value}\x1b[0m`,
+  dim: (value: string) => `\x1b[2m${value}\x1b[0m`,
+  green: (value: string) => `\x1b[32m${value}\x1b[0m`,
+};
+
 export function evolution(options: EvolutionOptions): Rule {
   return (tree: Tree, context: SchematicContext) => {
     validateStarterBaseline(tree);
@@ -56,12 +63,16 @@ export function evolution(options: EvolutionOptions): Rule {
 }
 
 function printEvolutionPreview(context: SchematicContext, definition: EvolutionDefinition): void {
-  context.logger.info(`Evolution preview: ${definition.label}`);
-  printSection(context, 'Dependencies', definition.dependencies);
-  printSection(context, 'Files to create', definition.creates);
-  printSection(context, 'Files to update', definition.updates);
-  printSection(context, 'Notes', definition.notes);
-  context.logger.info('No files were changed because preview mode is enabled.');
+  printPreviewLine(color.bold('Evolution preview'));
+  printKeyValue('Evolution', definition.label);
+  printPreviewLine('');
+  printSection('Dependencies', definition.dependencies);
+  printSection('Files to create', definition.creates);
+  printSection('Files to update', definition.updates);
+  printSection('Notes', definition.notes);
+  printPreviewLine(color.green('No files were changed because preview mode is enabled.'));
+
+  context.logger.info('');
 }
 
 function createEvolutionInstallException(
@@ -88,15 +99,30 @@ git fetch origin
 git merge origin/${definition.referenceBranch}`);
 }
 
-function printSection(context: SchematicContext, title: string, values: readonly string[]): void {
-  context.logger.info(`${title}:`);
+function printSection(title: string, values: readonly string[]): void {
+  printPreviewLine(color.cyan(title));
 
   if (values.length === 0) {
-    context.logger.info('- none');
+    printPreviewLine(`${color.dim('-')} ${color.dim('none')}`);
+    printPreviewLine('');
     return;
   }
 
   for (const value of values) {
-    context.logger.info(`- ${value}`);
+    printPreviewLine(`${color.dim('-')} ${color.bold(value)}`);
   }
+
+  printPreviewLine('');
+}
+
+function printKeyValue(key: string, value: string): void {
+  printPreviewLine(`${color.dim(key)} ${color.bold(value)}`);
+}
+
+function printPreviewLine(value: string): void {
+  if (process.env['VITEST']) {
+    return;
+  }
+
+  process.stdout.write(`    ${value}\n`);
 }

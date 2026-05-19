@@ -21,7 +21,9 @@ const EVOLUTIONS = [
 ];
 
 const color = {
+  bold: (value) => `\x1b[1m${value}\x1b[0m`,
   cyan: (value) => `\x1b[36m${value}\x1b[0m`,
+  dim: (value) => `\x1b[2m${value}\x1b[0m`,
   green: (value) => `\x1b[32m${value}\x1b[0m`,
   red: (value) => `\x1b[31m${value}\x1b[0m`,
   yellow: (value) => `\x1b[33m${value}\x1b[0m`,
@@ -47,19 +49,22 @@ async function main() {
 
   if (!preview && !args.yes) {
     const shouldContinue = await askConfirmation(
-      `${color.yellow('This will modify your workspace.')} Continue? (y/N): `,
+      `${color.yellow('This will modify your workspace.')} Continue? ${color.dim('(y/N)')} `,
     );
 
     if (!shouldContinue) {
       console.log('');
       console.log(
-        'No changes were made. Run again in preview mode if you want to inspect the impact.',
+        color.dim('No changes were made. Run preview again if you want to inspect the impact.'),
       );
       return;
     }
   }
 
-  run('npm', ['run', 'schematics:build'], 'Building local schematics');
+  run('npm', ['run', 'schematics:build'], {
+    title: 'Prepare schematics',
+    description: 'Compile local generators and copy Angular CLI collection assets.',
+  });
 
   const generateArgs = [
     'ng',
@@ -73,17 +78,32 @@ async function main() {
     generateArgs.push('--preview');
   }
 
-  run('npx', generateArgs, preview ? 'Running evolution preview' : 'Applying evolution');
+  run('npx', generateArgs, {
+    title: preview ? 'Execute preview' : 'Execute apply',
+    description: preview
+      ? 'Inspect the planned changes without touching the workspace.'
+      : 'Apply the selected evolution to the workspace.',
+    meta: [
+      ['Evolution', evolution.label],
+      ['Mode', preview ? 'Preview' : 'Apply'],
+    ],
+  });
   printNextSteps(preview);
 }
 
 function printHeader() {
   console.log('');
-  console.log('Angular Enterprise Starter');
-  console.log('Evolution CLI');
+  console.log(color.cyan('╭────────────────────────────────────────────╮'));
+  console.log(
+    `${color.cyan('│')} ${color.bold('Angular Enterprise Starter')}                 ${color.cyan('│')}`,
+  );
+  console.log(
+    `${color.cyan('│')} ${color.dim('Evolution CLI')}                              ${color.cyan('│')}`,
+  );
+  console.log(color.cyan('╰────────────────────────────────────────────╯'));
   console.log('');
-  console.log('Compose optional starter capabilities without bloating the main baseline.');
-  console.log('Preview first, apply only when the impact is clear.');
+  console.log('Composable Angular starter capabilities.');
+  console.log(`Preview first. ${color.green('Apply')} when ready.`);
   console.log('');
 }
 
@@ -91,16 +111,15 @@ async function askEvolutionName() {
   const rl = createInterface({ input, output });
 
   try {
-    console.log('Available evolutions');
-    console.log('');
+    printSection('Choose an evolution');
 
     for (const [index, evolution] of EVOLUTIONS.entries()) {
-      console.log(`${index + 1}. ${evolution.label}`);
-      console.log(`   ${evolution.description}`);
+      console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(evolution.label)}`);
+      console.log(`   ${color.dim(evolution.description)}`);
     }
 
     console.log('');
-    const answer = await rl.question('Select evolution: ');
+    const answer = await rl.question(`${color.bold('Select evolution')} `);
     const selectedIndex = Number.parseInt(answer, 10) - 1;
     const selectedEvolution = EVOLUTIONS[selectedIndex];
 
@@ -118,14 +137,16 @@ async function askPreviewMode() {
   const rl = createInterface({ input, output });
 
   try {
-    console.log('');
-    console.log('Choose mode');
-    console.log('');
-    console.log('1. Preview (recommended)');
-    console.log('2. Apply');
+    printSection('Choose mode');
+    console.log(
+      `${color.cyan('1.')} ${color.bold('Preview')} ${color.dim('(recommended, no file changes)')}`,
+    );
+    console.log(
+      `${color.cyan('2.')} ${color.bold('Apply')} ${color.dim('(writes changes after confirmation)')}`,
+    );
     console.log('');
 
-    const answer = await rl.question('Select mode [1]: ');
+    const answer = await rl.question(`${color.bold('Select mode')} ${color.dim('[1]')} `);
 
     if (answer === '' || answer === '1') {
       return true;
@@ -153,11 +174,11 @@ async function askConfirmation(question) {
 }
 
 function printSummary(evolution, preview) {
-  console.log('');
-  console.log('Selection summary');
-  console.log('');
-  console.log(`Evolution: ${evolution.label}`);
-  console.log(`Mode: ${preview ? 'Preview' : 'Apply'}`);
+  printSection('Selection summary');
+  console.log(`${color.dim('Evolution')} ${color.bold(evolution.label)}`);
+  console.log(
+    `${color.dim('Mode')}      ${preview ? color.cyan('Preview') : color.green('Apply')}`,
+  );
   console.log('');
 }
 
@@ -166,17 +187,24 @@ function printNextSteps(preview) {
 
   if (preview) {
     console.log(color.cyan('Preview completed. No files were changed.'));
-    console.log('Run the same command with --apply when you are ready.');
+    console.log(`Run ${color.bold('--apply')} when you are ready.`);
     return;
   }
 
   console.log(color.green('Evolution applied.'));
   console.log('');
-  console.log('Recommended next steps:');
-  console.log('- npm install');
-  console.log('- npm run format:check');
-  console.log('- npm run lint');
-  console.log('- npm run build');
+  console.log(color.bold('Recommended next steps'));
+  console.log(`${color.cyan('-')} npm install`);
+  console.log(`${color.cyan('-')} npm run format:check`);
+  console.log(`${color.cyan('-')} npm run lint`);
+  console.log(`${color.cyan('-')} npm run build`);
+}
+
+function printSection(title) {
+  console.log('');
+  console.log(color.dim('--------------------------------------------------------------'));
+  console.log(color.bold(title));
+  console.log(color.dim('--------------------------------------------------------------'));
 }
 
 function getEvolution(evolutionName) {
@@ -222,8 +250,24 @@ function parseArgs(rawArgs) {
   return parsedArgs;
 }
 
-function run(command, commandArgs, label) {
-  console.log(`> ${label}`);
+function run(command, commandArgs, step) {
+  printSection(step.title);
+
+  if (step.description) {
+    console.log(color.dim(step.description));
+    console.log('');
+  }
+
+  for (const [label, value] of step.meta ?? []) {
+    console.log(`${color.dim(label)} ${color.bold(value)}`);
+  }
+
+  if (step.meta?.length) {
+    console.log('');
+  }
+
+  console.log(color.bold('Command'));
+  console.log(color.dim(`${command} ${commandArgs.join(' ')}`));
   console.log('');
 
   const result = spawnSync(command, commandArgs, {
@@ -234,6 +278,4 @@ function run(command, commandArgs, label) {
   if (result.status !== 0) {
     throw new Error(`Command failed: ${command} ${commandArgs.join(' ')}`);
   }
-
-  console.log('');
 }

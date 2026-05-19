@@ -49,10 +49,10 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "starter:cleanup": "node tools/starter-cleanup.mjs",
     "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
-    "starter:evolution": "node tools/starter-evolution.mjs",
+    "starter:evolution": "node tools/schematics/starter-evolution.mjs",
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs",
-    "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics-copy-assets.mjs",
+    "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics/copy-assets.mjs",
     "schematics:test": "vitest run tools/schematics"
   },
   "private": true,
