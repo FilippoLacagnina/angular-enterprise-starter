@@ -5,7 +5,11 @@ import {
   type Tree,
 } from '@angular-devkit/schematics';
 
-import { type EvolutionDefinition } from '../evolutions/evolution-definition';
+import {
+  type EvolutionDefinition,
+  type EvolutionPreview,
+  EvolutionUserActionRequiredError,
+} from '../evolutions/evolution-definition';
 import { getEvolutionDefinition } from '../evolutions/evolution-registry';
 import {
   readStarterMetadata,
@@ -26,27 +30,33 @@ export function evolution(options: EvolutionOptions): Rule {
     validateStarterBaseline(tree);
 
     const metadata = readStarterMetadata(tree);
+    const definition = getEvolutionDefinition(options.name);
+    const isAlreadyEnabled = metadata.enabledEvolutions.includes(options.name);
 
-    if (metadata.enabledEvolutions.includes(options.name)) {
+    if (isAlreadyEnabled && !definition.repeatable) {
       throw new SchematicsException(`Evolution "${options.name}" is already enabled.`);
     }
 
-    const definition = getEvolutionDefinition(options.name);
-
     if (options.preview) {
-      printEvolutionPreview(context, definition);
+      printEvolutionPreview(context, definition, options, tree);
       return tree;
     }
 
     try {
-      definition.install?.(tree, context, definition);
+      definition.install?.(tree, context, definition, options);
     } catch (error) {
+      if (error instanceof EvolutionUserActionRequiredError) {
+        throw error;
+      }
+
       throw createEvolutionInstallException(definition, error);
     }
 
     writeStarterMetadata(tree, {
       ...metadata,
-      enabledEvolutions: [...metadata.enabledEvolutions, definition.name].sort(),
+      enabledEvolutions: isAlreadyEnabled
+        ? metadata.enabledEvolutions
+        : [...metadata.enabledEvolutions, definition.name].sort(),
     });
 
     context.logger.info(`Selected evolution: ${definition.label}`);
@@ -62,17 +72,49 @@ export function evolution(options: EvolutionOptions): Rule {
   };
 }
 
-function printEvolutionPreview(context: SchematicContext, definition: EvolutionDefinition): void {
+function printEvolutionPreview(
+  context: SchematicContext,
+  definition: EvolutionDefinition,
+  options: EvolutionOptions,
+  tree: Tree,
+): void {
+  const preview = resolveEvolutionPreview(definition, options, tree);
+
   printPreviewLine(color.bold('Evolution preview'));
   printKeyValue('Evolution', definition.label);
   printPreviewLine('');
-  printSection('Dependencies', definition.dependencies);
-  printSection('Files to create', definition.creates);
-  printSection('Files to update', definition.updates);
-  printSection('Notes', definition.notes);
+  printSection('Dependencies', preview.dependencies);
+  printSection('Files to create', preview.creates);
+  printSection('Files to update', preview.updates);
+  printOptionalSection('Existing files detected', preview.existing);
+  printOptionalSection('Blocking notes', preview.blockingNotes);
+  printSection('Notes', preview.notes);
   printPreviewLine(color.green('No files were changed because preview mode is enabled.'));
 
   context.logger.info('');
+}
+
+function resolveEvolutionPreview(
+  definition: EvolutionDefinition,
+  options: EvolutionOptions,
+  tree: Tree,
+): EvolutionPreview {
+  return (
+    definition.preview?.(options, tree) ?? {
+      dependencies: definition.dependencies,
+      creates: definition.creates,
+      updates: definition.updates,
+      notes: definition.notes,
+    }
+  );
+}
+
+function printOptionalSection(title: string, values: readonly string[] | undefined): void {
+  if (!values?.length) {
+    return;
+  }
+
+  printSection(title, values);
 }
 
 function createEvolutionInstallException(

@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
@@ -41,11 +42,16 @@ main().catch((error) => {
 async function main() {
   printHeader();
 
+  const shouldAskEvolutionOptions = !args.name;
   const evolutionName = args.name ?? (await askEvolutionName());
   const evolution = getEvolution(evolutionName);
+  const evolutionOptions =
+    evolution.name === 'signal-store'
+      ? await resolveSignalStoreOptions(shouldAskEvolutionOptions)
+      : {};
   const preview = args.preview ?? (await askPreviewMode());
 
-  printSummary(evolution, preview);
+  printSummary(evolution, preview, evolutionOptions);
 
   if (!preview && !args.yes) {
     const shouldContinue = await askConfirmation(
@@ -78,6 +84,10 @@ async function main() {
     generateArgs.push('--preview');
   }
 
+  for (const [optionName, optionValue] of Object.entries(evolutionOptions)) {
+    generateArgs.push(`--${formatCliOptionName(optionName)}`, optionValue);
+  }
+
   run('npx', generateArgs, {
     title: preview ? 'Execute preview' : 'Execute apply',
     description: preview
@@ -86,9 +96,73 @@ async function main() {
     meta: [
       ['Evolution', evolution.label],
       ['Mode', preview ? 'Preview' : 'Apply'],
+      ...createOptionSummary(evolutionOptions),
     ],
   });
   printNextSteps(preview);
+}
+
+async function resolveSignalStoreOptions(shouldAskOptions) {
+  if (!shouldAskOptions) {
+    return createSignalStoreOptions({
+      storeScope: args.storeScope,
+      featureName: args.featureName,
+      featureComponent: args.featureComponent,
+      storeName: args.storeName,
+    });
+  }
+
+  const storeScope = await askChoice('SignalStore scope', [
+    ['feature', 'Feature', 'Generate state under src/app/features/<feature>/state.'],
+    ['root', 'Root', 'Generate a root-provided store under src/app/core/state.'],
+  ]);
+
+  if (storeScope === 'root') {
+    const storeName = await askAvailableRootStoreName('app');
+
+    return createSignalStoreOptions({ storeScope, storeName });
+  }
+
+  while (true) {
+    const featureName = await askAvailableSignalStoreFeatureName('dashboard');
+    const featureComponent = await askChoice('Feature component', [
+      ['existing', 'Already exists', 'Create state/store only.'],
+      ['create', 'Create it', 'Create a minimal route and standalone component.'],
+    ]);
+
+    if (featureComponent !== 'create') {
+      return createSignalStoreOptions({
+        storeScope,
+        featureName,
+        featureComponent,
+      });
+    }
+
+    const existingComponentTargets = getExistingSignalStoreFeatureComponentTargets(featureName);
+
+    if (existingComponentTargets.length === 0) {
+      return createSignalStoreOptions({
+        storeScope,
+        featureName,
+        featureComponent,
+      });
+    }
+
+    printExistingFeatureComponentWarning(featureName, existingComponentTargets);
+
+    const nextAction = await askChoice('How do you want to continue?', [
+      ['existing', 'Use existing component', 'Create only the SignalStore files.'],
+      ['rename', 'Choose another feature', 'Enter a different feature name.'],
+    ]);
+
+    if (nextAction === 'existing') {
+      return createSignalStoreOptions({
+        storeScope,
+        featureName,
+        featureComponent: 'existing',
+      });
+    }
+  }
 }
 
 function printHeader() {
@@ -162,6 +236,85 @@ async function askPreviewMode() {
   }
 }
 
+async function askChoice(title, choices) {
+  const rl = createInterface({ input, output });
+
+  try {
+    printSection(title);
+
+    for (const [index, [, label, description]] of choices.entries()) {
+      console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(label)}`);
+      console.log(`   ${color.dim(description)}`);
+    }
+
+    console.log('');
+    const answer = await rl.question(`${color.bold('Select option')} ${color.dim('[1]')} `);
+    const selectedIndex = answer === '' ? 0 : Number.parseInt(answer, 10) - 1;
+    const selectedChoice = choices[selectedIndex];
+
+    if (!selectedChoice) {
+      throw new Error('Invalid option selection.');
+    }
+
+    return selectedChoice[0];
+  } finally {
+    rl.close();
+  }
+}
+
+async function askText(label, defaultValue) {
+  const rl = createInterface({ input, output });
+
+  try {
+    const answer = await rl.question(`${color.bold(label)} ${color.dim(`[${defaultValue}]`)} `);
+    return answer.trim() || defaultValue;
+  } finally {
+    rl.close();
+  }
+}
+
+async function askAvailableSignalStoreFeatureName(defaultValue) {
+  while (true) {
+    const featureName = normalizeFeatureName(await askText('Feature name', defaultValue));
+    const existingTargets = getExistingSignalStoreFeatureTargets(featureName);
+
+    if (existingTargets.length === 0) {
+      return featureName;
+    }
+
+    console.log('');
+    console.log(color.yellow(`Feature "${featureName}" already has SignalStore files.`));
+    console.log(color.dim('Existing targets:'));
+
+    for (const target of existingTargets) {
+      console.log(`${color.dim('-')} ${target}`);
+    }
+
+    console.log(color.dim('Choose another feature name to continue.'));
+  }
+}
+
+async function askAvailableRootStoreName(defaultValue) {
+  while (true) {
+    const storeName = normalizeFeatureName(await askText('Root store name', defaultValue));
+    const existingTargets = getExistingRootStoreTargets(storeName);
+
+    if (existingTargets.length === 0) {
+      return storeName;
+    }
+
+    console.log('');
+    console.log(color.yellow(`Root store "${storeName}" already exists.`));
+    console.log(color.dim('Existing targets:'));
+
+    for (const target of existingTargets) {
+      console.log(`${color.dim('-')} ${target}`);
+    }
+
+    console.log(color.dim('Choose another root store name to continue.'));
+  }
+}
+
 async function askConfirmation(question) {
   const rl = createInterface({ input, output });
 
@@ -173,12 +326,50 @@ async function askConfirmation(question) {
   }
 }
 
-function printSummary(evolution, preview) {
+function getExistingRootStoreTargets(storeName) {
+  return [
+    `src/app/core/state/${storeName}.state.ts`,
+    `src/app/core/state/${storeName}.store.ts`,
+  ].filter((targetPath) => existsSync(targetPath));
+}
+
+function getExistingSignalStoreFeatureTargets(featureName) {
+  return [
+    `src/app/features/${featureName}/state/${featureName}.state.ts`,
+    `src/app/features/${featureName}/state/${featureName}.store.ts`,
+  ].filter((targetPath) => existsSync(targetPath));
+}
+
+function getExistingSignalStoreFeatureComponentTargets(featureName) {
+  return [
+    `src/app/features/${featureName}/${featureName}.routes.ts`,
+    `src/app/features/${featureName}/views/${featureName}/${featureName}.component.ts`,
+    `src/app/features/${featureName}/views/${featureName}/${featureName}.component.html`,
+    `src/app/features/${featureName}/views/${featureName}/${featureName}.component.scss`,
+  ].filter((targetPath) => existsSync(targetPath));
+}
+
+function printExistingFeatureComponentWarning(featureName, existingTargets) {
+  console.log('');
+  console.log(color.yellow(`Feature component files already exist for "${featureName}".`));
+  console.log(color.dim('Existing targets:'));
+
+  for (const target of existingTargets) {
+    console.log(`${color.dim('-')} ${target}`);
+  }
+}
+
+function printSummary(evolution, preview, evolutionOptions) {
   printSection('Selection summary');
   console.log(`${color.dim('Evolution')} ${color.bold(evolution.label)}`);
   console.log(
     `${color.dim('Mode')}      ${preview ? color.cyan('Preview') : color.green('Apply')}`,
   );
+
+  for (const [label, value] of createOptionSummary(evolutionOptions)) {
+    console.log(`${color.dim(label)} ${color.bold(value)}`);
+  }
+
   console.log('');
 }
 
@@ -217,6 +408,50 @@ function getEvolution(evolutionName) {
   return evolution;
 }
 
+function createSignalStoreOptions(options) {
+  const storeScope = options.storeScope ?? 'feature';
+
+  if (storeScope === 'root') {
+    return {
+      storeScope,
+      storeName: normalizeFeatureName(options.storeName ?? 'app'),
+    };
+  }
+
+  return {
+    storeScope,
+    featureName: normalizeFeatureName(options.featureName ?? 'dashboard'),
+    featureComponent: options.featureComponent ?? 'existing',
+  };
+}
+
+function normalizeFeatureName(value) {
+  const normalized = value
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/[^a-zA-Z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .toLowerCase();
+
+  if (!normalized) {
+    throw new Error('Feature name cannot be empty.');
+  }
+
+  return normalized;
+}
+
+function createOptionSummary(evolutionOptions) {
+  return Object.entries(evolutionOptions).map(([name, value]) => [formatOptionName(name), value]);
+}
+
+function formatOptionName(value) {
+  return value.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (first) => first.toUpperCase());
+}
+
+function formatCliOptionName(value) {
+  return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+}
+
 function parseArgs(rawArgs) {
   const parsedArgs = {};
 
@@ -241,6 +476,30 @@ function parseArgs(rawArgs) {
 
     if (arg === '--yes' || arg === '-y') {
       parsedArgs.yes = true;
+      continue;
+    }
+
+    if (arg === '--store-scope') {
+      parsedArgs.storeScope = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--feature-name') {
+      parsedArgs.featureName = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--feature-component') {
+      parsedArgs.featureComponent = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--store-name') {
+      parsedArgs.storeName = rawArgs[index + 1];
+      index += 1;
       continue;
     }
 

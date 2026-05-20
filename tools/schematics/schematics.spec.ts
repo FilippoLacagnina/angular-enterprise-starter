@@ -12,6 +12,9 @@ const PACKAGE_JSON_PATH = '/package.json';
 const GLOBAL_STYLES_PATH = '/src/styles.scss';
 const DASHBOARD_STATE_PATH = '/src/app/features/dashboard/state/dashboard.state.ts';
 const DASHBOARD_STORE_PATH = '/src/app/features/dashboard/state/dashboard.store.ts';
+const APP_STATE_PATH = '/src/app/core/state/app.state.ts';
+const APP_STORE_PATH = '/src/app/core/state/app.store.ts';
+const DASHBOARD_ROUTES_PATH = '/src/app/features/dashboard/dashboard.routes.ts';
 const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
 
 const runner = new SchematicTestRunner(
@@ -46,8 +49,72 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(result.exists(STARTER_METADATA_PATH)).toBe(true);
     expect(result.exists(DASHBOARD_STATE_PATH)).toBe(true);
     expect(result.exists(DASHBOARD_STORE_PATH)).toBe(true);
+    expect(readText(result, DASHBOARD_ROUTES_PATH)).toContain(
+      "import { DashboardStore } from './state/dashboard.store';",
+    );
+    expect(readText(result, DASHBOARD_ROUTES_PATH)).toContain('providers: [DashboardStore]');
     expect(packageJson.dependencies?.['@ngrx/signals']).toBe('^21.1.0');
     expect(metadata.enabledEvolutions).toEqual(['signal-store']);
+  });
+
+  it('evolution installs a root SignalStore when requested', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'signal-store', storeScope: 'root' }), tree),
+    );
+    const metadata = readMetadata(result);
+
+    expect(result.exists(APP_STATE_PATH)).toBe(true);
+    expect(result.exists(APP_STORE_PATH)).toBe(true);
+    expect(readText(result, APP_STORE_PATH)).toContain("{ providedIn: 'root' }");
+    expect(metadata.enabledEvolutions).toEqual(['signal-store']);
+  });
+
+  it('evolution installs a named root SignalStore when requested', async () => {
+    const tree = createStarterTree(['signal-store']);
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({ name: 'signal-store', storeScope: 'root', storeName: 'session' }),
+        tree,
+      ),
+    );
+    const metadata = readMetadata(result);
+
+    expect(result.exists('/src/app/core/state/session.state.ts')).toBe(true);
+    expect(result.exists('/src/app/core/state/session.store.ts')).toBe(true);
+    expect(readText(result, '/src/app/core/state/session.store.ts')).toContain(
+      'export const SessionStore = signalStore',
+    );
+    expect(metadata.enabledEvolutions).toEqual(['signal-store']);
+  });
+
+  it('evolution can create a feature SignalStore with a new feature component', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'signal-store',
+          storeScope: 'feature',
+          featureName: 'orders',
+          featureComponent: 'create',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists('/src/app/features/orders/state/orders.state.ts')).toBe(true);
+    expect(result.exists('/src/app/features/orders/state/orders.store.ts')).toBe(true);
+    expect(result.exists('/src/app/features/orders/orders.routes.ts')).toBe(true);
+    expect(result.exists('/src/app/features/orders/views/orders/orders.component.ts')).toBe(true);
+    expect(readText(result, '/src/app/features/orders/orders.routes.ts')).toContain(
+      'export const ordersRoutes',
+    );
+    expect(readText(result, '/src/app/features/orders/views/orders/orders.component.ts')).toContain(
+      'export class OrdersComponent',
+    );
   });
 
   it('evolution installs Docker SSR files and updates starter metadata', async () => {
@@ -104,12 +171,36 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n`);
   });
 
-  it('evolution fails when the selected evolution is already enabled', async () => {
+  it('evolution can generate another SignalStore after the capability is enabled', async () => {
     const tree = createStarterTree(['signal-store']);
 
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'signal-store',
+          storeScope: 'feature',
+          featureName: 'orders',
+          featureComponent: 'create',
+        }),
+        tree,
+      ),
+    );
+    const metadata = readMetadata(result);
+
+    expect(result.exists('/src/app/features/orders/state/orders.state.ts')).toBe(true);
+    expect(result.exists('/src/app/features/orders/state/orders.store.ts')).toBe(true);
+    expect(readText(result, '/src/app/features/orders/orders.routes.ts')).toContain(
+      'providers: [OrdersStore]',
+    );
+    expect(metadata.enabledEvolutions).toEqual(['signal-store']);
+  });
+
+  it('evolution fails when a non-repeatable evolution is already enabled', async () => {
+    const tree = createStarterTree(['bootstrap']);
+
     await expect(
-      lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
-    ).rejects.toThrow('Evolution "signal-store" is already enabled.');
+      lastValueFrom(runner.callRule(evolution({ name: 'bootstrap' }), tree)),
+    ).rejects.toThrow('Evolution "bootstrap" is already enabled.');
   });
 
   it('evolution keeps enabled evolutions sorted', async () => {
@@ -142,7 +233,52 @@ describe('Angular Enterprise Starter schematics', () => {
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
-    ).rejects.toThrow(/evo\/state\/signal-store/);
+    ).rejects.toThrow('A SignalStore already exists for feature "dashboard".');
+  });
+
+  it('evolution asks for user action before overwriting an existing root SignalStore', async () => {
+    const tree = createStarterTree(['signal-store']);
+    tree.create(APP_STORE_PATH, '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'signal-store', storeScope: 'root' }), tree)),
+    ).rejects.toThrow('A root SignalStore named "app" already exists under src/app/core/state.');
+  });
+
+  it('evolution user action errors do not include branch fallback guidance', async () => {
+    const tree = createStarterTree(['signal-store']);
+    tree.create(APP_STORE_PATH, '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'signal-store', storeScope: 'root' }), tree)),
+    ).rejects.not.toThrow('evo/state/signal-store');
+  });
+
+  it('evolution fails before overwriting existing feature component files', async () => {
+    const tree = createStarterTree();
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(
+          evolution({
+            name: 'signal-store',
+            storeScope: 'feature',
+            featureName: 'dashboard',
+            featureComponent: 'create',
+          }),
+          tree,
+        ),
+      ),
+    ).rejects.toThrow('Feature component files already exist for feature "dashboard".');
+  });
+
+  it('evolution fails when a feature route is missing for an existing component', async () => {
+    const tree = createStarterTree();
+    tree.delete(DASHBOARD_ROUTES_PATH);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
+    ).rejects.toThrow('Missing route file for feature "dashboard".');
   });
 
   it('evolution fails before overwriting existing Docker SSR files', async () => {
@@ -203,6 +339,22 @@ function createStarterTree(enabledEvolutions: readonly string[] = []): Tree {
   ]) {
     tree.create(path, '');
   }
+
+  tree.create(
+    DASHBOARD_ROUTES_PATH,
+    `import { type Routes } from '@angular/router';
+
+export const dashboardRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./views/dashboard/dashboard.component').then(
+        (component) => component.DashboardComponent,
+      ),
+  },
+];
+`,
+  );
 
   tree.create(
     PACKAGE_JSON_PATH,

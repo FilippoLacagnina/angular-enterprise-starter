@@ -50,6 +50,28 @@
       "type": "boolean",
       "description": "Show what the selected evolution would do without changing files.",
       "default": false
+    },
+    "storeScope": {
+      "type": "string",
+      "description": "SignalStore scope.",
+      "enum": ["feature", "root"],
+      "default": "feature"
+    },
+    "featureName": {
+      "type": "string",
+      "description": "Feature name used by feature-scoped SignalStore installers.",
+      "default": "dashboard"
+    },
+    "featureComponent": {
+      "type": "string",
+      "description": "Whether the feature component already exists or should be generated.",
+      "enum": ["existing", "create"],
+      "default": "existing"
+    },
+    "storeName": {
+      "type": "string",
+      "description": "Root SignalStore name. Used only with --store-scope root.",
+      "default": "app"
     }
   },
   "required": ["name"]

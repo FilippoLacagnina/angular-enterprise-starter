@@ -9,4 +9,8 @@ export type EvolutionName =
 export interface EvolutionOptions {
   readonly name: EvolutionName;
   readonly preview?: boolean;
+  readonly storeScope?: 'feature' | 'root';
+  readonly featureName?: string;
+  readonly featureComponent?: 'existing' | 'create';
+  readonly storeName?: string;
 }

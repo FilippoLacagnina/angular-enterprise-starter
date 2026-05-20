@@ -1,37 +1,40 @@
-# Starter Evolution CLI
+# Evolution CLI
 
 ## Index
 
-- [Goal](#goal)
-- [How to use it](#how-to-use-it)
+- [Purpose](#purpose)
+- [Recommended flow](#recommended-flow)
 - [Installable evolutions](#installable-evolutions)
-- [Preview mode](#preview-mode)
-- [Apply mode](#apply-mode)
-- [Blocking errors and branch fallback](#blocking-errors-and-branch-fallback)
-- [Current behavior](#current-behavior)
+- [Command usage](#command-usage)
+- [SignalStore installer](#signalstore-installer)
+- [Safety model](#safety-model)
 - [Future parametrized installers](#future-parametrized-installers)
 - [Maintenance rules](#maintenance-rules)
 - [Tooling structure](#tooling-structure)
 - [Quality checks](#quality-checks)
 
-## Goal
+## Purpose
 
-The Starter Evolution CLI lets users add optional Angular Enterprise Starter capabilities without bloating the `main` baseline.
+The Evolution CLI is the guided installation layer for Angular Enterprise Starter.
 
-The main idea is:
+It keeps `main` minimal while allowing users to add selected capabilities through a safer, preview-first workflow.
 
 ```text
-main stays minimal
-evo/* branches remain visible references
-the CLI applies selected evolutions in a guided way
+main baseline
+  + guided Evolution CLI
+  + compatible evo/* reference branches
+  = composable starter
 ```
 
 The CLI is intended for projects based on Angular Enterprise Starter.
-It is not intended to patch arbitrary Angular applications.
+It is not designed to patch arbitrary Angular applications, where existing architecture and naming conventions may conflict.
 
-## How to use it
+Installers do not generate documentation files.
+Canonical documentation remains maintained in the repository docs and should be updated separately when a capability changes.
 
-Interactive mode:
+## Recommended flow
+
+Start with the interactive command:
 
 ```bash
 npm run starter:evolution
@@ -39,33 +42,35 @@ npm run starter:evolution
 
 ![Starter Evolution CLI preview](assets/starter-evolution-cli.svg)
 
-The CLI asks:
-
-```text
-Which evolution do you want to add?
-Which mode do you want to run?
-```
-
 Recommended flow:
 
 ```text
-preview -> apply
+preview -> review impact -> apply
 ```
+
+Preview should be the default workflow during development.
+Apply should be used only after the generated changes are understood.
 
 ## Installable evolutions
 
-| Evolution   | Name           | Status      |
-| ----------- | -------------- | ----------- |
-| SignalStore | `signal-store` | installable |
-| Docker SSR  | `docker-ssr`   | installable |
-| Bootstrap   | `bootstrap`    | installable |
+| Evolution   | Name           | Status      | Notes                                       |
+| ----------- | -------------- | ----------- | ------------------------------------------- |
+| SignalStore | `signal-store` | installable | Parametrized feature/root store generation. |
+| Docker SSR  | `docker-ssr`   | installable | SSR-oriented Docker deployment baseline.    |
+| Bootstrap   | `bootstrap`    | installable | Minimal Bootstrap design-system baseline.   |
 
-Other evolutions can still exist as `evo/*` branches.
-Some of them are still in development and will be released as CLI-installable evolutions once their installers are implemented and validated.
+Other evolutions may exist as `evo/*` branches before they become CLI-installable.
+Those branches remain useful as implementation references, but they should not be treated as CLI installers until an installer, preview metadata and tests exist.
 
-## Preview mode
+## Command usage
 
-Preview mode shows what would be changed without writing files.
+Interactive mode:
+
+```bash
+npm run starter:evolution
+```
+
+Preview examples:
 
 ```bash
 npm run starter:evolution -- --name signal-store --preview
@@ -73,19 +78,15 @@ npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 ```
 
-Preview is the recommended first step before applying an evolution.
-
-## Apply mode
-
-Apply mode writes the selected evolution to the workspace.
-
-With confirmation:
+Apply examples:
 
 ```bash
+npm run starter:evolution -- --name signal-store --apply
+npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
 ```
 
-Without confirmation:
+Non-interactive apply examples:
 
 ```bash
 npm run starter:evolution -- --name signal-store --apply --yes
@@ -93,172 +94,141 @@ npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
 ```
 
-Use `--yes` only when the command is already validated, for example inside a temporary test workspace.
+Use `--yes` only after validating the command in preview mode or inside a temporary test workspace.
 
-## Blocking errors and branch fallback
+## SignalStore installer
 
-If an installer cannot safely complete, the CLI stops and shows the related `evo/*` reference branch.
+SignalStore is currently the first parametrized installer.
+
+It can create:
+
+| Scope   | Generated location                        | Provider strategy             |
+| ------- | ----------------------------------------- | ----------------------------- |
+| Feature | `src/app/features/<feature-name>/state/*` | route-level `providers` entry |
+| Root    | `src/app/core/state/<store-name>.*`       | `{ providedIn: 'root' }`      |
+
+Available options:
+
+| Option                | Default     | Applies to | Description                                                  |
+| --------------------- | ----------- | ---------- | ------------------------------------------------------------ |
+| `--store-scope`       | `feature`   | all        | Selects `feature` or `root` scope.                           |
+| `--feature-name`      | `dashboard` | feature    | Controls generated feature paths and class names.            |
+| `--feature-component` | `existing`  | feature    | Uses an existing feature component or creates a minimal one. |
+| `--store-name`        | `app`       | root       | Controls generated root store paths and class names.         |
+
+Feature examples:
+
+```bash
+npm run starter:evolution -- --name signal-store --preview --store-scope feature --feature-name dashboard
+npm run starter:evolution -- --name signal-store --apply --store-scope feature --feature-name orders --feature-component create
+```
+
+Root examples:
+
+```bash
+npm run starter:evolution -- --name signal-store --preview --store-scope root
+npm run starter:evolution -- --name signal-store --apply --store-scope root --store-name session
+```
+
+Generated state is intentionally neutral:
+
+```ts
+export interface ExampleState {
+  readonly initialized: boolean;
+}
+
+export const initialExampleState: ExampleState = {
+  initialized: false,
+};
+```
+
+Feature-scoped stores are registered in route providers.
+Root stores are provided through Angular dependency injection at root level.
+
+The installer is repeatable: after enabling the SignalStore capability once, users can generate additional feature or root stores without duplicating metadata.
+
+## Safety model
+
+The CLI follows a conservative safety model:
+
+- preview before writing files;
+- stop before overwriting generated targets;
+- do not modify existing components;
+- do not silently resolve ambiguous project structure;
+- ask for explicit choices when a parametrized installer needs them;
+- keep reference branches available for manual inspection.
+
+Expected user-action conflicts stop with a direct message.
+Examples:
+
+- a feature SignalStore already exists;
+- a root SignalStore with the same name already exists;
+- a required feature route is missing;
+- feature component files already exist while using `--feature-component create`.
+
+Unexpected installer failures include the related `evo/*` reference branch so the user can inspect or merge manually if needed.
+
+## Future parametrized installers
+
+SignalStore already proves the parametrized installer model.
+Future parametrized installers should use the same safety principles, but document choices that are not implemented yet.
+
+A likely next candidate is a design-system primitive flow.
 
 Example:
 
 ```text
-Unable to safely install the Docker SSR evolution.
-
-Reason:
-- Cannot create /Dockerfile. File already exists.
-
-You can still inspect or merge the reference evolution branch manually.
-
-Branch:
-evo/deployment/docker-ssr
-
-GitHub:
-https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr
-
-Suggested manual flow:
-git fetch origin
-git merge origin/evo/deployment/docker-ssr
-```
-
-This keeps the automated installer safe while preserving the branch as a transparent fallback.
-
-## Current behavior
-
-### SignalStore
-
-Creates:
-
-```text
-src/app/features/dashboard/state/dashboard.state.ts
-src/app/features/dashboard/state/dashboard.store.ts
-```
-
-Updates:
-
-```text
-package.json
-.angular-enterprise-starter.json
-```
-
-Notes:
-
-- adds `@ngrx/signals` only if missing
-- does not modify routes or components
-- fails before overwriting generated state files
-
-### Docker SSR
-
-Creates:
-
-```text
-Dockerfile
-.dockerignore
-```
-
-Updates:
-
-```text
-.angular-enterprise-starter.json
-```
-
-Notes:
-
-- does not modify Angular source files
-- does not modify `package.json`
-- fails before overwriting existing Docker files
-
-### Bootstrap
-
-Updates:
-
-```text
-package.json
-src/styles.scss
-.angular-enterprise-starter.json
-```
-
-Notes:
-
-- adds `bootstrap` only if missing
-- adds Bootstrap global style import only if missing
-- preserves existing `src/styles.scss` content
-- does not generate documentation files
-
-## Future parametrized installers
-
-Current installers are intentionally simple and predictable.
-Each installable evolution applies a known baseline.
-
-Future installers can become parametrized when an evolution needs user choices before writing files.
-This would make the CLI more configurable while keeping `main` minimal.
-
-Example for a future SignalStore flow:
-
-```text
 Which evolution?
-- SignalStore
+- Bootstrap
 
-Store scope?
-- Feature
-- Root
+Bootstrap setup?
+- Install baseline only
+- Install UI primitives
 
-Feature name?
-dashboard
+UI primitives?
+- All
+- Select manually
 
-Generate example usage?
-- No
-- Yes
+Select primitives:
+- Button
+- Input
+- Card
 ```
 
 Possible outcomes:
 
-| Choice                  | Result                                                   |
-| ----------------------- | -------------------------------------------------------- |
-| `Feature` scope         | Generates `features/<feature-name>/state/*`.             |
-| `Root` scope            | Generates a root-provided store for application state.   |
-| `Feature name`          | Controls generated file paths and store naming.          |
-| `Generate example: No`  | Creates only state/store files.                          |
-| `Generate example: Yes` | Can add optional usage examples when the target is safe. |
+| Choice                  | Result                                                          |
+| ----------------------- | --------------------------------------------------------------- |
+| `Install baseline only` | Adds Bootstrap dependency and global style import only.         |
+| `Install UI primitives` | Adds selected starter-owned UI primitives.                      |
+| `All`                   | Generates every available primitive in the installer.           |
+| `Select manually`       | Generates only selected primitives such as `Button` or `Input`. |
 
-The current SignalStore installer is deliberately conservative:
-
-- feature-scoped
-- dashboard-based
-- no route updates
-- no component updates
-- no generated documentation
-
-Parametrized installers should follow the same safety rule:
-
-```text
-Ask before changing user-owned files.
-Prefer preview before apply.
-Never overwrite without a safe strategy.
-```
+Parametrized installers should prefer explicit choices over hidden assumptions.
+They must keep preview mode accurate before writing files.
 
 ## Maintenance rules
 
 Every CLI installer must stay aligned with its reference branch.
 
-When an `evo/*` branch changes, verify whether an installer exists for that evolution.
+When an `evo/*` branch changes, check whether a CLI installer exists for that evolution.
 If it exists, update:
 
-- installer implementation
-- preview metadata
-- tests
-- CLI available evolution list
-- this document
+- installer implementation;
+- preview metadata;
+- CLI evolution list;
+- tests;
+- this document.
 
-Reference branches currently mapped by the CLI:
+Current CLI/reference branch mapping:
 
 | Evolution   | Reference branch              |
 | ----------- | ----------------------------- |
 | SignalStore | `evo/state/signal-store`      |
 | Docker SSR  | `evo/deployment/docker-ssr`   |
 | Bootstrap   | `evo/design-system/bootstrap` |
-| Transloco   | `evo/i18n/transloco`          |
-| Runtime     | `evo/config/runtime-config`   |
-| Tailwind    | `evo/design-system/tailwind`  |
+
+Reference-only branches that are not CLI-installable yet must remain documented in `docs/evolutions.md` until their installers are implemented.
 
 ## Tooling structure
 
@@ -268,28 +238,39 @@ Schematics-related tooling lives under:
 tools/schematics/
 ```
 
-This includes:
+Main areas:
 
-- Angular schematic sources
-- schematic tests
-- local CLI wrapper
-- build asset copy script
+| Path                                     | Purpose                                  |
+| ---------------------------------------- | ---------------------------------------- |
+| `tools/schematics/starter-evolution.mjs` | Local Evolution CLI wrapper.             |
+| `tools/schematics/evolution/`            | Angular schematic entrypoint and schema. |
+| `tools/schematics/evolutions/`           | Installer implementations and registry.  |
+| `tools/schematics/shared/`               | Shared schematic utilities.              |
+| `tools/schematics/schematics.spec.ts`    | Schematic tests.                         |
 
-The cleanup tool remains outside this directory because it is starter-maintenance tooling, not schematic tooling.
+The cleanup tool remains outside `tools/schematics/` because it is starter-maintenance tooling, not schematic installation tooling.
 
 ## Quality checks
 
 After changing schematics or the CLI, run:
 
 ```bash
-npm run starter:evolution -- --name bootstrap --preview
 npm run schematics:build
 npm run schematics:test
 npm run format:check
 npm run lint
 ```
 
-For a real apply test, use a temporary copy of the repository and then run:
+Recommended preview smoke checks:
+
+```bash
+npm run starter:evolution -- --name bootstrap --preview
+npm run starter:evolution -- --name docker-ssr --preview
+npm run starter:evolution -- --name signal-store --preview --store-scope feature --feature-name dashboard
+npm run starter:evolution -- --name signal-store --preview --store-scope root --store-name session
+```
+
+For real apply testing, use a temporary copy of the repository, then run:
 
 ```bash
 npm install

@@ -2,7 +2,10 @@ import { type EvolutionName } from '../evolution/schema';
 import { installBootstrapEvolution } from './bootstrap/bootstrap.installer';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
-import { installSignalStoreEvolution } from './signal-store/signal-store.installer';
+import {
+  getSignalStorePreview,
+  installSignalStoreEvolution,
+} from './signal-store/signal-store.installer';
 
 const GITHUB_REPOSITORY_URL = 'https://github.com/FilippoLacagnina/angular-enterprise-starter';
 
@@ -40,6 +43,7 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   'signal-store': {
     name: 'signal-store',
     label: 'SignalStore',
+    repeatable: true,
     dependencies: ['@ngrx/signals'],
     creates: [
       'src/app/features/dashboard/state/dashboard.state.ts',
@@ -49,6 +53,7 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     notes: ['Adds a feature-scoped SignalStore example and state management conventions.'],
     referenceBranch: 'evo/state/signal-store',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/state/signal-store`,
+    preview: getSignalStorePreview,
     install: installSignalStoreEvolution,
   },
   'docker-ssr': {
