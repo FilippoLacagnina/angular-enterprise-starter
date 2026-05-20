@@ -1,0 +1,225 @@
+<svg width="1376" height="768" viewBox="0 0 1376 768" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Angular Enterprise Starter Architecture</title>
+  <desc id="desc">Terminal-style architecture diagram for Angular Enterprise Starter showing experience and shell, feature domains, foundation boundaries and CI quality gate.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1376" y2="768" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1720"/>
+      <stop offset="0.48" stop-color="#14272f"/>
+      <stop offset="1" stop-color="#0e1b22"/>
+    </linearGradient>
+    <linearGradient id="panelBg" x1="0" y1="0" x2="520" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#24343b"/>
+      <stop offset="1" stop-color="#17262d"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="300" y2="150" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b2d34"/>
+      <stop offset="1" stop-color="#102128"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1376" y2="768" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="redAccent" x1="0" y1="0" x2="1376" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#be123c"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2L10 6L2 10" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .mono { font-family: SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace; }
+      .title { fill: #e2e8f0; font-size: 44px; font-weight: 800; }
+      .subtitle { fill: #cbd5e1; font-size: 22px; }
+      .panel-title { fill: #e2e8f0; font-size: 22px; font-weight: 800; }
+      .card-title { fill: #e2e8f0; font-size: 19px; font-weight: 800; }
+      .bullet { fill: #cbd5e1; font-size: 13px; font-weight: 600; }
+      .small { fill: #94a3b8; font-size: 13px; font-weight: 600; }
+      .icon-stroke { stroke: #2dd4bf; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-red { stroke: #fb7185; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+      .muted-line { stroke: #42515b; }
+    </style>
+  </defs>
+
+  <rect width="1376" height="768" rx="30" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1374" height="766" rx="29" stroke="#2dd4bf" stroke-opacity="0.12"/>
+
+  <g opacity="0.18">
+    <path d="M1058 42L1240 152L1324 104" stroke="#94a3b8" stroke-width="1.2"/>
+    <path d="M1128 28L1320 146L1320 340" stroke="#94a3b8" stroke-width="1.2"/>
+    <path d="M30 624L190 714L346 646" stroke="#94a3b8" stroke-width="1.2"/>
+    <circle cx="1168" cy="118" r="108" stroke="#94a3b8" stroke-width="1.2"/>
+  </g>
+
+  <g class="mono">
+    <g transform="translate(104 34)">
+      <path d="M32 0L64 18V56L32 74L0 56V18L32 0Z" fill="#dd0031"/>
+      <path d="M32 8L56 22V52L32 66L8 52V22L32 8Z" fill="#c3002f"/>
+      <text x="32" y="49" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700">A</text>
+    </g>
+    <text x="704" y="80" text-anchor="middle" class="title">Angular Enterprise Starter Architecture</text>
+    <text x="704" y="118" text-anchor="middle" class="subtitle">Enterprise-ready Angular 21 baseline</text>
+    <rect x="574" y="138" width="260" height="3" rx="2" fill="url(#redAccent)"/>
+
+    <g>
+      <rect x="60" y="162" width="322" height="492" rx="16" fill="url(#panelBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+      <rect x="458" y="162" width="318" height="492" rx="16" fill="url(#panelBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+      <rect x="836" y="162" width="480" height="492" rx="16" fill="url(#panelBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+    </g>
+
+    <path d="M382 432H458" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.7"/>
+    <path d="M776 408H836" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" opacity="0.7"/>
+
+    <g transform="translate(60 162)">
+      <text x="161" y="40" text-anchor="middle" class="panel-title">Experience &amp; Shell</text>
+      <rect x="44" y="60" width="92" height="3" rx="2" fill="#fb7185"/>
+      <rect x="136" y="61" width="142" height="1" class="muted-line"/>
+
+      <g transform="translate(26 86)">
+        <rect width="270" height="116" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="17" y="20" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(34 37)">
+          <path d="M-10 -8H10V8H-10V-8ZM-6 -8V-12M6 -8V-12M-10 -3H10" class="icon-stroke"/>
+        </g>
+        <text x="66" y="34" class="card-title">User Experience</text>
+        <text x="30" y="72" class="bullet">- Browser navigation</text>
+        <text x="30" y="90" class="bullet">- Responsive-ready layout</text>
+      </g>
+
+      <g transform="translate(26 218)">
+        <rect width="270" height="140" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="17" y="20" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(34 37)">
+          <path d="M-10 -9H8V9H-10V-9ZM-4 -9V9M-10 -3H8M-10 3H8" class="icon-stroke"/>
+        </g>
+        <text x="66" y="34" class="card-title">Layout</text>
+        <text x="66" y="72" class="bullet">- Header</text>
+        <text x="66" y="92" class="bullet">- Sidebar</text>
+        <text x="66" y="112" class="bullet">- Main</text>
+        <text x="66" y="132" class="bullet">- Footer</text>
+      </g>
+
+      <g transform="translate(26 380)">
+        <rect width="270" height="96" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="17" y="20" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(34 37)">
+          <circle cx="0" cy="0" r="10" class="icon-stroke"/>
+          <path d="M-4 5L2 -2L6 -6" class="icon-stroke"/>
+        </g>
+        <text x="66" y="32" class="card-title">Angular Router</text>
+        <text x="66" y="66" class="bullet">- Lazy loading</text>
+        <text x="66" y="84" class="bullet">- Route boundaries</text>
+      </g>
+    </g>
+
+    <g transform="translate(458 162)">
+      <text x="159" y="40" text-anchor="middle" class="panel-title">Feature Domains</text>
+      <rect x="44" y="60" width="92" height="3" rx="2" fill="#fb7185"/>
+      <rect x="136" y="61" width="142" height="1" class="muted-line"/>
+
+      <g transform="translate(24 88)">
+        <rect width="270" height="166" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="18" y="18" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 35)">
+          <path d="M-9 -9H9V9H-9V-9ZM-5 -3H5M-5 3H1M5 3L9 3" class="icon-stroke"/>
+        </g>
+        <text x="68" y="36" class="card-title">Dashboard Feature</text>
+        <text x="68" y="68" class="bullet">- Routes</text>
+        <text x="68" y="90" class="bullet">- Views</text>
+        <text x="68" y="112" class="bullet">- Components</text>
+        <text x="68" y="134" class="bullet">- Services</text>
+        <text x="68" y="156" class="bullet">- Models</text>
+      </g>
+
+      <path d="M159 266V300" stroke="#2dd4bf" stroke-width="2" marker-end="url(#arrow)" opacity="0.65"/>
+
+      <g transform="translate(24 316)">
+        <rect width="270" height="136" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="18" y="18" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 35)">
+          <path d="M-9 -6H1C6 -6 9 -3 9 2V8H-9V-6ZM-2 -6V-10H9" class="icon-stroke"/>
+        </g>
+        <text x="68" y="36" class="card-title">Future Feature</text>
+        <text x="68" y="70" class="bullet">- Same structure</text>
+        <text x="68" y="94" class="bullet">- Isolated domain</text>
+        <text x="68" y="118" class="bullet">- Lazy loaded</text>
+      </g>
+    </g>
+
+    <g transform="translate(836 162)">
+      <text x="240" y="40" text-anchor="middle" class="panel-title">Foundation &amp; Boundaries</text>
+      <rect x="54" y="60" width="92" height="3" rx="2" fill="#fb7185"/>
+      <rect x="146" y="61" width="280" height="1" class="muted-line"/>
+
+      <g transform="translate(20 88)">
+        <rect width="204" height="166" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="20" y="20" width="30" height="30" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 35)">
+          <circle cx="-6" cy="0" r="3.4" class="icon-stroke"/>
+          <circle cx="6" cy="-5" r="3.4" class="icon-stroke"/>
+          <circle cx="6" cy="5" r="3.4" class="icon-stroke"/>
+          <path d="M-2.5 -1L2.5 -3.5M-2.5 1L2.5 3.5" class="icon-stroke"/>
+        </g>
+        <text x="68" y="36" class="card-title">Core</text>
+        <text x="68" y="68" class="bullet">- Config</text>
+        <text x="68" y="90" class="bullet">- API routes</text>
+        <text x="68" y="112" class="bullet">- Guards</text>
+        <text x="68" y="134" class="bullet">- Interceptors</text>
+        <text x="68" y="156" class="bullet">- Tokens</text>
+      </g>
+
+      <g transform="translate(248 88)">
+        <rect width="204" height="146" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="18" y="18" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 35)">
+          <path d="M0 -11V-3M-10 9H10M-10 9V1H10V9M-4 -3H4V1H-4V-3Z" class="icon-stroke"/>
+        </g>
+        <text x="68" y="36" class="card-title">Shared</text>
+        <text x="68" y="68" class="bullet">- Components</text>
+        <text x="68" y="90" class="bullet">- Directives</text>
+        <text x="68" y="112" class="bullet">- Pipes</text>
+        <text x="68" y="134" class="bullet">- Utilities</text>
+      </g>
+
+      <g transform="translate(20 294)">
+        <rect width="432" height="76" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="20" y="23" width="30" height="30" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 38)">
+          <path d="M-8 3C-11 3 -13 0.8 -13 -1.5C-13 -4 -10.5 -6 -7.5 -5C-6.5 -9.5 -2.8 -11 1 -9.5C3.2 -8.6 4.8 -6.8 5.8 -5C9.5 -5 12.5 -2.4 12.5 0.8C12.5 3.2 10 5 6.8 5H-8" class="icon-stroke"/>
+        </g>
+        <text x="68" y="34" class="card-title">Configuration</text>
+        <text x="68" y="62" class="bullet">- environments</text>
+        <text x="250" y="62" class="bullet">- values.yml</text>
+      </g>
+
+      <g transform="translate(20 394)">
+        <rect width="432" height="76" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+        <rect x="18" y="21" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+        <g transform="translate(35 38)">
+          <path d="M-10 -5H10M-10 0H10M-10 5H10" class="icon-stroke"/>
+          <circle cx="-6" cy="-5" r="2.5" class="icon-red"/>
+          <circle cx="6" cy="5" r="2.5" class="icon-red"/>
+        </g>
+        <text x="68" y="34" class="card-title">Microservice APIs</text>
+        <text x="68" y="62" class="bullet">- Versioned endpoints</text>
+        <text x="260" y="62" class="bullet">- Service routes</text>
+      </g>
+    </g>
+
+    <g transform="translate(60 682)">
+      <rect width="1256" height="56" rx="12" fill="#17262d" stroke="#2dd4bf" stroke-opacity="0.5" stroke-dasharray="7 7"/>
+      <rect x="24" y="12" width="32" height="32" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+      <g transform="translate(40 28)">
+        <path d="M-8 0L-2 6L9 -7" class="icon-stroke"/>
+      </g>
+      <text x="76" y="35" class="card-title">CI Quality Gate</text>
+      <text x="386" y="35" class="bullet">Format</text>
+      <line x1="504" y1="16" x2="504" y2="40" stroke="#64748b"/>
+      <text x="574" y="35" class="bullet">Lint</text>
+      <line x1="672" y1="16" x2="672" y2="40" stroke="#64748b"/>
+      <text x="740" y="35" class="bullet">Typecheck</text>
+      <line x1="888" y1="16" x2="888" y2="40" stroke="#64748b"/>
+      <text x="958" y="35" class="bullet">Build</text>
+    </g>
+  </g>
+</svg>

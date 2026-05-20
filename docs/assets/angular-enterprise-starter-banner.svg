@@ -1,0 +1,288 @@
+<svg width="1376" height="768" viewBox="0 0 1376 768" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Angular Enterprise Starter Architecture</title>
+  <desc id="desc">Four-column terminal-style architecture banner for Angular Enterprise Starter with icon cards for the main baseline, configuration strategy, composable evolution branches and enterprise delivery.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1376" y2="768" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1720"/>
+      <stop offset="0.48" stop-color="#14272f"/>
+      <stop offset="1" stop-color="#0e1b22"/>
+    </linearGradient>
+    <linearGradient id="columnBg" x1="0" y1="0" x2="292" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#24343b"/>
+      <stop offset="1" stop-color="#17262d"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="236" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1b2d34"/>
+      <stop offset="1" stop-color="#102128"/>
+    </linearGradient>
+    <linearGradient id="cardActive" x1="0" y1="0" x2="236" y2="62" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#12333a"/>
+      <stop offset="1" stop-color="#10262e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1376" y2="768" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="redAccent" x1="0" y1="0" x2="1376" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#be123c"/>
+    </linearGradient>
+    <filter id="columnShadow" x="0" y="0" width="1376" height="768" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.38"/>
+    </filter>
+    <filter id="cardShadow" x="0" y="0" width="340" height="130" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#020617" flood-opacity="0.28"/>
+    </filter>
+    <marker id="arrowCyan" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2 2L10 6L2 10" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .mono { font-family: SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace; }
+      .title { fill: #e2e8f0; font-size: 48px; font-weight: 800; }
+      .subtitle { fill: #cbd5e1; font-size: 25px; }
+      .column-title { fill: #e2e8f0; font-size: 20px; font-weight: 800; }
+      .label { fill: #e2e8f0; font-size: 15px; font-weight: 700; }
+      .small { fill: #94a3b8; font-size: 10px; font-weight: 600; }
+      .icon-stroke { stroke: #2dd4bf; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-red { stroke: #fb7185; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+      .icon-fill { fill: #2dd4bf; }
+      .muted-line { stroke: #42515b; }
+    </style>
+  </defs>
+
+  <rect width="1376" height="768" rx="30" fill="url(#bg)"/>
+  <rect x="1" y="1" width="1374" height="766" rx="29" stroke="#2dd4bf" stroke-opacity="0.12"/>
+
+  <g opacity="0.18">
+    <path d="M1064 42L1244 154L1324 104" stroke="#94a3b8" stroke-width="1.2"/>
+    <path d="M1128 28L1320 146L1320 350" stroke="#94a3b8" stroke-width="1.2"/>
+    <path d="M30 632L190 720L348 650" stroke="#94a3b8" stroke-width="1.2"/>
+    <circle cx="1168" cy="118" r="108" stroke="#94a3b8" stroke-width="1.2"/>
+  </g>
+
+  <g class="mono">
+    <g transform="translate(238 42)">
+      <path d="M35 0L70 20V60L35 80L0 60V20L35 0Z" fill="#dd0031"/>
+      <path d="M35 8L62 24V56L35 72L8 56V24L35 8Z" fill="#c3002f"/>
+      <text x="35" y="52" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="35" font-weight="700">A</text>
+    </g>
+
+    <text x="718" y="90" text-anchor="middle" class="title">Angular Enterprise Starter</text>
+    <text x="688" y="132" text-anchor="middle" class="subtitle">Modular Angular 21 enterprise baseline</text>
+    <rect x="570" y="152" width="236" height="3" rx="2" fill="url(#redAccent)"/>
+
+    <g opacity="0.75">
+      <path d="M339 448H375" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowCyan)"/>
+      <path d="M670 448H706" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowCyan)"/>
+      <path d="M1001 448H1037" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowCyan)"/>
+    </g>
+
+    <g>
+      <rect x="44" y="188" width="295" height="520" rx="16" fill="url(#columnBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+      <rect x="375" y="188" width="295" height="520" rx="16" fill="url(#columnBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+      <rect x="706" y="188" width="295" height="520" rx="16" fill="url(#columnBg)" stroke="#2dd4bf" stroke-opacity="0.58"/>
+      <rect x="1037" y="188" width="295" height="520" rx="16" fill="url(#columnBg)" stroke="#2dd4bf" stroke-opacity="0.46"/>
+    </g>
+
+    <g transform="translate(44 188)">
+      <text x="147.5" y="39" text-anchor="middle" class="column-title">Minimal main baseline</text>
+      <rect x="34" y="58" width="90" height="3" rx="2" fill="#fb7185"/>
+      <rect x="124" y="59" width="132" height="1" class="muted-line"/>
+
+      <g>
+        <g transform="translate(29 78)">
+          <rect width="237" height="54" rx="9" fill="url(#cardActive)" stroke="#2dd4bf" stroke-width="1.4"/>
+          <rect x="14" y="10" width="34" height="34" rx="8" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.55"/>
+          <g transform="translate(31 27)">
+            <path d="M-8 -7H8M-8 1H0M5 1H10M6 -3L10 1L6 5" class="icon-stroke"/>
+          </g>
+          <text x="62" y="24" class="label">Evolution CLI</text>
+          <text x="62" y="40" class="small">preview | apply safely</text>
+        </g>
+        <g transform="translate(29 143)">
+          <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="9" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 23.5)">
+            <rect x="-4" y="-10" width="8" height="8" rx="1.5" class="icon-stroke"/>
+            <rect x="-10" y="2" width="8" height="8" rx="1.5" class="icon-stroke"/>
+            <rect x="2" y="2" width="8" height="8" rx="1.5" class="icon-stroke"/>
+            <path d="M0 -2V2M-6 2V-2H6V2" class="icon-stroke"/>
+          </g>
+          <text x="62" y="19" class="label">Modular</text>
+          <text x="62" y="35" class="label">architecture</text>
+        </g>
+        <g transform="translate(29 198)">
+          <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="9" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 23.5)">
+            <path d="M-8 10C-8 0 0 0 0 -8M8 10C8 0 0 0 0 -8M-6 -2L0 -8L6 -2" class="icon-stroke"/>
+          </g>
+          <text x="62" y="19" class="label">Lazy feature</text>
+          <text x="62" y="35" class="label">routing</text>
+        </g>
+        <g transform="translate(29 253)">
+          <rect width="237" height="54" rx="9" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="12" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 26.5)">
+            <path d="M-8 -7H8M-8 0H8M-8 7H3M7 7C7 3 11 3 11 7C11 11 7 11 7 7Z" class="icon-stroke"/>
+          </g>
+          <text x="62" y="23" class="label">SSR / Prerender</text>
+          <text x="62" y="40" class="label">Hydration</text>
+        </g>
+        <g transform="translate(29 317)">
+          <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="9" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 23.5)">
+            <circle cx="-6" cy="0" r="3.5" class="icon-stroke"/>
+            <circle cx="7" cy="-6" r="3.5" class="icon-stroke"/>
+            <circle cx="7" cy="6" r="3.5" class="icon-stroke"/>
+            <path d="M-2.5 -1.5L3.5 -4.5M-2.5 1.5L3.5 4.5" class="icon-stroke"/>
+          </g>
+          <text x="62" y="30" class="label">API patterns</text>
+        </g>
+        <g transform="translate(29 372)">
+          <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="9" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 23.5)">
+            <path d="M0 -9L8 -5V2C8 7 5 10 0 12C-5 10 -8 7 -8 2V-5L0 -9Z" class="icon-stroke"/>
+            <path d="M-5 2L-1 6L6 -3" class="icon-stroke"/>
+          </g>
+          <text x="62" y="30" class="label">CI quality gate</text>
+        </g>
+        <g transform="translate(29 427)">
+          <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="15" y="9" width="29" height="29" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(29.5 23.5)">
+            <path d="M-8 -9H4C7 -9 9 -7 9 -4V9H-3C-6 9 -8 7 -8 4V-9Z" class="icon-stroke"/>
+            <path d="M-3 -2H5M-3 3H5" class="icon-stroke"/>
+          </g>
+          <text x="62" y="30" class="label">Docs-first</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(375 188)">
+      <text x="147.5" y="39" text-anchor="middle" class="column-title">Configuration strategy</text>
+      <rect x="34" y="58" width="90" height="3" rx="2" fill="#fb7185"/>
+      <rect x="124" y="59" width="132" height="1" class="muted-line"/>
+
+      <g>
+        <g transform="translate(29 142)">
+          <rect width="237" height="108" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="32" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <g transform="translate(39 52)">
+            <path d="M-11 5C-15 5 -17 2 -17 -1C-17 -4 -14 -7 -10 -6C-9 -12 -4 -15 2 -13C5 -12 7 -10 8 -7C13 -7 17 -3 17 1C17 4 14 7 10 7H-11" class="icon-stroke"/>
+          </g>
+          <text x="82" y="47" class="label">Angular</text>
+          <text x="82" y="71" class="label">environments</text>
+        </g>
+        <g transform="translate(29 290)">
+          <rect width="237" height="108" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="32" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M30 38H43L50 45V66H30V38Z" class="icon-stroke"/>
+          <path d="M43 38V45H50M36 50L33 54L36 58M44 50L47 54L44 58" class="icon-stroke"/>
+          <text x="82" y="47" class="label">Runtime</text>
+          <text x="82" y="71" class="label">values.yml</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(706 188)">
+      <text x="147.5" y="39" text-anchor="middle" class="column-title">evo/* branches</text>
+      <rect x="34" y="58" width="90" height="3" rx="2" fill="#fb7185"/>
+      <rect x="124" y="59" width="132" height="1" class="muted-line"/>
+
+      <g>
+        <g transform="translate(29 90)">
+          <rect width="237" height="42" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="13" y="7" width="28" height="28" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M19 21C19 16 23 12 27 12C31 12 35 16 35 21C35 26 31 30 27 30C23 30 19 26 19 21ZM19 21H35M27 12C24 16 24 26 27 30M27 12C30 16 30 26 27 30" class="icon-stroke"/>
+          <text x="56" y="27" class="label">Transloco i18n</text>
+        </g>
+        <g transform="translate(29 150)">
+          <rect width="237" height="42" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="13" y="7" width="28" height="28" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M19 17H33V27H19V17ZM23 17V14H37V24H33" class="icon-stroke"/>
+          <text x="56" y="27" class="label">SignalStore</text>
+        </g>
+        <g transform="translate(29 210)">
+          <rect width="237" height="42" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="13" y="7" width="28" height="28" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <circle cx="27" cy="21" r="7.5" class="icon-stroke"/>
+          <path d="M27 14V21L32 24" class="icon-stroke"/>
+          <text x="56" y="27" class="label">Runtime config</text>
+        </g>
+        <g transform="translate(29 270)">
+          <rect width="237" height="46" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="13" y="9" width="28" height="28" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M20 24L25 29L35 16" class="icon-stroke"/>
+          <path d="M20 16H35" class="icon-stroke" opacity="0.5"/>
+          <text x="56" y="20" class="label">Dependency</text>
+          <text x="56" y="36" class="label">monitoring</text>
+        </g>
+        <g transform="translate(29 335)">
+          <rect width="237" height="96" rx="9" fill="url(#cardBg)" stroke="#566874"/>
+          <text x="118.5" y="25" text-anchor="middle" class="label">UI Kits</text>
+          <rect x="18" y="38" width="92" height="22" rx="6" fill="#182a31" stroke="#52636e"/>
+          <rect x="127" y="38" width="92" height="22" rx="6" fill="#182a31" stroke="#52636e"/>
+          <rect x="18" y="66" width="92" height="22" rx="6" fill="#182a31" stroke="#52636e"/>
+          <rect x="127" y="66" width="92" height="22" rx="6" fill="#182a31" stroke="#52636e"/>
+          <text x="64" y="54" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700">Bootstrap</text>
+          <text x="173" y="54" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700">Tailwind</text>
+          <text x="64" y="82" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700">Material</text>
+          <text x="173" y="82" text-anchor="middle" fill="#e2e8f0" font-size="12" font-weight="700">PrimeNG</text>
+        </g>
+        <g transform="translate(29 455)">
+          <rect width="237" height="42" rx="8" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="13" y="7" width="28" height="28" rx="7" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M19 23H35L32 29H22L19 23ZM22 17H26V23H22V17ZM28 14H32V23H28V14" class="icon-stroke"/>
+          <text x="56" y="27" class="label">Docker SSR</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(1037 188)">
+      <text x="147.5" y="39" text-anchor="middle" class="column-title">Enterprise delivery</text>
+      <rect x="34" y="58" width="90" height="3" rx="2" fill="#fb7185"/>
+      <rect x="124" y="59" width="132" height="1" class="muted-line"/>
+
+      <g>
+        <g transform="translate(29 86)">
+          <rect width="237" height="82" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="21" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M30 39L39 34L48 39L39 44L30 39ZM30 39V50L39 56L48 50V39M39 34V28" class="icon-stroke"/>
+          <text x="82" y="36" class="label">Build once /</text>
+          <text x="82" y="58" class="label">deploy many</text>
+        </g>
+        <g transform="translate(29 191)">
+          <rect width="237" height="82" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="21" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <circle cx="31" cy="41" r="5" class="icon-stroke"/>
+          <circle cx="47" cy="34" r="5" class="icon-stroke"/>
+          <circle cx="47" cy="52" r="5" class="icon-stroke"/>
+          <path d="M36 39L42 36M36 44L42 50" class="icon-stroke"/>
+          <text x="82" y="36" class="label">Microservice</text>
+          <text x="82" y="58" class="label">APIs</text>
+        </g>
+        <g transform="translate(29 296)">
+          <rect width="237" height="82" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="21" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M28 35H50M28 48H50" class="icon-stroke"/>
+          <circle cx="33" cy="35" r="4.5" fill="#102128" class="icon-red"/>
+          <circle cx="46" cy="48" r="4.5" fill="#102128" class="icon-red"/>
+          <text x="82" y="36" class="label">Versioned</text>
+          <text x="82" y="58" class="label">endpoints</text>
+        </g>
+        <g transform="translate(29 401)">
+          <rect width="237" height="82" rx="10" fill="url(#cardBg)" stroke="#566874"/>
+          <rect x="19" y="21" width="40" height="40" rx="9" fill="#0f2027" stroke="#2dd4bf" stroke-opacity="0.5"/>
+          <path d="M28 45L35 52L52 31" class="icon-stroke"/>
+          <path d="M28 31H50" class="icon-stroke" opacity="0.5"/>
+          <text x="82" y="45" class="label">Quality gates</text>
+        </g>
+      </g>
+    </g>
+
+  </g>
+</svg>
