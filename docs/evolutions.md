@@ -7,6 +7,7 @@
 - [Branch strategy](#branch-strategy)
 - [Evolution versioning](#evolution-versioning)
 - [Merge strategy](#merge-strategy)
+- [Documentation strategy](#documentation-strategy)
 - [Implemented evolution branches](#implemented-evolution-branches)
 - [Planned evolution branches](#planned-evolution-branches)
 - [Usage model](#usage-model)
@@ -60,7 +61,7 @@ Each evolution branch should:
 - start from `main`
 - focus on one capability
 - avoid mixing unrelated concerns
-- include dedicated documentation
+- link to canonical documentation on `main`
 - remain optional for consumers
 - be clearly marked as WIP until validated
 
@@ -99,22 +100,47 @@ Common shared files that may become merge points:
 - `src/app/app.routes.ts`
 - root documentation files
 
+## Documentation strategy
+
+The `main` branch is the source of truth for documentation.
+
+Evolution branches contain focused implementation variants.
+They should not become independent documentation sources.
+
+Canonical documentation lives under:
+
+```text
+docs/
+docs/evolutions/
+```
+
+This keeps documentation readable from every branch and reduces merge conflicts between optional evolutions.
+
+Recommended rules:
+
+- Keep general documentation on `main`.
+- Keep evolution-specific guides under `docs/evolutions/` on `main`.
+- Link from README files to canonical `main` documentation.
+- Avoid duplicating full guides inside every `evo/*` branch.
+- When an evolution changes behavior, update the canonical guide before or together with the merge to `main`.
+- If a branch needs a local note, keep it short and point back to the canonical documentation.
+
 ## Implemented evolution branches
 
 > [!IMPORTANT]
 > Implemented evolution branches are available optional baselines and should be reviewed before starting a new project.
 
-| Branch                                                                                                                                         | Area          | Description                                                            | Compatible baseline | Expected merge points                                                              | Status      |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------- | ----------- |
-| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`               | Implemented |
-| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config files | Implemented |
-| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | design system | Angular Material component baseline.                                   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | design system | PrimeNG component baseline.                                            | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss`    | Implemented |
-| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | design system | Tailwind CSS styling baseline.                                         | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`          | Implemented |
-| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | design system | Bootstrap-based styling baseline.                                      | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.2.0-alpha.0`    | `Dockerfile`, `.dockerignore`, root documentation files                            | Implemented |
-| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | state         | NgRx SignalStore feature-first state management baseline.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files, root documentation     | Implemented |
-| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.2.0-alpha.0`    | `package.json`, `README.md`, `docs/dependency-monitoring.md`, `tools/`             | Implemented |
+| Branch                                                                                                                                         | Guide                                          | Area          | Description                                                            | Compatible baseline | Expected merge points                                                           | Status      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------- | ---------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- | ----------- |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | [Guide](./evolutions/i18n-transloco.md)        | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
+| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | [Guide](./evolutions/runtime-config.md)        | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config    | Implemented |
+| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | [Guide](./evolutions/angular-material.md)      | design system | Angular Material component baseline.                                   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | [Guide](./evolutions/primeng.md)               | design system | PrimeNG component baseline.                                            | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
+| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | [Guide](./evolutions/tailwind.md)              | design system | Tailwind CSS styling baseline.                                         | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`       | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | [Guide](./evolutions/bootstrap.md)             | design system | Bootstrap-based styling baseline.                                      | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | [Guide](./evolutions/docker-ssr.md)            | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.2.0-alpha.0`    | `Dockerfile`, `.dockerignore`                                                   | Implemented |
+| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | [Guide](./evolutions/signal-store.md)          | state         | NgRx SignalStore feature-first state management baseline.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files                      | Implemented |
+| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | [Guide](./evolutions/dependency-monitoring.md) | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.2.0-alpha.0`    | `package.json`, `README.md`, `tools/`                                           | Implemented |
 
 ## Planned evolution branches
 
@@ -127,6 +153,7 @@ Common shared files that may become merge points:
 | `evo/design-system/primeng-tailwind` | design system | PrimeNG and Tailwind CSS integrated baseline.                   | WIP    |
 | `evo/deployment/docker-compose`      | deployment    | Docker Compose baseline for SSR and runtime config mounting.    | WIP    |
 | `evo/state/ngrx-store`               | state         | Classic NgRx Store baseline with actions, reducers and effects. | WIP    |
+| `evo/tooling/schematics`             | tooling       | Guided Evolution CLI for previewing and applying capabilities.  | WIP    |
 | `evo/auth/oidc`                      | auth          | OIDC authentication baseline.                                   | WIP    |
 
 ## Usage model
@@ -178,7 +205,7 @@ compare: feature/i18n/add-locale-docs
 - Declare the compatible `main` baseline for every implemented evolution branch.
 - Prefer additive-first changes and keep shared file edits intentional.
 - List expected merge points for every implemented evolution branch.
-- Document what each evolution branch adds.
+- Document what each evolution adds in the canonical `main` documentation.
 - Prefer composable changes that can be merged with other evolution branches.
 - Mark branches as WIP until their setup, documentation and quality checks are validated.
 - Avoid creating too many branches without maintenance capacity.
