@@ -1,10 +1,22 @@
 # Roadmap
 
-This roadmap tracks the work needed before making the repository public.
+This roadmap tracks public alpha work before the first stable release.
 
 ## Current Phase
 
-Public alpha evolution work.
+Public alpha Evolution CLI work.
+
+## Milestone 0.3.0-alpha.0
+
+Goal: centralize evolution documentation and introduce the Evolution CLI as the guided installation model.
+
+### Scope
+
+- Keep evolution documentation canonical on `main`.
+- Add dedicated guides for implemented `evo/*` branches.
+- Introduce the Evolution CLI documentation and README positioning.
+- Clarify CLI installers versus manual `evo/*` branch usage.
+- Keep the starter composable without turning `main` into an all-in-one template.
 
 ## Milestone 0.2.0-alpha.0
 
@@ -31,18 +43,15 @@ Goal: provide a coherent private alpha that can be reviewed before publication.
 - Confirm API route contracts and interceptor baseline.
 - Review README, technical docs and changelog before publication.
 
-## Before Public Release
+## Before Stable Release
 
-- Decide and add project license.
 - Decide first stable version target.
-- Add contribution guidelines if external collaboration is expected.
-- Review repository metadata, topics and GitHub visibility.
+- Review repository metadata and GitHub topics.
 - Remove or adapt demonstrative dashboard API/service examples.
+- Expand CLI installers only when the maintenance model remains sustainable.
 
 ## Later
 
-- Add optional CI template.
-- Add optional design system baseline.
-- Add optional i18n baseline.
+- Add additional Evolution CLI installers.
 - Add optional testing strategy.
 - Add optional auth/session examples.
