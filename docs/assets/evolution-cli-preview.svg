@@ -1,0 +1,36 @@
+<svg width="548" height="547" viewBox="0 0 548 547" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Angular Enterprise Starter Evolution CLI</title>
+  <desc id="desc">Terminal preview of the Angular Enterprise Starter Evolution CLI showing SignalStore, Docker SSR and Bootstrap options.</desc>
+
+  <rect width="548" height="547" fill="#223036"/>
+  <rect x="0" y="0" width="6" height="547" fill="#1D2A30"/>
+
+  <g font-family="SFMono-Regular, Menlo, Consolas, monospace">
+    <rect x="26" y="31" width="352" height="80" rx="4" stroke="#2DD4BF" stroke-width="2"/>
+    <text x="38" y="63" fill="#CBD5E1" font-size="14" font-weight="700">Angular Enterprise Starter</text>
+    <text x="38" y="89" fill="#8B9BA7" font-size="14">Evolution CLI</text>
+
+    <text x="23" y="167" fill="#CBD5E1" font-size="14" font-weight="700">Composable Angular starter capabilities.</text>
+    <text x="23" y="193" fill="#CBD5E1" font-size="14" font-weight="700">Preview first.</text>
+    <text x="157" y="193" fill="#22C55E" font-size="14" font-weight="700">Apply</text>
+    <text x="211" y="193" fill="#CBD5E1" font-size="14" font-weight="700">when ready.</text>
+
+    <line x1="23" y1="266" x2="505" y2="266" stroke="#7B8994" stroke-width="1.2" stroke-dasharray="4 4"/>
+    <text x="23" y="297" fill="#CBD5E1" font-size="14" font-weight="700">Choose an evolution</text>
+    <line x1="23" y1="318" x2="505" y2="318" stroke="#7B8994" stroke-width="1.2" stroke-dasharray="4 4"/>
+
+    <text x="23" y="349" fill="#2DD4BF" font-size="14" font-weight="700">1.</text>
+    <text x="47" y="349" fill="#CBD5E1" font-size="14" font-weight="700">SignalStore</text>
+    <text x="47" y="375" fill="#8B9BA7" font-size="14">Feature-scoped NgRx SignalStore baseline.</text>
+
+    <text x="23" y="401" fill="#2DD4BF" font-size="14" font-weight="700">2.</text>
+    <text x="47" y="401" fill="#CBD5E1" font-size="14" font-weight="700">Docker SSR</text>
+    <text x="47" y="427" fill="#8B9BA7" font-size="14">SSR-oriented Docker deployment baseline.</text>
+
+    <text x="23" y="453" fill="#2DD4BF" font-size="14" font-weight="700">3.</text>
+    <text x="47" y="453" fill="#CBD5E1" font-size="14" font-weight="700">Bootstrap</text>
+    <text x="47" y="479" fill="#8B9BA7" font-size="14">Bootstrap design-system baseline.</text>
+
+    <text x="23" y="532" fill="#CBD5E1" font-size="14" font-weight="700">Select evolution</text>
+  </g>
+</svg>
