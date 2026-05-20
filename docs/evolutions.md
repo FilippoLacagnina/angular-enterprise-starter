@@ -7,6 +7,8 @@
 - [Branch strategy](#branch-strategy)
 - [Evolution versioning](#evolution-versioning)
 - [Merge strategy](#merge-strategy)
+- [Documentation strategy](#documentation-strategy)
+- [Evolution CLI model](#evolution-cli-model)
 - [Implemented evolution branches](#implemented-evolution-branches)
 - [Planned evolution branches](#planned-evolution-branches)
 - [Usage model](#usage-model)
@@ -60,7 +62,7 @@ Each evolution branch should:
 - start from `main`
 - focus on one capability
 - avoid mixing unrelated concerns
-- include dedicated documentation
+- link to canonical documentation on `main`
 - remain optional for consumers
 - be clearly marked as WIP until validated
 
@@ -74,8 +76,8 @@ Each implemented evolution branch declares the `main` baseline version it is com
 Example:
 
 ```text
-main                  -> v0.2.0-alpha.0
-evo/i18n/transloco    -> compatible with v0.2.0-alpha.0
+main                  -> v0.3.0-alpha.0
+evo/i18n/transloco    -> compatible with v0.3.0-alpha.0
 ```
 
 This keeps versioning simple while the starter is still in alpha and avoids creating separate release lifecycles for optional variants.
@@ -99,22 +101,63 @@ Common shared files that may become merge points:
 - `src/app/app.routes.ts`
 - root documentation files
 
+## Documentation strategy
+
+The `main` branch is the source of truth for documentation.
+
+Evolution branches contain focused implementation variants.
+They should not become independent documentation sources.
+
+Canonical documentation lives under:
+
+```text
+docs/
+docs/evolutions/
+```
+
+This keeps documentation readable from every branch and reduces merge conflicts between optional evolutions.
+
+Recommended rules:
+
+- Keep general documentation on `main`.
+- Keep evolution-specific guides under `docs/evolutions/` on `main`.
+- Link from README files to canonical `main` documentation.
+- Avoid duplicating full guides inside every `evo/*` branch.
+- When an evolution changes behavior, update the canonical guide before or together with the merge to `main`.
+- If a branch needs a local note, keep it short and point back to the canonical documentation.
+
+## Evolution CLI model
+
+The Evolution CLI is part of the `main` tooling baseline.
+It is not treated as an optional evolution branch once merged into `main`.
+
+The CLI provides a guided path for selected capabilities:
+
+```text
+preview -> review impact -> apply
+```
+
+Use the CLI when an installer exists for the desired capability.
+Use `evo/*` branches when a capability is not CLI-installable yet, or when the full reference implementation should be reviewed manually.
+
+Every CLI installer must stay aligned with its related reference branch and with the dedicated [Evolution CLI guide](./schematics.md).
+
 ## Implemented evolution branches
 
 > [!IMPORTANT]
 > Implemented evolution branches are available optional baselines and should be reviewed before starting a new project.
 
-| Branch                                                                                                                                         | Area          | Description                                                            | Compatible baseline | Expected merge points                                                              | Status      |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------- | ----------- |
-| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`               | Implemented |
-| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config files | Implemented |
-| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | design system | Angular Material component baseline.                                   | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | design system | PrimeNG component baseline.                                            | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss`    | Implemented |
-| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | design system | Tailwind CSS styling baseline.                                         | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`          | Implemented |
-| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | design system | Bootstrap-based styling baseline.                                      | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                             | Implemented |
-| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.2.0-alpha.0`    | `Dockerfile`, `.dockerignore`, root documentation files                            | Implemented |
-| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | state         | NgRx SignalStore feature-first state management baseline.              | `v0.2.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files, root documentation     | Implemented |
-| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.2.0-alpha.0`    | `package.json`, `README.md`, `docs/dependency-monitoring.md`, `tools/`             | Implemented |
+| Branch                                                                                                                                         | Guide                                          | Area          | Description                                                            | Compatible baseline | Expected merge points                                                           | Status      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------- | ---------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- | ----------- |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | [Guide](./evolutions/i18n-transloco.md)        | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
+| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | [Guide](./evolutions/runtime-config.md)        | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config    | Implemented |
+| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | [Guide](./evolutions/angular-material.md)      | design system | Angular Material component baseline.                                   | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | [Guide](./evolutions/primeng.md)               | design system | PrimeNG component baseline.                                            | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
+| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | [Guide](./evolutions/tailwind.md)              | design system | Tailwind CSS styling baseline.                                         | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`       | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | [Guide](./evolutions/bootstrap.md)             | design system | Bootstrap-based styling baseline.                                      | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | [Guide](./evolutions/docker-ssr.md)            | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.3.0-alpha.0`    | `Dockerfile`, `.dockerignore`                                                   | Implemented |
+| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | [Guide](./evolutions/signal-store.md)          | state         | NgRx SignalStore feature-first state management baseline.              | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files                      | Implemented |
+| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | [Guide](./evolutions/dependency-monitoring.md) | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.3.0-alpha.0`    | `package.json`, `README.md`, `tools/`                                           | Implemented |
 
 ## Planned evolution branches
 
@@ -132,6 +175,12 @@ Common shared files that may become merge points:
 ## Usage model
 
 Consumers can start from `main` when they want the cleanest possible baseline.
+
+When a capability is available through the Evolution CLI, consumers can preview and apply it directly from the starter:
+
+```bash
+npm run starter:evolution
+```
 
 Consumers can start from an evolution branch when they want a specific optional capability already integrated.
 
@@ -178,7 +227,8 @@ compare: feature/i18n/add-locale-docs
 - Declare the compatible `main` baseline for every implemented evolution branch.
 - Prefer additive-first changes and keep shared file edits intentional.
 - List expected merge points for every implemented evolution branch.
-- Document what each evolution branch adds.
+- Document what each evolution adds in the canonical `main` documentation.
 - Prefer composable changes that can be merged with other evolution branches.
 - Mark branches as WIP until their setup, documentation and quality checks are validated.
+- Keep CLI installers aligned with their reference branches and `docs/schematics.md`.
 - Avoid creating too many branches without maintenance capacity.
