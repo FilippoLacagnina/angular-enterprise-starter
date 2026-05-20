@@ -59,16 +59,15 @@ It lets teams select optional capabilities, preview the impact and apply validat
 npm run starter:evolution
 ```
 
-<p align="center">
-  <img src="./docs/assets/evolution-cli-preview.svg" alt="Angular Enterprise Starter Evolution CLI preview" width="620" />
-</p>
+![Angular Enterprise Starter CLI](./docs/assets/starter-evolution-cli.svg)
 
 The CLI focuses on three principles:
 
-| Principle     | What it means                                                     |
-| ------------- | ----------------------------------------------------------------- |
-| Preview first | Show files to create/update before touching the workspace.        |
-| Apply safely  | Stop before overwriting existing files or ambiguous project code. |
+| Principle            | What it means                                                     |
+| -------------------- | ----------------------------------------------------------------- |
+| Preview first        | Show files to create/update before touching the workspace.        |
+| Apply safely         | Stop before overwriting existing files or ambiguous project code. |
+| Parametrized choices | Ask for explicit options when an evolution needs project context. |
 
 First CLI installers:
 
@@ -80,7 +79,7 @@ First CLI installers:
 
 Additional installers are in active development and will be added progressively as evolutions are validated.
 
-Detailed command usage is intentionally kept out of the README and documented in the dedicated schematics guide.
+Detailed command usage is intentionally kept out of the README and documented in the dedicated [Evolution CLI guide](./docs/schematics.md).
 
 ## Current Release
 
@@ -233,6 +232,7 @@ Canonical documentation is maintained on `main` and is intended to be readable f
 - [State Management](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/state-management.md)
 - [Testing Strategy](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/testing.md)
 - [Evolutions](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions.md)
+- [Evolution CLI](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md)
 - [Versioning](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/versioning.md)
 - [Current Status](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/current-status.md)
 - [Roadmap](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/ROADMAP.md)

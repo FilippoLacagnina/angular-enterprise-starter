@@ -8,6 +8,7 @@
 - [Evolution versioning](#evolution-versioning)
 - [Merge strategy](#merge-strategy)
 - [Documentation strategy](#documentation-strategy)
+- [Evolution CLI model](#evolution-cli-model)
 - [Implemented evolution branches](#implemented-evolution-branches)
 - [Planned evolution branches](#planned-evolution-branches)
 - [Usage model](#usage-model)
@@ -125,6 +126,22 @@ Recommended rules:
 - When an evolution changes behavior, update the canonical guide before or together with the merge to `main`.
 - If a branch needs a local note, keep it short and point back to the canonical documentation.
 
+## Evolution CLI model
+
+The Evolution CLI is part of the `main` tooling baseline.
+It is not treated as an optional evolution branch once merged into `main`.
+
+The CLI provides a guided path for selected capabilities:
+
+```text
+preview -> review impact -> apply
+```
+
+Use the CLI when an installer exists for the desired capability.
+Use `evo/*` branches when a capability is not CLI-installable yet, or when the full reference implementation should be reviewed manually.
+
+Every CLI installer must stay aligned with its related reference branch and with the dedicated [Evolution CLI guide](./schematics.md).
+
 ## Implemented evolution branches
 
 > [!IMPORTANT]
@@ -153,12 +170,17 @@ Recommended rules:
 | `evo/design-system/primeng-tailwind` | design system | PrimeNG and Tailwind CSS integrated baseline.                   | WIP    |
 | `evo/deployment/docker-compose`      | deployment    | Docker Compose baseline for SSR and runtime config mounting.    | WIP    |
 | `evo/state/ngrx-store`               | state         | Classic NgRx Store baseline with actions, reducers and effects. | WIP    |
-| `evo/tooling/schematics`             | tooling       | Guided Evolution CLI for previewing and applying capabilities.  | WIP    |
 | `evo/auth/oidc`                      | auth          | OIDC authentication baseline.                                   | WIP    |
 
 ## Usage model
 
 Consumers can start from `main` when they want the cleanest possible baseline.
+
+When a capability is available through the Evolution CLI, consumers can preview and apply it directly from the starter:
+
+```bash
+npm run starter:evolution
+```
 
 Consumers can start from an evolution branch when they want a specific optional capability already integrated.
 
@@ -208,4 +230,5 @@ compare: feature/i18n/add-locale-docs
 - Document what each evolution adds in the canonical `main` documentation.
 - Prefer composable changes that can be merged with other evolution branches.
 - Mark branches as WIP until their setup, documentation and quality checks are validated.
+- Keep CLI installers aligned with their reference branches and `docs/schematics.md`.
 - Avoid creating too many branches without maintenance capacity.
