@@ -1,6 +1,6 @@
 {
   "name": "angular-enterprise-starter",
-  "version": "0.2.0-alpha.0",
+  "version": "0.3.0-alpha.0",
   "description": "Enterprise-ready Angular 21 starter with modular architecture, SSR, environments, API patterns, CI and documentation-first conventions.",
   "author": "Filippo Lacagnina",
   "repository": {
@@ -49,8 +49,11 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "starter:cleanup": "node tools/starter-cleanup.mjs",
     "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
+    "starter:evolution": "node tools/schematics/starter-evolution.mjs",
     "test": "ng test",
-    "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs"
+    "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs",
+    "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics/copy-assets.mjs",
+    "schematics:test": "vitest run tools/schematics"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
@@ -70,6 +73,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-devkit/schematics": "^21.2.11",
     "@angular/build": "^21.2.3",
     "@angular/cli": "^21.2.3",
     "@angular/compiler-cli": "^21.2.0",

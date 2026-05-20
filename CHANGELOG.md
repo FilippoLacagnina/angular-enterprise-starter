@@ -2,11 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
-The project is currently private and in alpha pre-release.
+The project is public and currently in alpha pre-release.
 
 ## Unreleased
 
 No unreleased changes yet.
+
+## 0.3.0-alpha.0 - 2026-05-20
+
+Centralized documentation and Evolution CLI preview.
+
+### Added
+
+- Added centralized evolution documentation on `main`.
+- Added dedicated guides for implemented `evo/*` branches.
+- Added Evolution CLI documentation and README positioning.
+- Added Evolution CLI preview visuals.
+- Added `docs/schematics.md` as the canonical CLI/schematics guide.
+
+### Changed
+
+- Updated README to highlight the Evolution CLI as the guided path for optional capabilities.
+- Clarified that the Evolution CLI becomes part of the `main` tooling baseline once merged.
+- Clarified when to use CLI installers and when to use `evo/*` reference branches.
+- Updated architecture and starter visuals.
+- Updated package metadata to `0.3.0-alpha.0`.
 
 ## 0.2.0-alpha.0 - 2026-05-17
 

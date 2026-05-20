@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "ng-add": {
+      "description": "Enable Angular Enterprise Starter tooling in a compatible baseline.",
+      "factory": "./ng-add/index#ngAdd"
+    },
+    "evolution": {
+      "description": "Select and install an Angular Enterprise Starter evolution.",
+      "factory": "./evolution/index#evolution",
+      "schema": "./evolution/schema.json"
+    }
+  }
+}
