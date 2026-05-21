@@ -51,9 +51,12 @@ See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented 
 
 ## Evolution CLI
 
-The Evolution CLI is the guided layer that makes the starter composable without turning `main` into an all-in-one template.
+The Evolution CLI is the recommended path when an installer exists.
+Compared with using an `evo/*` branch directly, it provides a richer guided flow with preview, parametrized choices, repeatable generators and safety checks.
 
 It lets teams select optional capabilities, preview the impact and apply validated evolutions through a safer parametrized workflow.
+
+`evo/*` branches remain useful as reference implementations, manual merge targets and fallbacks for capabilities that are not CLI-installable yet.
 
 ```bash
 npm run starter:evolution
@@ -75,11 +78,11 @@ First CLI installers:
 | ----------- | ---------------------------------------------------------------------------------------- |
 | SignalStore | Generate feature/root stores with route provider registration and safe target detection. |
 | Docker SSR  | Add an SSR-oriented Docker deployment baseline.                                          |
-| Bootstrap   | Add a minimal Bootstrap design-system baseline.                                          |
+| Bootstrap   | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
 
 Additional installers are in active development and will be added progressively as evolutions are validated.
 
-Detailed command usage is intentionally kept out of the README and documented in the dedicated [Evolution CLI guide](./docs/schematics.md).
+Detailed command usage is intentionally kept out of the README and documented in the dedicated [Evolution CLI guide](./docs/schematics.md), with installer-specific guides under `docs/evolution-cli/`.
 
 ## Current Release
 

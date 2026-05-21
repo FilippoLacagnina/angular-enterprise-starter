@@ -140,7 +140,10 @@ preview -> review impact -> apply
 Use the CLI when an installer exists for the desired capability.
 Use `evo/*` branches when a capability is not CLI-installable yet, or when the full reference implementation should be reviewed manually.
 
-Every CLI installer must stay aligned with its related reference branch and with the dedicated [Evolution CLI guide](./schematics.md).
+The CLI can provide more functionality than the related branch because it can ask for dynamic choices, generate only selected files, skip already installed pieces, detect unsafe partial states and keep starter metadata aligned.
+The `evo/*` branch remains the implementation reference and manual fallback.
+
+Every CLI installer must stay aligned with its related reference branch, the dedicated [Evolution CLI guide](./schematics.md) and its installer-specific guide under `docs/evolution-cli/`.
 
 ## Implemented evolution branches
 
@@ -181,6 +184,8 @@ When a capability is available through the Evolution CLI, consumers can preview 
 ```bash
 npm run starter:evolution
 ```
+
+This is the recommended path for CLI-installable capabilities because it provides guided parametrization and safer repeatable generation.
 
 Consumers can start from an evolution branch when they want a specific optional capability already integrated.
 
