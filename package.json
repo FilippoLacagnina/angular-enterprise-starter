@@ -1,6 +1,6 @@
 {
   "name": "angular-enterprise-starter",
-  "version": "0.3.0-alpha.0",
+  "version": "0.4.0-alpha.0",
   "description": "Enterprise-ready Angular 21 starter with modular architecture, SSR, environments, API patterns, CI and documentation-first conventions.",
   "author": "Filippo Lacagnina",
   "repository": {

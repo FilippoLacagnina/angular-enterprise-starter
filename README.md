@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 ![Evolution CLI](https://img.shields.io/badge/Evolution%20CLI-preview%20%7C%20apply-0f766e?logo=gnubash&logoColor=white)
-[![Evolution CLI npm alpha](https://img.shields.io/npm/v/%40filippolacagnina%2Fangular-enterprise-starter/alpha?label=Evolution%20CLI%20npm%20alpha&logo=npm&color=cb3837)](https://www.npmjs.com/package/@filippolacagnina/angular-enterprise-starter)
+![Evolution CLI npm alpha](https://img.shields.io/badge/Evolution%20CLI%20npm-alpha%20soon-cb3837?logo=npm&logoColor=white)
 
 **Available Evolutions**
 
@@ -97,7 +97,7 @@ Detailed command usage is intentionally kept out of the README and documented in
 ## Current Release
 
 ```text
-v0.3.0-alpha.0 - Centralized documentation and Evolution CLI preview
+v0.4.0-alpha.0 - Versioned Evolution CLI npm package
 ```
 
 Current evolution branches:
@@ -141,7 +141,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.3.0-alpha.0`
+- public alpha release: `v0.4.0-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)

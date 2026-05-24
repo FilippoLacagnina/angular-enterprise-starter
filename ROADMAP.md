@@ -6,6 +6,18 @@ This roadmap tracks public alpha work before the first stable release.
 
 Public alpha Evolution CLI work.
 
+## Milestone 0.4.0-alpha.0
+
+Goal: publish the Evolution CLI as a versioned npm package while keeping the root starter as a GitHub baseline.
+
+### Scope
+
+- Keep the root Angular starter package private.
+- Package the Evolution CLI separately under `@filippolacagnina/angular-enterprise-starter`.
+- Publish alpha versions with the npm `alpha` dist-tag.
+- Support consumer repositories that remove local installer tooling.
+- Keep CLI package documentation linked back to the starter documentation.
+
 ## Milestone 0.3.0-alpha.0
 
 Goal: centralize evolution documentation and introduce the Evolution CLI as the guided installation model.

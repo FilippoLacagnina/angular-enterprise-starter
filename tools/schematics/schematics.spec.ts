@@ -452,7 +452,7 @@ function createStarterTree(enabledEvolutions: readonly string[] = []): Tree {
     JSON.stringify(
       {
         schemaVersion: 1,
-        baselineVersion: '0.3.0-alpha.0',
+        baselineVersion: '0.4.0-alpha.0',
         enabledEvolutions,
       },
       null,
