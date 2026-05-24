@@ -4,6 +4,7 @@
 
 - [Purpose](#purpose)
 - [Recommended flow](#recommended-flow)
+- [Usage channels](#usage-channels)
 - [Installable evolutions](#installable-evolutions)
 - [Command usage](#command-usage)
 - [Installer guides](#installer-guides)
@@ -61,6 +62,27 @@ preview -> review impact -> apply
 Preview should be the default workflow during development.
 Apply should be used only after the generated changes are understood.
 
+## Usage channels
+
+The Evolution CLI can be used through two channels.
+
+| Channel             | Command                                                            | Best for                                                                 |
+| ------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| Local starter tools | `npm run starter:evolution`                                        | Maintainers and fresh clones that still keep the local installer source. |
+| Versioned package   | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` | Product repositories that removed local installer tooling.               |
+
+The versioned package is the long-term consumer path.
+It lets teams remove local schematic sources from their product repository while still receiving newer installer behavior through npm.
+
+When testing a local package build before publishing, use the generated tarball:
+
+```bash
+npm run evolution-cli:pack
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.3.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name bootstrap --preview
+```
+
 ## Installable evolutions
 
 | Evolution   | Name           | Status      | Guide                                    | Notes                                           |
@@ -82,10 +104,17 @@ Interactive mode:
 npm run starter:evolution
 ```
 
+Package mode:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
+
 Version check:
 
 ```bash
 npm run starter:evolution -- --version
+npx @filippolacagnina/angular-enterprise-starter@alpha --version
 ```
 
 Preview examples:
@@ -94,6 +123,7 @@ Preview examples:
 npm run starter:evolution -- --name signal-store --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview
 ```
 
 Apply examples:
@@ -193,6 +223,8 @@ If it exists, update:
 - `docs/schematics.md` when the installer list changes;
 - the related `docs/evolution-cli/*` guide.
 
+When installer behavior changes and the package is intended for consumers, also rebuild and publish a new npm package version.
+
 Current CLI/reference branch mapping:
 
 | Evolution   | Reference branch              | CLI guide                                |
@@ -209,18 +241,20 @@ Schematics-related tooling lives under:
 
 ```text
 tools/schematics/
+tools/evolution-cli-package/
 ```
 
 Main areas:
 
-| Path                                         | Purpose                                   |
-| -------------------------------------------- | ----------------------------------------- |
-| `tools/schematics/starter-evolution.mjs`     | Local Evolution CLI wrapper.              |
-| `tools/schematics/evolution/`                | Angular schematic entrypoint and schema.  |
-| `tools/schematics/evolutions/`               | Installer implementations and registry.   |
-| `tools/schematics/evolutions/design-system/` | Shared design-system installer utilities. |
-| `tools/schematics/shared/`                   | Shared schematic utilities.               |
-| `tools/schematics/schematics.spec.ts`        | Schematic tests.                          |
+| Path                                         | Purpose                                            |
+| -------------------------------------------- | -------------------------------------------------- |
+| `tools/schematics/starter-evolution.mjs`     | Local and packaged Evolution CLI wrapper.          |
+| `tools/schematics/evolution/`                | Angular schematic entrypoint and schema.           |
+| `tools/schematics/evolutions/`               | Installer implementations and registry.            |
+| `tools/schematics/evolutions/design-system/` | Shared design-system installer utilities.          |
+| `tools/schematics/shared/`                   | Shared schematic utilities.                        |
+| `tools/schematics/schematics.spec.ts`        | Schematic tests.                                   |
+| `tools/evolution-cli-package/`               | npm package template for the versioned CLI bundle. |
 
 The cleanup tool remains outside `tools/schematics/` because it is starter-maintenance tooling, not schematic installation tooling.
 
@@ -231,6 +265,7 @@ After changing schematics, CLI behavior or CLI documentation, run:
 ```bash
 npm run schematics:build
 npm run schematics:test
+npm run evolution-cli:pack
 npm run format:check
 npm run lint
 ```
@@ -243,6 +278,14 @@ npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select 
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name signal-store --preview --store-scope feature --feature-name dashboard
 npm run starter:evolution -- --name signal-store --preview --store-scope root --store-name session
+```
+
+Recommended package smoke checks:
+
+```bash
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.3.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 ```
 
 For real apply testing, use a temporary copy of the repository, then run:

@@ -131,6 +131,12 @@ Recommended rules:
 The Evolution CLI is part of the `main` tooling baseline.
 It is not treated as an optional evolution branch once merged into `main`.
 
+For product repositories, local installer sources can be removed with consumer cleanup and the CLI can continue to be used through the versioned npm package:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
+
 The CLI provides a guided path for selected capabilities:
 
 ```text
@@ -186,6 +192,12 @@ npm run starter:evolution
 ```
 
 This is the recommended path for CLI-installable capabilities because it provides guided parametrization and safer repeatable generation.
+
+If local installer tooling has been removed from the project repository, use the versioned package instead:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
 
 Consumers can start from an evolution branch when they want a specific optional capability already integrated.
 

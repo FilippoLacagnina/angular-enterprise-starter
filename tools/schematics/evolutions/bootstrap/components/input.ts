@@ -14,7 +14,7 @@ type BootstrapInputSize = 'sm' | 'md' | 'lg';
 type BootstrapInputType = 'text' | 'email' | 'password' | 'number' | 'search' | 'tel' | 'url';
 
 @Component({
-  selector: 'aes-bootstrap-input',
+  selector: 'app-bootstrap-input',
   imports: [],
   templateUrl: './input.html',
   styleUrl: './input.scss',
@@ -26,11 +26,11 @@ export class BootstrapInput {
   readonly type = input<BootstrapInputType>('text');
   readonly value = input('');
   readonly placeholder = input('');
-  readonly ariaLabel = input<string | null>(null, { alias: 'aria-label' });
-  readonly describedBy = input<string | null>(null, { alias: 'aria-describedby' });
+  readonly ariaLabel = input<string | null>(null);
+  readonly describedBy = input<string | null>(null);
   readonly size = input<BootstrapInputSize>('md');
   readonly disabled = input(false, { transform: booleanAttribute });
-  readonly readOnly = input(false, { alias: 'readonly', transform: booleanAttribute });
+  readonly readOnly = input(false, { transform: booleanAttribute });
 
   readonly valueChange = output<string>();
 

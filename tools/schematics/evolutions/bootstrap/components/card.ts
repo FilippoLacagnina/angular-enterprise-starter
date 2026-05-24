@@ -13,7 +13,7 @@ export const bootstrapCardDefinition: BootstrapComponentDefinition = {
 type BootstrapCardImagePosition = 'top' | 'bottom';
 
 @Component({
-  selector: 'aes-bootstrap-card',
+  selector: 'app-bootstrap-card',
   imports: [],
   templateUrl: './card.html',
   styleUrl: './card.scss',

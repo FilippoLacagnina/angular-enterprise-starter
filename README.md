@@ -13,6 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 ![Evolution CLI](https://img.shields.io/badge/Evolution%20CLI-preview%20%7C%20apply-0f766e?logo=gnubash&logoColor=white)
+[![Evolution CLI npm alpha](https://img.shields.io/npm/v/%40filippolacagnina%2Fangular-enterprise-starter/alpha?label=Evolution%20CLI%20npm%20alpha&logo=npm&color=cb3837)](https://www.npmjs.com/package/@filippolacagnina/angular-enterprise-starter)
 
 **Available Evolutions**
 
@@ -57,6 +58,15 @@ Compared with using an `evo/*` branch directly, it provides a richer guided flow
 It lets teams select optional capabilities, preview the impact and apply validated evolutions through a safer parametrized workflow.
 
 `evo/*` branches remain useful as reference implementations, manual merge targets and fallbacks for capabilities that are not CLI-installable yet.
+
+| Usage mode          | Command                                                            |
+| ------------------- | ------------------------------------------------------------------ |
+| Local starter clone | `npm run starter:evolution`                                        |
+| Versioned npm CLI   | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` |
+
+> [!TIP]
+> During alpha, use the `@alpha` npm tag for the versioned CLI package.
+> This is the recommended flow after removing local installer tooling from a product repository.
 
 ```bash
 npm run starter:evolution
@@ -195,6 +205,20 @@ npm run starter:cleanup:apply
 The cleanup script removes starter community and planning files only.
 It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
 
+For product repositories that should not keep local installer sources, use consumer mode after the project baseline is ready:
+
+```bash
+npm run starter:cleanup:consumer
+```
+
+Consumer mode removes local installer tooling while keeping evolutions available through:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
+
+This is the recommended long-term flow for real product repositories: keep the application clean, then receive newer installer behavior from the versioned npm package.
+
 ## Evolutions Catalog
 
 See [Evolutions](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions.md) for the complete branch catalog, implemented variants, planned variants, compatibility notes and maintenance rules.
@@ -203,17 +227,18 @@ See [Evolutions](https://github.com/FilippoLacagnina/angular-enterprise-starter/
 
 Essential commands for working with the starter:
 
-| Command                         | Purpose                                                        |
-| ------------------------------- | -------------------------------------------------------------- |
-| `npm run start`                 | Start the local development server.                            |
-| `npm run build`                 | Generate the production browser/server bundle.                 |
-| `npm run test`                  | Run the test suite.                                            |
-| `npm run lint`                  | Run ESLint checks.                                             |
-| `npm run format:check`          | Verify Prettier formatting.                                    |
-| `npm run serve:ssr`             | Run the generated SSR server after a build.                    |
-| `npm run starter:evolution`     | Open the guided Evolution CLI.                                 |
-| `npm run starter:cleanup`       | Preview starter-only files that can be removed after cloning.  |
-| `npm run starter:cleanup:apply` | Remove starter-only files after reviewing the cleanup preview. |
+| Command                            | Purpose                                                        |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `npm run start`                    | Start the local development server.                            |
+| `npm run build`                    | Generate the production browser/server bundle.                 |
+| `npm run test`                     | Run the test suite.                                            |
+| `npm run lint`                     | Run ESLint checks.                                             |
+| `npm run format:check`             | Verify Prettier formatting.                                    |
+| `npm run serve:ssr`                | Run the generated SSR server after a build.                    |
+| `npm run starter:evolution`        | Open the guided Evolution CLI.                                 |
+| `npm run starter:cleanup`          | Preview starter-only files that can be removed after cloning.  |
+| `npm run starter:cleanup:apply`    | Remove starter-only files after reviewing the cleanup preview. |
+| `npm run starter:cleanup:consumer` | Remove local installer tooling from product repositories.      |
 
 Environment-specific scripts such as `start:dev`, `build:test` and `build:prod` are available in `package.json` and documented in [Configuration](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/configuration.md).
 
@@ -276,7 +301,8 @@ Evolution guides are centralized on `main`; evolution branches should focus on i
 ## Alpha Notes
 
 The repository is public and currently in alpha pre-release.
-The package remains marked as `private` to prevent accidental npm publication.
+The root Angular starter application remains marked as `private` to prevent accidental npm publication.
+The Evolution CLI is packaged separately for npm usage.
 
 Before the first stable release:
 

@@ -82,11 +82,11 @@ button,input,card
 
 | Component | Selector               | Generated path                                 |
 | --------- | ---------------------- | ---------------------------------------------- |
-| `alert`   | `aes-bootstrap-alert`  | `shared/components/bootstrap/alert/alert.ts`   |
-| `badge`   | `aes-bootstrap-badge`  | `shared/components/bootstrap/badge/badge.ts`   |
-| `button`  | `aes-bootstrap-button` | `shared/components/bootstrap/button/button.ts` |
-| `card`    | `aes-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
-| `input`   | `aes-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
+| `alert`   | `app-bootstrap-alert`  | `shared/components/bootstrap/alert/alert.ts`   |
+| `badge`   | `app-bootstrap-badge`  | `shared/components/bootstrap/badge/badge.ts`   |
+| `button`  | `app-bootstrap-button` | `shared/components/bootstrap/button/button.ts` |
+| `card`    | `app-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
+| `input`   | `app-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
 
 ## Wrapper API
 
@@ -102,13 +102,13 @@ Generated wrappers expose only a small starter-owned API surface.
 Button:
 
 ```html
-<aes-bootstrap-button variant="primary">Save</aes-bootstrap-button>
+<app-bootstrap-button variant="primary">Save</app-bootstrap-button>
 ```
 
 Input:
 
 ```html
-<aes-bootstrap-input
+<app-bootstrap-input
   id="email"
   label="Email"
   type="email"
@@ -119,26 +119,26 @@ Input:
 Card:
 
 ```html
-<aes-bootstrap-card
+<app-bootstrap-card
   title="Dashboard"
   subtitle="Overview"
   imageSrc="assets/images/dashboard.png"
   imageAlt="Dashboard preview"
 >
   Dashboard content
-</aes-bootstrap-card>
+</app-bootstrap-card>
 ```
 
 Alert:
 
 ```html
-<aes-bootstrap-alert variant="warning">Review pending configuration.</aes-bootstrap-alert>
+<app-bootstrap-alert variant="warning">Review pending configuration.</app-bootstrap-alert>
 ```
 
 Badge:
 
 ```html
-<aes-bootstrap-badge variant="success">Active</aes-bootstrap-badge>
+<app-bootstrap-badge variant="success">Active</app-bootstrap-badge>
 ```
 
 ## Repeatable usage

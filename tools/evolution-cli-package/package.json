@@ -1,0 +1,45 @@
+{
+  "name": "@filippolacagnina/angular-enterprise-starter",
+  "version": "0.3.0-alpha.0",
+  "description": "Versioned Evolution CLI and schematics for Angular Enterprise Starter.",
+  "author": "Filippo Lacagnina",
+  "license": "MIT",
+  "bin": {
+    "angular-enterprise-starter": "./bin/angular-enterprise-starter.mjs",
+    "aes": "./bin/angular-enterprise-starter.mjs"
+  },
+  "schematics": "./schematics/collection.json",
+  "files": [
+    "bin/",
+    "schematics/",
+    "package.json",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FilippoLacagnina/angular-enterprise-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FilippoLacagnina/angular-enterprise-starter/issues"
+  },
+  "homepage": "https://github.com/FilippoLacagnina/angular-enterprise-starter#readme",
+  "keywords": [
+    "angular",
+    "angular-starter",
+    "schematics",
+    "cli",
+    "enterprise",
+    "starter",
+    "signals",
+    "ssr"
+  ],
+  "dependencies": {
+    "@angular-devkit/schematics": "^21.2.11"
+  },
+  "peerDependencies": {
+    "@angular/cli": ">=21 <22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -56,11 +56,11 @@ Available starter-owned wrapper components:
 
 | Component | Selector               | Generated path                                 |
 | --------- | ---------------------- | ---------------------------------------------- |
-| `alert`   | `aes-bootstrap-alert`  | `shared/components/bootstrap/alert/alert.ts`   |
-| `badge`   | `aes-bootstrap-badge`  | `shared/components/bootstrap/badge/badge.ts`   |
-| `button`  | `aes-bootstrap-button` | `shared/components/bootstrap/button/button.ts` |
-| `card`    | `aes-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
-| `input`   | `aes-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
+| `alert`   | `app-bootstrap-alert`  | `shared/components/bootstrap/alert/alert.ts`   |
+| `badge`   | `app-bootstrap-badge`  | `shared/components/bootstrap/badge/badge.ts`   |
+| `button`  | `app-bootstrap-button` | `shared/components/bootstrap/button/button.ts` |
+| `card`    | `app-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
+| `input`   | `app-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
 
 The generated wrappers intentionally expose a small API:
 

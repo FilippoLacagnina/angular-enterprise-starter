@@ -155,7 +155,7 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(result.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_CARD_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_INPUT_PATH)).toBe(true);
-    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain("selector: 'aes-bootstrap-button'");
+    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain("selector: 'app-bootstrap-button'");
     expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain('readonly variant = input');
     expect(readText(result, BOOTSTRAP_CARD_PATH)).toContain('readonly imageSrc = input');
     expect(readText(result, BOOTSTRAP_CARD_TEMPLATE_PATH)).toContain('card-img-top');

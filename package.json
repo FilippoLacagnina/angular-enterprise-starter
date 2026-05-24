@@ -49,11 +49,14 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,html,scss,css,json,md,yml,yaml}\"",
     "starter:cleanup": "node tools/starter-cleanup.mjs",
     "starter:cleanup:apply": "node tools/starter-cleanup.mjs --yes",
+    "starter:cleanup:consumer": "node tools/starter-cleanup.mjs --yes --consumer-mode",
     "starter:evolution": "node tools/schematics/starter-evolution.mjs",
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs",
     "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics/copy-assets.mjs",
-    "schematics:test": "vitest run tools/schematics"
+    "schematics:test": "vitest run tools/schematics",
+    "evolution-cli:package": "npm run schematics:build && node tools/evolution-cli-package/build.mjs",
+    "evolution-cli:pack": "npm run evolution-cli:package && npm pack ./dist/evolution-cli-package --pack-destination ./dist --cache ./dist/.npm-cache"
   },
   "private": true,
   "packageManager": "npm@11.9.0",

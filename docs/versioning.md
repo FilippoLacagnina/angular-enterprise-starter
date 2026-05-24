@@ -28,7 +28,15 @@ The package remains marked as private:
 ```
 
 This does not prevent the GitHub repository from becoming public.
-It only prevents accidental publication to npm.
+It only prevents accidental publication of the Angular starter application itself to npm.
+
+The Evolution CLI is packaged separately under:
+
+```text
+@filippolacagnina/angular-enterprise-starter
+```
+
+That package can be published to npm while the root starter application remains private.
 
 Current Git tag:
 
@@ -113,7 +121,45 @@ v0.3.0-alpha.0 - Centralized documentation and Evolution CLI preview
 
 ## npm publication
 
-This repository is currently intended as a GitHub starter/template, not as an npm package.
+The root Angular application remains a GitHub starter/template and should stay marked as private.
 
-Keep `private: true` unless there is a clear decision to publish a package to npm.
-(wip)
+The versioned npm surface is the Evolution CLI package assembled from:
+
+```text
+tools/evolution-cli-package/
+```
+
+Build and pack it locally before publication:
+
+```bash
+npm run evolution-cli:pack
+```
+
+Publish alpha versions with the `alpha` dist-tag:
+
+```bash
+npm publish ./dist/evolution-cli-package --access public --tag alpha
+```
+
+The generated tarball is created under:
+
+```text
+dist/filippolacagnina-angular-enterprise-starter-<version>.tgz
+```
+
+Before publishing a new CLI package version:
+
+- run schematic tests;
+- run a package smoke test through the generated tarball;
+- test at least one preview flow;
+- test at least one apply flow in a temporary consumer workspace;
+- run `npm install`, `npm run format:check`, `npm run lint` and `npm run build` in that consumer workspace.
+
+The public consumer command is:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
+
+Use npm pre-release versions while the starter is still in alpha.
+Use the `latest` dist-tag only when the starter reaches a stable release line.

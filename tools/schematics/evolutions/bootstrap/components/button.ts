@@ -25,7 +25,7 @@ type BootstrapButtonSize = 'sm' | 'md' | 'lg';
 type BootstrapButtonType = 'button' | 'submit' | 'reset';
 
 @Component({
-  selector: 'aes-bootstrap-button',
+  selector: 'app-bootstrap-button',
   imports: [],
   templateUrl: './button.html',
   styleUrl: './button.scss',

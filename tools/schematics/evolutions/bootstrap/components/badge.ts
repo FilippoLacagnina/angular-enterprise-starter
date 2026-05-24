@@ -21,7 +21,7 @@ type BootstrapBadgeVariant =
   | 'dark';
 
 @Component({
-  selector: 'aes-bootstrap-badge',
+  selector: 'app-bootstrap-badge',
   imports: [],
   templateUrl: './badge.html',
   styleUrl: './badge.scss',

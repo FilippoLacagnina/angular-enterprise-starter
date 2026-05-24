@@ -21,7 +21,7 @@ type BootstrapAlertVariant =
   | 'dark';
 
 @Component({
-  selector: 'aes-bootstrap-alert',
+  selector: 'app-bootstrap-alert',
   imports: [],
   templateUrl: './alert.html',
   styleUrl: './alert.scss',

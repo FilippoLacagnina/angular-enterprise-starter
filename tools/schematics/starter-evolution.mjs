@@ -1,12 +1,17 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { fileURLToPath } from 'node:url';
 
 const STARTER_VERSION = readStarterVersion();
 const CLI_DOCUMENTATION_URL =
   'https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md';
 const HEADER_CONTENT_WIDTH = Math.max(70, CLI_DOCUMENTATION_URL.length - 4);
+const SHOULD_BUILD_LOCAL_SCHEMATICS = process.env['AES_SKIP_SCHEMATICS_BUILD'] !== 'true';
+const SCHEMATICS_COLLECTION_PATH =
+  process.env['AES_SCHEMATICS_COLLECTION_PATH'] ?? './dist/schematics/collection.json';
 
 const EVOLUTIONS = [
   {
@@ -83,15 +88,19 @@ async function main() {
     }
   }
 
-  run('npm', ['run', 'schematics:build'], {
-    title: 'Prepare schematics',
-    description: 'Compile local generators and copy Angular CLI collection assets.',
-  });
+  if (SHOULD_BUILD_LOCAL_SCHEMATICS) {
+    run('npm', ['run', 'schematics:build'], {
+      title: 'Prepare schematics',
+      description: 'Compile local generators and copy Angular CLI collection assets.',
+    });
+  } else {
+    printPackagedSchematicsStep();
+  }
 
   const generateArgs = [
     'ng',
     'generate',
-    './dist/schematics/collection.json:evolution',
+    `${SCHEMATICS_COLLECTION_PATH}:evolution`,
     '--name',
     evolution.name,
   ];
@@ -511,6 +520,13 @@ function printNextSteps(preview) {
   console.log(`${color.cyan('-')} npm run build`);
 }
 
+function printPackagedSchematicsStep() {
+  printSection('Prepare schematics');
+  console.log(color.dim('Use the schematics collection bundled with this CLI package.'));
+  console.log('');
+  console.log(`${color.dim('Collection')} ${color.bold(SCHEMATICS_COLLECTION_PATH)}`);
+}
+
 function printSection(title) {
   console.log('');
   console.log(color.dim('--------------------------------------------------------------'));
@@ -731,9 +747,10 @@ function parseArgs(rawArgs) {
 }
 
 function readStarterVersion() {
-  const packageJson = JSON.parse(
-    readFileSync(new URL('../../package.json', import.meta.url), 'utf8'),
-  );
+  const packageJsonPath =
+    process.env['AES_CLI_PACKAGE_JSON_PATH'] ??
+    resolve(dirname(fileURLToPath(import.meta.url)), '../../package.json');
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
 
   return packageJson.version ?? 'unknown';
 }
