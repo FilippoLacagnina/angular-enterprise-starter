@@ -1,7 +1,17 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { fileURLToPath } from 'node:url';
+
+const STARTER_VERSION = readStarterVersion();
+const CLI_DOCUMENTATION_URL =
+  'https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md';
+const HEADER_CONTENT_WIDTH = Math.max(70, CLI_DOCUMENTATION_URL.length - 4);
+const SHOULD_BUILD_LOCAL_SCHEMATICS = process.env['AES_SKIP_SCHEMATICS_BUILD'] !== 'true';
+const SCHEMATICS_COLLECTION_PATH =
+  process.env['AES_SCHEMATICS_COLLECTION_PATH'] ?? './dist/schematics/collection.json';
 
 const EVOLUTIONS = [
   {
@@ -20,6 +30,15 @@ const EVOLUTIONS = [
     description: 'Bootstrap design-system baseline.',
   },
 ];
+
+const BOOTSTRAP_COMPONENTS = [
+  ['alert', 'Alert', 'Contextual feedback message.'],
+  ['badge', 'Badge', 'Small count or status label.'],
+  ['button', 'Button', 'Action button wrapper.'],
+  ['card', 'Card', 'Content container.'],
+  ['input', 'Input', 'Basic form-control input.'],
+];
+const BOOTSTRAP_DEFAULT_COMPONENTS = 'button,input,card';
 
 const color = {
   bold: (value) => `\x1b[1m${value}\x1b[0m`,
@@ -40,15 +59,17 @@ main().catch((error) => {
 });
 
 async function main() {
+  if (args.version) {
+    console.log(`Angular Enterprise Starter Evolution CLI v${STARTER_VERSION}`);
+    return;
+  }
+
   printHeader();
 
   const shouldAskEvolutionOptions = !args.name;
   const evolutionName = args.name ?? (await askEvolutionName());
   const evolution = getEvolution(evolutionName);
-  const evolutionOptions =
-    evolution.name === 'signal-store'
-      ? await resolveSignalStoreOptions(shouldAskEvolutionOptions)
-      : {};
+  const evolutionOptions = await resolveEvolutionOptions(evolution, shouldAskEvolutionOptions);
   const preview = args.preview ?? (await askPreviewMode());
 
   printSummary(evolution, preview, evolutionOptions);
@@ -67,15 +88,19 @@ async function main() {
     }
   }
 
-  run('npm', ['run', 'schematics:build'], {
-    title: 'Prepare schematics',
-    description: 'Compile local generators and copy Angular CLI collection assets.',
-  });
+  if (SHOULD_BUILD_LOCAL_SCHEMATICS) {
+    run('npm', ['run', 'schematics:build'], {
+      title: 'Prepare schematics',
+      description: 'Compile local generators and copy Angular CLI collection assets.',
+    });
+  } else {
+    printPackagedSchematicsStep();
+  }
 
   const generateArgs = [
     'ng',
     'generate',
-    './dist/schematics/collection.json:evolution',
+    `${SCHEMATICS_COLLECTION_PATH}:evolution`,
     '--name',
     evolution.name,
   ];
@@ -100,6 +125,18 @@ async function main() {
     ],
   });
   printNextSteps(preview);
+}
+
+async function resolveEvolutionOptions(evolution, shouldAskOptions) {
+  if (evolution.name === 'signal-store') {
+    return resolveSignalStoreOptions(shouldAskOptions);
+  }
+
+  if (evolution.name === 'bootstrap') {
+    return resolveBootstrapOptions(shouldAskOptions);
+  }
+
+  return {};
 }
 
 async function resolveSignalStoreOptions(shouldAskOptions) {
@@ -165,20 +202,63 @@ async function resolveSignalStoreOptions(shouldAskOptions) {
   }
 }
 
+async function resolveBootstrapOptions(shouldAskOptions) {
+  if (!shouldAskOptions) {
+    return createBootstrapOptions({
+      bootstrapMode: args.bootstrapMode,
+      bootstrapComponents: args.bootstrapComponents,
+    });
+  }
+
+  const bootstrapMode = await askChoice('Bootstrap setup', [
+    ['all', 'Install all starter UI components', 'Generate every Bootstrap wrapper component.'],
+    ['select', 'Select UI components', 'Choose only the Bootstrap wrappers you need.'],
+  ]);
+
+  if (bootstrapMode === 'all') {
+    return createBootstrapOptions({ bootstrapMode });
+  }
+
+  const bootstrapComponents = await askBootstrapComponents();
+
+  return createBootstrapOptions({
+    bootstrapMode,
+    bootstrapComponents,
+  });
+}
+
 function printHeader() {
   console.log('');
-  console.log(color.cyan('╭────────────────────────────────────────────╮'));
-  console.log(
-    `${color.cyan('│')} ${color.bold('Angular Enterprise Starter')}                 ${color.cyan('│')}`,
-  );
-  console.log(
-    `${color.cyan('│')} ${color.dim('Evolution CLI')}                              ${color.cyan('│')}`,
-  );
-  console.log(color.cyan('╰────────────────────────────────────────────╯'));
+  console.log(createHeaderBorder('╭', '╮'));
+  printHeaderLine('');
+  printHeaderLine('ANGULAR ENTERPRISE STARTER', color.bold);
+  printHeaderLine('Evolution CLI', color.bold);
+  printHeaderLine(`v${STARTER_VERSION}`, color.dim);
+  printHeaderLine('');
+  console.log(createHeaderBorder('╰', '╯'));
   console.log('');
-  console.log('Composable Angular starter capabilities.');
+  console.log('Modular Angular starter capabilities.');
   console.log(`Preview first. ${color.green('Apply')} when ready.`);
+  console.log(`${color.dim('Evolution CLI guide:')}`);
+  console.log(`${CLI_DOCUMENTATION_URL}`);
   console.log('');
+}
+
+function printHeaderLine(value, formatter = (text) => text) {
+  console.log(
+    `${color.cyan('│')} ${formatter(center(value, HEADER_CONTENT_WIDTH))} ${color.cyan('│')}`,
+  );
+}
+
+function createHeaderBorder(left, right) {
+  return color.cyan(`${left}${'─'.repeat(HEADER_CONTENT_WIDTH + 2)}${right}`);
+}
+
+function center(value, width) {
+  const leftPadding = Math.max(0, Math.floor((width - value.length) / 2));
+  const rightPadding = Math.max(0, width - value.length - leftPadding);
+
+  return `${' '.repeat(leftPadding)}${value}${' '.repeat(rightPadding)}`;
 }
 
 async function askEvolutionName() {
@@ -270,6 +350,55 @@ async function askText(label, defaultValue) {
     return answer.trim() || defaultValue;
   } finally {
     rl.close();
+  }
+}
+
+async function askBootstrapComponents() {
+  while (true) {
+    printSection('Select Bootstrap components');
+    console.log(color.dim('Choose the starter-owned wrappers to generate.'));
+    console.log(color.dim('Use numbers, names, or a mix of both.'));
+    console.log('');
+
+    printBootstrapComponentChoices();
+    console.log('');
+    console.log(
+      `${color.dim('Examples')} ${color.bold('3,5')} ${color.dim('or')} ${color.bold(
+        'button,input',
+      )} ${color.dim('or')} ${color.bold('3,input')}`,
+    );
+    console.log(
+      `${color.dim('Recommended starter set')} ${color.bold(
+        formatBootstrapComponentSelection(BOOTSTRAP_DEFAULT_COMPONENTS.split(',')),
+      )}`,
+    );
+    console.log('');
+
+    const answer = await askText('Components', BOOTSTRAP_DEFAULT_COMPONENTS);
+
+    try {
+      const selectedComponents = parseBootstrapComponentSelection(answer);
+
+      console.log('');
+      console.log(
+        `${color.green('Selected')} ${color.bold(formatBootstrapComponentSelection(selectedComponents))}`,
+      );
+
+      return selectedComponents.join(',');
+    } catch (error) {
+      console.log('');
+      console.log(color.yellow(error instanceof Error ? error.message : String(error)));
+      console.log(color.dim(createBootstrapSelectionHint()));
+    }
+  }
+}
+
+function printBootstrapComponentChoices() {
+  for (const [index, [name, label, description]] of BOOTSTRAP_COMPONENTS.entries()) {
+    console.log(
+      `${color.cyan(`${index + 1}.`)} ${color.bold(label)} ${color.dim(`(${name})`)}`,
+    );
+    console.log(`   ${color.dim(description)}`);
   }
 }
 
@@ -391,6 +520,13 @@ function printNextSteps(preview) {
   console.log(`${color.cyan('-')} npm run build`);
 }
 
+function printPackagedSchematicsStep() {
+  printSection('Prepare schematics');
+  console.log(color.dim('Use the schematics collection bundled with this CLI package.'));
+  console.log('');
+  console.log(`${color.dim('Collection')} ${color.bold(SCHEMATICS_COLLECTION_PATH)}`);
+}
+
 function printSection(title) {
   console.log('');
   console.log(color.dim('--------------------------------------------------------------'));
@@ -425,6 +561,23 @@ function createSignalStoreOptions(options) {
   };
 }
 
+function createBootstrapOptions(options) {
+  const bootstrapMode = options.bootstrapMode ?? 'all';
+
+  if (!['all', 'select'].includes(bootstrapMode)) {
+    throw new Error(`Unsupported Bootstrap mode: ${bootstrapMode}.`);
+  }
+
+  if (bootstrapMode === 'all') {
+    return { bootstrapMode };
+  }
+
+  return {
+    bootstrapMode,
+    bootstrapComponents: parseBootstrapComponentSelection(options.bootstrapComponents).join(','),
+  };
+}
+
 function normalizeFeatureName(value) {
   const normalized = value
     .trim()
@@ -440,8 +593,75 @@ function normalizeFeatureName(value) {
   return normalized;
 }
 
+function parseBootstrapComponentSelection(value) {
+  if (!value?.trim()) {
+    throw new Error('Select at least one Bootstrap component.');
+  }
+
+  const selectedComponents = value
+    .split(',')
+    .map((component) => component.trim().toLowerCase())
+    .filter(Boolean)
+    .map((component) => resolveBootstrapComponentName(component));
+
+  return [...new Set(selectedComponents)];
+}
+
+function resolveBootstrapComponentName(value) {
+  const componentIndex = Number.parseInt(value, 10);
+
+  if (Number.isInteger(componentIndex) && String(componentIndex) === value) {
+    const component = BOOTSTRAP_COMPONENTS[componentIndex - 1];
+
+    if (component) {
+      return component[0];
+    }
+  }
+
+  if (BOOTSTRAP_COMPONENTS.some(([componentName]) => componentName === value)) {
+    return value;
+  }
+
+  throw new Error(
+    `Unsupported Bootstrap component: ${value}. Supported components: ${getBootstrapComponentNames().join(
+      ', ',
+    )}.`,
+  );
+}
+
+function getBootstrapComponentNames() {
+  return BOOTSTRAP_COMPONENTS.map(([componentName]) => componentName);
+}
+
+function createBootstrapSelectionHint() {
+  return `Use numbers 1-${BOOTSTRAP_COMPONENTS.length}, component names (${getBootstrapComponentNames().join(
+    ', ',
+  )}), or a mix like 3,input.`;
+}
+
+function formatBootstrapComponentSelection(componentNames) {
+  return componentNames
+    .map((componentName) => {
+      const component = BOOTSTRAP_COMPONENTS.find(([name]) => name === componentName);
+
+      return component?.[1] ?? componentName;
+    })
+    .join(', ');
+}
+
 function createOptionSummary(evolutionOptions) {
-  return Object.entries(evolutionOptions).map(([name, value]) => [formatOptionName(name), value]);
+  return Object.entries(evolutionOptions).map(([name, value]) => [
+    formatOptionName(name),
+    formatOptionSummaryValue(name, value),
+  ]);
+}
+
+function formatOptionSummaryValue(name, value) {
+  if (name === 'bootstrapComponents') {
+    return formatBootstrapComponentSelection(String(value).split(','));
+  }
+
+  return value;
 }
 
 function formatOptionName(value) {
@@ -457,6 +677,11 @@ function parseArgs(rawArgs) {
 
   for (let index = 0; index < rawArgs.length; index += 1) {
     const arg = rawArgs[index];
+
+    if (arg === '--version' || arg === '-v') {
+      parsedArgs.version = true;
+      continue;
+    }
 
     if (arg === '--name') {
       parsedArgs.name = rawArgs[index + 1];
@@ -503,10 +728,31 @@ function parseArgs(rawArgs) {
       continue;
     }
 
+    if (arg === '--bootstrap-mode') {
+      parsedArgs.bootstrapMode = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--bootstrap-components') {
+      parsedArgs.bootstrapComponents = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
     throw new Error(`Unsupported argument: ${arg}`);
   }
 
   return parsedArgs;
+}
+
+function readStarterVersion() {
+  const packageJsonPath =
+    process.env['AES_CLI_PACKAGE_JSON_PATH'] ??
+    resolve(dirname(fileURLToPath(import.meta.url)), '../../package.json');
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+
+  return packageJson.version ?? 'unknown';
 }
 
 function run(command, commandArgs, step) {

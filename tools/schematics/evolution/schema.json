@@ -72,6 +72,16 @@
       "type": "string",
       "description": "Root SignalStore name. Used only with --store-scope root.",
       "default": "app"
+    },
+    "bootstrapMode": {
+      "type": "string",
+      "description": "Bootstrap component generation mode.",
+      "enum": ["all", "select"],
+      "default": "all"
+    },
+    "bootstrapComponents": {
+      "type": "string",
+      "description": "Comma-separated Bootstrap components to generate when --bootstrap-mode select is used."
     }
   },
   "required": ["name"]

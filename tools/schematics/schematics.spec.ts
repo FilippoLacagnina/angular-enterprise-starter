@@ -15,6 +15,14 @@ const DASHBOARD_STORE_PATH = '/src/app/features/dashboard/state/dashboard.store.
 const APP_STATE_PATH = '/src/app/core/state/app.state.ts';
 const APP_STORE_PATH = '/src/app/core/state/app.store.ts';
 const DASHBOARD_ROUTES_PATH = '/src/app/features/dashboard/dashboard.routes.ts';
+const BOOTSTRAP_INDEX_PATH = '/src/app/shared/components/bootstrap/index.ts';
+const BOOTSTRAP_ALERT_PATH = '/src/app/shared/components/bootstrap/alert/alert.ts';
+const BOOTSTRAP_BADGE_PATH = '/src/app/shared/components/bootstrap/badge/badge.ts';
+const BOOTSTRAP_BUTTON_PATH = '/src/app/shared/components/bootstrap/button/button.ts';
+const BOOTSTRAP_CARD_PATH = '/src/app/shared/components/bootstrap/card/card.ts';
+const BOOTSTRAP_CARD_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/card/card.html';
+const BOOTSTRAP_INPUT_PATH = '/src/app/shared/components/bootstrap/input/input.ts';
+const BOOTSTRAP_INPUT_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/input/input.html';
 const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
 
 const runner = new SchematicTestRunner(
@@ -142,7 +150,48 @@ describe('Angular Enterprise Starter schematics', () => {
 
     expect(packageJson.dependencies?.bootstrap).toBe('^5.3.8');
     expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n\nbody { margin: 0; }\n`);
+    expect(result.exists(BOOTSTRAP_ALERT_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_BADGE_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_CARD_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_INPUT_PATH)).toBe(true);
+    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain("selector: 'app-bootstrap-button'");
+    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain('readonly variant = input');
+    expect(readText(result, BOOTSTRAP_CARD_PATH)).toContain('readonly imageSrc = input');
+    expect(readText(result, BOOTSTRAP_CARD_TEMPLATE_PATH)).toContain('card-img-top');
+    expect(readText(result, BOOTSTRAP_INPUT_PATH)).toContain('readonly label = input');
+    expect(readText(result, BOOTSTRAP_INPUT_TEMPLATE_PATH)).toContain('class="form-label"');
+    expect(readText(result, BOOTSTRAP_INPUT_TEMPLATE_PATH)).toContain('[attr.aria-label]');
+    expect(readText(result, BOOTSTRAP_INDEX_PATH)).toContain(
+      "export { BootstrapButton } from './button/button';",
+    );
     expect(metadata.enabledEvolutions).toEqual(['bootstrap']);
+  });
+
+  it('evolution installs only selected Bootstrap components when requested', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'bootstrap',
+          bootstrapMode: 'select',
+          bootstrapComponents: 'button,input',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_INPUT_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_CARD_PATH)).toBe(false);
+    expect(readText(result, BOOTSTRAP_INDEX_PATH)).toContain(
+      "export { BootstrapButton } from './button/button';",
+    );
+    expect(readText(result, BOOTSTRAP_INDEX_PATH)).toContain(
+      "export { BootstrapInput } from './input/input';",
+    );
+    expect(readText(result, BOOTSTRAP_INDEX_PATH)).not.toContain('BootstrapCard');
   });
 
   it('evolution does not duplicate Bootstrap when dependency and style import already exist', async () => {
@@ -171,6 +220,68 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n`);
   });
 
+  it('evolution can add another Bootstrap component after the capability is enabled', async () => {
+    const tree = createStarterTree(['bootstrap']);
+
+    const firstResult = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'bootstrap',
+          bootstrapMode: 'select',
+          bootstrapComponents: 'button',
+        }),
+        tree,
+      ),
+    );
+    const secondResult = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'bootstrap',
+          bootstrapMode: 'select',
+          bootstrapComponents: 'card',
+        }),
+        firstResult,
+      ),
+    );
+    const metadata = readMetadata(secondResult);
+    const indexContent = readText(secondResult, BOOTSTRAP_INDEX_PATH);
+
+    expect(secondResult.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
+    expect(secondResult.exists(BOOTSTRAP_CARD_PATH)).toBe(true);
+    expect(indexContent).toContain("export { BootstrapButton } from './button/button';");
+    expect(indexContent).toContain("export { BootstrapCard } from './card/card';");
+    expect(metadata.enabledEvolutions).toEqual(['bootstrap']);
+  });
+
+  it('evolution skips complete Bootstrap components and creates missing components', async () => {
+    const tree = createStarterTree();
+
+    const firstResult = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'bootstrap',
+          bootstrapMode: 'select',
+          bootstrapComponents: 'button,input',
+        }),
+        tree,
+      ),
+    );
+    const secondResult = await lastValueFrom(
+      runner.callRule(evolution({ name: 'bootstrap', bootstrapMode: 'all' }), firstResult),
+    );
+    const metadata = readMetadata(secondResult);
+    const indexContent = readText(secondResult, BOOTSTRAP_INDEX_PATH);
+
+    expect(secondResult.exists(BOOTSTRAP_ALERT_PATH)).toBe(true);
+    expect(secondResult.exists(BOOTSTRAP_BADGE_PATH)).toBe(true);
+    expect(secondResult.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
+    expect(secondResult.exists(BOOTSTRAP_CARD_PATH)).toBe(true);
+    expect(secondResult.exists(BOOTSTRAP_INPUT_PATH)).toBe(true);
+    expect(countOccurrences(indexContent, 'BootstrapButton')).toBe(1);
+    expect(countOccurrences(indexContent, 'BootstrapInput')).toBe(1);
+    expect(metadata.enabledEvolutions).toEqual(['bootstrap']);
+  });
+
   it('evolution can generate another SignalStore after the capability is enabled', async () => {
     const tree = createStarterTree(['signal-store']);
 
@@ -196,11 +307,29 @@ describe('Angular Enterprise Starter schematics', () => {
   });
 
   it('evolution fails when a non-repeatable evolution is already enabled', async () => {
-    const tree = createStarterTree(['bootstrap']);
+    const tree = createStarterTree(['docker-ssr']);
 
     await expect(
-      lastValueFrom(runner.callRule(evolution({ name: 'bootstrap' }), tree)),
-    ).rejects.toThrow('Evolution "bootstrap" is already enabled.');
+      lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
+    ).rejects.toThrow('Evolution "docker-ssr" is already enabled.');
+  });
+
+  it('evolution fails before completing a partially installed Bootstrap component', async () => {
+    const tree = createStarterTree();
+    tree.create(BOOTSTRAP_BUTTON_PATH, '');
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(
+          evolution({
+            name: 'bootstrap',
+            bootstrapMode: 'select',
+            bootstrapComponents: 'button',
+          }),
+          tree,
+        ),
+      ),
+    ).rejects.toThrow('Bootstrap component installation is incomplete');
   });
 
   it('evolution keeps enabled evolutions sorted', async () => {
@@ -323,7 +452,7 @@ function createStarterTree(enabledEvolutions: readonly string[] = []): Tree {
     JSON.stringify(
       {
         schemaVersion: 1,
-        baselineVersion: '0.2.0-alpha.0',
+        baselineVersion: '0.4.0-alpha.0',
         enabledEvolutions,
       },
       null,
@@ -401,4 +530,8 @@ function readText(tree: Tree, path: string): string {
   }
 
   return content.toString();
+}
+
+function countOccurrences(value: string, searchValue: string): number {
+  return value.split(searchValue).length - 1;
 }

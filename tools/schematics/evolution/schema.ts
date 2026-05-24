@@ -13,4 +13,6 @@ export interface EvolutionOptions {
   readonly featureName?: string;
   readonly featureComponent?: 'existing' | 'create';
   readonly storeName?: string;
+  readonly bootstrapMode?: 'all' | 'select';
+  readonly bootstrapComponents?: string;
 }
