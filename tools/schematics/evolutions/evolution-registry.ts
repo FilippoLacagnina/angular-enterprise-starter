@@ -1,5 +1,6 @@
 import { type EvolutionName } from '../evolution/schema';
 import { installBootstrapEvolution } from './bootstrap/bootstrap.installer';
+import { getBootstrapPreview } from './bootstrap/bootstrap.preview';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
 import {
@@ -70,15 +71,18 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   bootstrap: {
     name: 'bootstrap',
     label: 'Bootstrap',
+    repeatable: true,
     dependencies: ['bootstrap'],
-    creates: [],
+    creates: ['src/app/shared/components/bootstrap/*'],
     updates: ['package.json', 'src/styles.scss', '.angular-enterprise-starter.json'],
     notes: [
       'Adds Bootstrap as an optional design-system baseline.',
+      'Generates selected starter-owned Angular standalone wrappers.',
       'Preserves existing global styles and adds the Bootstrap import only if missing.',
     ],
     referenceBranch: 'evo/design-system/bootstrap',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/bootstrap`,
+    preview: getBootstrapPreview,
     install: installBootstrapEvolution,
   },
   tailwind: {

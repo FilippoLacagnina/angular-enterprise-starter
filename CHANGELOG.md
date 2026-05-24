@@ -8,6 +8,22 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.4.0-alpha.0 - 2026-05-24
+
+Versioned Evolution CLI npm package.
+
+### Added
+
+- Added npm-ready Evolution CLI package under `@filippolacagnina/angular-enterprise-starter`.
+- Added package build and pack scripts for the Evolution CLI.
+- Added consumer cleanup mode for product repositories that should remove local installer tooling.
+- Added npm alpha usage documentation and package README references.
+
+### Changed
+
+- Updated the starter baseline version to `0.4.0-alpha.0`.
+- Clarified the alpha npm publish flow with the `alpha` dist-tag.
+
 ## 0.3.0-alpha.0 - 2026-05-20
 
 Centralized documentation and Evolution CLI preview.

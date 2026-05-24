@@ -1,6 +1,6 @@
 <svg width="1376" height="768" viewBox="0 0 1376 768" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Angular Enterprise Starter Architecture</title>
-  <desc id="desc">Four-column terminal-style architecture banner for Angular Enterprise Starter with icon cards for the main baseline, configuration strategy, composable evolution branches and enterprise delivery.</desc>
+  <desc id="desc">Four-column terminal-style architecture banner for Angular Enterprise Starter with icon cards for the main baseline, versioned Evolution CLI, configuration strategy, composable evolution branches and enterprise delivery.</desc>
 
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1376" y2="768" gradientUnits="userSpaceOnUse">
@@ -97,8 +97,8 @@
           <g transform="translate(31 27)">
             <path d="M-8 -7H8M-8 1H0M5 1H10M6 -3L10 1L6 5" class="icon-stroke"/>
           </g>
-          <text x="62" y="24" class="label">Evolution CLI</text>
-          <text x="62" y="40" class="small">preview | apply safely</text>
+          <text x="62" y="23" class="label">Evolution CLI</text>
+          <text x="62" y="40" class="small">local | npm package</text>
         </g>
         <g transform="translate(29 143)">
           <rect width="237" height="47" rx="8" fill="url(#cardBg)" stroke="#566874"/>
