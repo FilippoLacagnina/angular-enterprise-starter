@@ -76,8 +76,8 @@ Each implemented evolution branch declares the `main` baseline version it is com
 Example:
 
 ```text
-main                  -> v0.3.0-alpha.0
-evo/i18n/transloco    -> compatible with v0.3.0-alpha.0
+main                  -> v0.4.0-alpha.0
+evo/i18n/transloco    -> compatible with v0.4.0-alpha.0
 ```
 
 This keeps versioning simple while the starter is still in alpha and avoids creating separate release lifecycles for optional variants.
@@ -131,6 +131,12 @@ Recommended rules:
 The Evolution CLI is part of the `main` tooling baseline.
 It is not treated as an optional evolution branch once merged into `main`.
 
+For product repositories, local installer sources can be removed with consumer cleanup and the CLI can continue to be used through the versioned npm package:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+```
+
 The CLI provides a guided path for selected capabilities:
 
 ```text
@@ -140,7 +146,10 @@ preview -> review impact -> apply
 Use the CLI when an installer exists for the desired capability.
 Use `evo/*` branches when a capability is not CLI-installable yet, or when the full reference implementation should be reviewed manually.
 
-Every CLI installer must stay aligned with its related reference branch and with the dedicated [Evolution CLI guide](./schematics.md).
+The CLI can provide more functionality than the related branch because it can ask for dynamic choices, generate only selected files, skip already installed pieces, detect unsafe partial states and keep starter metadata aligned.
+The `evo/*` branch remains the implementation reference and manual fallback.
+
+Every CLI installer must stay aligned with its related reference branch, the dedicated [Evolution CLI guide](./schematics.md) and its installer-specific guide under `docs/evolution-cli/`.
 
 ## Implemented evolution branches
 
@@ -149,15 +158,15 @@ Every CLI installer must stay aligned with its related reference branch and with
 
 | Branch                                                                                                                                         | Guide                                          | Area          | Description                                                            | Compatible baseline | Expected merge points                                                           | Status      |
 | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------- | ---------------------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- | ----------- |
-| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | [Guide](./evolutions/i18n-transloco.md)        | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
-| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | [Guide](./evolutions/runtime-config.md)        | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config    | Implemented |
-| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | [Guide](./evolutions/angular-material.md)      | design system | Angular Material component baseline.                                   | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
-| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | [Guide](./evolutions/primeng.md)               | design system | PrimeNG component baseline.                                            | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
-| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | [Guide](./evolutions/tailwind.md)              | design system | Tailwind CSS styling baseline.                                         | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`       | Implemented |
-| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | [Guide](./evolutions/bootstrap.md)             | design system | Bootstrap-based styling baseline.                                      | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
-| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | [Guide](./evolutions/docker-ssr.md)            | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.3.0-alpha.0`    | `Dockerfile`, `.dockerignore`                                                   | Implemented |
-| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | [Guide](./evolutions/signal-store.md)          | state         | NgRx SignalStore feature-first state management baseline.              | `v0.3.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files                      | Implemented |
-| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | [Guide](./evolutions/dependency-monitoring.md) | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.3.0-alpha.0`    | `package.json`, `README.md`, `tools/`                                           | Implemented |
+| [`evo/i18n/transloco`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/i18n/transloco)                                 | [Guide](./evolutions/i18n-transloco.md)        | i18n          | Runtime translation baseline with Transloco, static assets and docs.   | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`            | Implemented |
+| [`evo/config/runtime-config`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/config/runtime-config)                   | [Guide](./evolutions/runtime-config.md)        | config        | Runtime YAML configuration loaded from deployable assets.              | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `angular.json`, `app.config.ts`, config    | Implemented |
+| [`evo/design-system/angular-material`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/angular-material) | [Guide](./evolutions/angular-material.md)      | design system | Angular Material component baseline.                                   | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/design-system/primeng`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/primeng)                   | [Guide](./evolutions/primeng.md)               | design system | PrimeNG component baseline.                                            | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `src/app/app.config.ts`, `src/styles.scss` | Implemented |
+| [`evo/design-system/tailwind`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/tailwind)                 | [Guide](./evolutions/tailwind.md)              | design system | Tailwind CSS styling baseline.                                         | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `.postcssrc.json`, `src/styles.scss`       | Implemented |
+| [`evo/design-system/bootstrap`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/design-system/bootstrap)               | [Guide](./evolutions/bootstrap.md)             | design system | Bootstrap-based styling baseline.                                      | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, `src/styles.scss`                          | Implemented |
+| [`evo/deployment/docker-ssr`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr)                   | [Guide](./evolutions/docker-ssr.md)            | deployment    | Docker SSR baseline for running the Angular Node server in container.  | `v0.4.0-alpha.0`    | `Dockerfile`, `.dockerignore`                                                   | Implemented |
+| [`evo/state/signal-store`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/state/signal-store)                         | [Guide](./evolutions/signal-store.md)          | state         | NgRx SignalStore feature-first state management baseline.              | `v0.4.0-alpha.0`    | `package.json`, `package-lock.json`, dashboard state files                      | Implemented |
+| [`evo/tooling/dependency-monitoring`](https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/tooling/dependency-monitoring)   | [Guide](./evolutions/dependency-monitoring.md) | tooling       | Angular-aware dependency monitoring report across main and evolutions. | `v0.4.0-alpha.0`    | `package.json`, `README.md`, `tools/`                                           | Implemented |
 
 ## Planned evolution branches
 
@@ -180,6 +189,14 @@ When a capability is available through the Evolution CLI, consumers can preview 
 
 ```bash
 npm run starter:evolution
+```
+
+This is the recommended path for CLI-installable capabilities because it provides guided parametrization and safer repeatable generation.
+
+If local installer tooling has been removed from the project repository, use the versioned package instead:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution
 ```
 
 Consumers can start from an evolution branch when they want a specific optional capability already integrated.

@@ -1,4 +1,12 @@
-import { SchematicsException, type Tree } from '@angular-devkit/schematics';
+import { SchematicsException, type SchematicContext, type Tree } from '@angular-devkit/schematics';
+
+import { type EvolutionOptions } from '../../evolution/schema';
+import { type EvolutionDefinition } from '../evolution-definition';
+import {
+  installDesignSystemComponents,
+  updateDesignSystemIndex,
+} from '../design-system/design-system.installer';
+import { BOOTSTRAP_INDEX_PATH, createBootstrapInstallPlan } from './bootstrap.plan';
 
 const BOOTSTRAP_VERSION = '^5.3.8';
 const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
@@ -9,9 +17,21 @@ interface PackageJson {
   [key: string]: unknown;
 }
 
-export function installBootstrapEvolution(tree: Tree): void {
+export function installBootstrapEvolution(
+  tree: Tree,
+  context: SchematicContext,
+  definition: EvolutionDefinition,
+  options: EvolutionOptions,
+): void {
+  const plan = createBootstrapInstallPlan(options);
+
   addPackageDependency(tree, 'bootstrap', BOOTSTRAP_VERSION);
   addBootstrapStyleImport(tree);
+  installDesignSystemComponents({ tree, plan, displayName: 'Bootstrap' });
+  updateDesignSystemIndex({ tree, plan, indexPath: BOOTSTRAP_INDEX_PATH });
+
+  context.logger.info(`${definition.label} files created.`);
+  context.logger.info('Run npm install to update the package lock before running quality checks.');
 }
 
 function addPackageDependency(tree: Tree, packageName: string, version: string): void {
