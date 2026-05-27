@@ -24,6 +24,16 @@ const BOOTSTRAP_CARD_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/card/
 const BOOTSTRAP_INPUT_PATH = '/src/app/shared/components/bootstrap/input/input.ts';
 const BOOTSTRAP_INPUT_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/input/input.html';
 const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
+const TAILWIND_INDEX_PATH = '/src/app/shared/components/tailwind/index.ts';
+const TAILWIND_ALERT_PATH = '/src/app/shared/components/tailwind/alert/alert.ts';
+const TAILWIND_BADGE_PATH = '/src/app/shared/components/tailwind/badge/badge.ts';
+const TAILWIND_BUTTON_PATH = '/src/app/shared/components/tailwind/button/button.ts';
+const TAILWIND_CARD_PATH = '/src/app/shared/components/tailwind/card/card.ts';
+const TAILWIND_CARD_TEMPLATE_PATH = '/src/app/shared/components/tailwind/card/card.html';
+const TAILWIND_INPUT_PATH = '/src/app/shared/components/tailwind/input/input.ts';
+const TAILWIND_INPUT_TEMPLATE_PATH = '/src/app/shared/components/tailwind/input/input.html';
+const TAILWIND_STYLE_IMPORT = "@use 'tailwindcss';";
+const POSTCSS_CONFIG_PATH = '/.postcssrc.json';
 
 const runner = new SchematicTestRunner(
   'angular-enterprise-starter',
@@ -282,6 +292,66 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(metadata.enabledEvolutions).toEqual(['bootstrap']);
   });
 
+  it('evolution installs Tailwind dependencies and preserves existing global styles', async () => {
+    const tree = createStarterTree();
+    tree.create(GLOBAL_STYLES_PATH, 'body { margin: 0; }\n');
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'tailwind' }), tree));
+    const metadata = readMetadata(result);
+    const packageJson = readPackageJson(result);
+    const stylesContent = readText(result, GLOBAL_STYLES_PATH);
+    const postcssConfig = JSON.parse(readText(result, POSTCSS_CONFIG_PATH)) as {
+      plugins?: Record<string, unknown>;
+    };
+
+    expect(packageJson.devDependencies?.tailwindcss).toBe('^4.3.0');
+    expect(packageJson.devDependencies?.['@tailwindcss/postcss']).toBe('^4.3.0');
+    expect(packageJson.devDependencies?.postcss).toBe('^8.5.14');
+    expect(postcssConfig.plugins?.['@tailwindcss/postcss']).toEqual({});
+    expect(stylesContent).toBe(`${TAILWIND_STYLE_IMPORT}\n\nbody { margin: 0; }\n`);
+    expect(result.exists(TAILWIND_ALERT_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_BADGE_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_BUTTON_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_CARD_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_INPUT_PATH)).toBe(true);
+    expect(readText(result, TAILWIND_BUTTON_PATH)).toContain("selector: 'app-tailwind-button'");
+    expect(readText(result, TAILWIND_BUTTON_PATH)).toContain('readonly variant = input');
+    expect(readText(result, TAILWIND_CARD_PATH)).toContain('readonly imageSrc = input');
+    expect(readText(result, TAILWIND_CARD_TEMPLATE_PATH)).toContain('rounded-xl');
+    expect(readText(result, TAILWIND_INPUT_PATH)).toContain('readonly label = input');
+    expect(readText(result, TAILWIND_INPUT_TEMPLATE_PATH)).toContain('text-slate-700');
+    expect(readText(result, TAILWIND_INDEX_PATH)).toContain(
+      "export { TailwindButton } from './button/button';",
+    );
+    expect(metadata.enabledEvolutions).toEqual(['tailwind']);
+  });
+
+  it('evolution installs only selected Tailwind components when requested', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'tailwind',
+          tailwindMode: 'select',
+          tailwindComponents: 'button,input',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists(TAILWIND_BUTTON_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_INPUT_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_CARD_PATH)).toBe(false);
+    expect(readText(result, TAILWIND_INDEX_PATH)).toContain(
+      "export { TailwindButton } from './button/button';",
+    );
+    expect(readText(result, TAILWIND_INDEX_PATH)).toContain(
+      "export { TailwindInput } from './input/input';",
+    );
+    expect(readText(result, TAILWIND_INDEX_PATH)).not.toContain('TailwindCard');
+  });
+
   it('evolution can generate another SignalStore after the capability is enabled', async () => {
     const tree = createStarterTree(['signal-store']);
 
@@ -512,7 +582,10 @@ function readMetadata(tree: Tree): { enabledEvolutions: string[] } {
   return JSON.parse(metadata.toString()) as { enabledEvolutions: string[] };
 }
 
-function readPackageJson(tree: Tree): { dependencies?: Record<string, string> } {
+function readPackageJson(tree: Tree): {
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+} {
   const packageJson = tree.read(PACKAGE_JSON_PATH);
 
   if (!packageJson) {

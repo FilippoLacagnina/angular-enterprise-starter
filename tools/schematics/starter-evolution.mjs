@@ -29,16 +29,21 @@ const EVOLUTIONS = [
     label: 'Bootstrap',
     description: 'Bootstrap design-system baseline.',
   },
+  {
+    name: 'tailwind',
+    label: 'Tailwind',
+    description: 'Tailwind design-system baseline.',
+  },
 ];
 
-const BOOTSTRAP_COMPONENTS = [
+const DESIGN_SYSTEM_COMPONENTS = [
   ['alert', 'Alert', 'Contextual feedback message.'],
   ['badge', 'Badge', 'Small count or status label.'],
   ['button', 'Button', 'Action button wrapper.'],
   ['card', 'Card', 'Content container.'],
   ['input', 'Input', 'Basic form-control input.'],
 ];
-const BOOTSTRAP_DEFAULT_COMPONENTS = 'button,input,card';
+const DESIGN_SYSTEM_DEFAULT_COMPONENTS = 'button,input,card';
 
 const color = {
   bold: (value) => `\x1b[1m${value}\x1b[0m`,
@@ -133,7 +138,25 @@ async function resolveEvolutionOptions(evolution, shouldAskOptions) {
   }
 
   if (evolution.name === 'bootstrap') {
-    return resolveBootstrapOptions(shouldAskOptions);
+    return resolveDesignSystemOptions({
+      shouldAskOptions,
+      systemName: 'Bootstrap',
+      modeOptionName: 'bootstrapMode',
+      componentsOptionName: 'bootstrapComponents',
+      modeValue: args.bootstrapMode,
+      componentsValue: args.bootstrapComponents,
+    });
+  }
+
+  if (evolution.name === 'tailwind') {
+    return resolveDesignSystemOptions({
+      shouldAskOptions,
+      systemName: 'Tailwind',
+      modeOptionName: 'tailwindMode',
+      componentsOptionName: 'tailwindComponents',
+      modeValue: args.tailwindMode,
+      componentsValue: args.tailwindComponents,
+    });
   }
 
   return {};
@@ -202,28 +225,46 @@ async function resolveSignalStoreOptions(shouldAskOptions) {
   }
 }
 
-async function resolveBootstrapOptions(shouldAskOptions) {
+async function resolveDesignSystemOptions({
+  shouldAskOptions,
+  systemName,
+  modeOptionName,
+  componentsOptionName,
+  modeValue,
+  componentsValue,
+}) {
   if (!shouldAskOptions) {
-    return createBootstrapOptions({
-      bootstrapMode: args.bootstrapMode,
-      bootstrapComponents: args.bootstrapComponents,
+    return createDesignSystemOptions({
+      systemName,
+      modeOptionName,
+      componentsOptionName,
+      modeValue,
+      componentsValue,
     });
   }
 
-  const bootstrapMode = await askChoice('Bootstrap setup', [
-    ['all', 'Install all starter UI components', 'Generate every Bootstrap wrapper component.'],
-    ['select', 'Select UI components', 'Choose only the Bootstrap wrappers you need.'],
+  const mode = await askChoice(`${systemName} setup`, [
+    ['all', 'Install all starter UI components', `Generate every ${systemName} wrapper component.`],
+    ['select', 'Select UI components', `Choose only the ${systemName} wrappers you need.`],
   ]);
 
-  if (bootstrapMode === 'all') {
-    return createBootstrapOptions({ bootstrapMode });
+  if (mode === 'all') {
+    return createDesignSystemOptions({
+      systemName,
+      modeOptionName,
+      componentsOptionName,
+      modeValue: mode,
+    });
   }
 
-  const bootstrapComponents = await askBootstrapComponents();
+  const components = await askDesignSystemComponents(systemName);
 
-  return createBootstrapOptions({
-    bootstrapMode,
-    bootstrapComponents,
+  return createDesignSystemOptions({
+    systemName,
+    modeOptionName,
+    componentsOptionName,
+    modeValue: mode,
+    componentsValue: components,
   });
 }
 
@@ -353,14 +394,14 @@ async function askText(label, defaultValue) {
   }
 }
 
-async function askBootstrapComponents() {
+async function askDesignSystemComponents(systemName) {
   while (true) {
-    printSection('Select Bootstrap components');
+    printSection(`Select ${systemName} components`);
     console.log(color.dim('Choose the starter-owned wrappers to generate.'));
     console.log(color.dim('Use numbers, names, or a mix of both.'));
     console.log('');
 
-    printBootstrapComponentChoices();
+    printDesignSystemComponentChoices();
     console.log('');
     console.log(
       `${color.dim('Examples')} ${color.bold('3,5')} ${color.dim('or')} ${color.bold(
@@ -369,35 +410,33 @@ async function askBootstrapComponents() {
     );
     console.log(
       `${color.dim('Recommended starter set')} ${color.bold(
-        formatBootstrapComponentSelection(BOOTSTRAP_DEFAULT_COMPONENTS.split(',')),
+        formatDesignSystemComponentSelection(DESIGN_SYSTEM_DEFAULT_COMPONENTS.split(',')),
       )}`,
     );
     console.log('');
 
-    const answer = await askText('Components', BOOTSTRAP_DEFAULT_COMPONENTS);
+    const answer = await askText('Components', DESIGN_SYSTEM_DEFAULT_COMPONENTS);
 
     try {
-      const selectedComponents = parseBootstrapComponentSelection(answer);
+      const selectedComponents = parseDesignSystemComponentSelection(answer, systemName);
 
       console.log('');
       console.log(
-        `${color.green('Selected')} ${color.bold(formatBootstrapComponentSelection(selectedComponents))}`,
+        `${color.green('Selected')} ${color.bold(formatDesignSystemComponentSelection(selectedComponents))}`,
       );
 
       return selectedComponents.join(',');
     } catch (error) {
       console.log('');
       console.log(color.yellow(error instanceof Error ? error.message : String(error)));
-      console.log(color.dim(createBootstrapSelectionHint()));
+      console.log(color.dim(createDesignSystemSelectionHint()));
     }
   }
 }
 
-function printBootstrapComponentChoices() {
-  for (const [index, [name, label, description]] of BOOTSTRAP_COMPONENTS.entries()) {
-    console.log(
-      `${color.cyan(`${index + 1}.`)} ${color.bold(label)} ${color.dim(`(${name})`)}`,
-    );
+function printDesignSystemComponentChoices() {
+  for (const [index, [name, label, description]] of DESIGN_SYSTEM_COMPONENTS.entries()) {
+    console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(label)} ${color.dim(`(${name})`)}`);
     console.log(`   ${color.dim(description)}`);
   }
 }
@@ -561,20 +600,28 @@ function createSignalStoreOptions(options) {
   };
 }
 
-function createBootstrapOptions(options) {
-  const bootstrapMode = options.bootstrapMode ?? 'all';
+function createDesignSystemOptions({
+  systemName,
+  modeOptionName,
+  componentsOptionName,
+  modeValue,
+  componentsValue,
+}) {
+  const mode = modeValue ?? 'all';
 
-  if (!['all', 'select'].includes(bootstrapMode)) {
-    throw new Error(`Unsupported Bootstrap mode: ${bootstrapMode}.`);
+  if (!['all', 'select'].includes(mode)) {
+    throw new Error(`Unsupported ${systemName} mode: ${mode}.`);
   }
 
-  if (bootstrapMode === 'all') {
-    return { bootstrapMode };
+  if (mode === 'all') {
+    return { [modeOptionName]: mode };
   }
 
   return {
-    bootstrapMode,
-    bootstrapComponents: parseBootstrapComponentSelection(options.bootstrapComponents).join(','),
+    [modeOptionName]: mode,
+    [componentsOptionName]: parseDesignSystemComponentSelection(componentsValue, systemName).join(
+      ',',
+    ),
   };
 }
 
@@ -593,56 +640,56 @@ function normalizeFeatureName(value) {
   return normalized;
 }
 
-function parseBootstrapComponentSelection(value) {
+function parseDesignSystemComponentSelection(value, systemName) {
   if (!value?.trim()) {
-    throw new Error('Select at least one Bootstrap component.');
+    throw new Error(`Select at least one ${systemName} component.`);
   }
 
   const selectedComponents = value
     .split(',')
     .map((component) => component.trim().toLowerCase())
     .filter(Boolean)
-    .map((component) => resolveBootstrapComponentName(component));
+    .map((component) => resolveDesignSystemComponentName(component, systemName));
 
   return [...new Set(selectedComponents)];
 }
 
-function resolveBootstrapComponentName(value) {
+function resolveDesignSystemComponentName(value, systemName) {
   const componentIndex = Number.parseInt(value, 10);
 
   if (Number.isInteger(componentIndex) && String(componentIndex) === value) {
-    const component = BOOTSTRAP_COMPONENTS[componentIndex - 1];
+    const component = DESIGN_SYSTEM_COMPONENTS[componentIndex - 1];
 
     if (component) {
       return component[0];
     }
   }
 
-  if (BOOTSTRAP_COMPONENTS.some(([componentName]) => componentName === value)) {
+  if (DESIGN_SYSTEM_COMPONENTS.some(([componentName]) => componentName === value)) {
     return value;
   }
 
   throw new Error(
-    `Unsupported Bootstrap component: ${value}. Supported components: ${getBootstrapComponentNames().join(
+    `Unsupported ${systemName} component: ${value}. Supported components: ${getDesignSystemComponentNames().join(
       ', ',
     )}.`,
   );
 }
 
-function getBootstrapComponentNames() {
-  return BOOTSTRAP_COMPONENTS.map(([componentName]) => componentName);
+function getDesignSystemComponentNames() {
+  return DESIGN_SYSTEM_COMPONENTS.map(([componentName]) => componentName);
 }
 
-function createBootstrapSelectionHint() {
-  return `Use numbers 1-${BOOTSTRAP_COMPONENTS.length}, component names (${getBootstrapComponentNames().join(
+function createDesignSystemSelectionHint() {
+  return `Use numbers 1-${DESIGN_SYSTEM_COMPONENTS.length}, component names (${getDesignSystemComponentNames().join(
     ', ',
   )}), or a mix like 3,input.`;
 }
 
-function formatBootstrapComponentSelection(componentNames) {
+function formatDesignSystemComponentSelection(componentNames) {
   return componentNames
     .map((componentName) => {
-      const component = BOOTSTRAP_COMPONENTS.find(([name]) => name === componentName);
+      const component = DESIGN_SYSTEM_COMPONENTS.find(([name]) => name === componentName);
 
       return component?.[1] ?? componentName;
     })
@@ -657,8 +704,8 @@ function createOptionSummary(evolutionOptions) {
 }
 
 function formatOptionSummaryValue(name, value) {
-  if (name === 'bootstrapComponents') {
-    return formatBootstrapComponentSelection(String(value).split(','));
+  if (name === 'bootstrapComponents' || name === 'tailwindComponents') {
+    return formatDesignSystemComponentSelection(String(value).split(','));
   }
 
   return value;
@@ -736,6 +783,18 @@ function parseArgs(rawArgs) {
 
     if (arg === '--bootstrap-components') {
       parsedArgs.bootstrapComponents = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--tailwind-mode') {
+      parsedArgs.tailwindMode = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--tailwind-components') {
+      parsedArgs.tailwindComponents = rawArgs[index + 1];
       index += 1;
       continue;
     }

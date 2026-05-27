@@ -90,11 +90,15 @@ npm --cache /private/tmp/aes-npm-cache exec \
 | SignalStore | `signal-store` | installable | [Guide](./evolution-cli/signal-store.md) | Parametrized feature/root store generation.     |
 | Docker SSR  | `docker-ssr`   | installable | [Guide](./evolution-cli/docker-ssr.md)   | SSR-oriented Docker deployment baseline.        |
 | Bootstrap   | `bootstrap`    | installable | [Guide](./evolution-cli/bootstrap.md)    | Parametrized Bootstrap UI primitive generation. |
+| Tailwind    | `tailwind`     | installable | [Guide](./evolution-cli/tailwind.md)     | Parametrized Tailwind UI primitive generation.  |
 
 Other evolutions may exist as `evo/*` branches before they become CLI-installable.
 Those branches remain useful as implementation references, but they should not be treated as CLI installers until an installer, preview metadata and tests exist.
 
 When both options are available, prefer the CLI for day-to-day installation and use the `evo/*` branch as the reference implementation to inspect or merge manually when needed.
+
+For real product baselines, choose one primary design-system evolution.
+Temporary test branches may combine installers to validate CLI behavior, but consumer projects should avoid mixing multiple design-system CSS frameworks unless that integration is explicitly owned.
 
 ## Command usage
 
@@ -123,6 +127,7 @@ Preview examples:
 npm run starter:evolution -- --name signal-store --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
+npm run starter:evolution -- --name tailwind --preview
 npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview
 ```
 
@@ -132,6 +137,7 @@ Apply examples:
 npm run starter:evolution -- --name signal-store --apply
 npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
+npm run starter:evolution -- --name tailwind --apply
 ```
 
 Non-interactive apply examples:
@@ -140,6 +146,7 @@ Non-interactive apply examples:
 npm run starter:evolution -- --name signal-store --apply --yes
 npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
+npm run starter:evolution -- --name tailwind --apply --yes
 ```
 
 Use `--yes` only after validating the command in preview mode or inside a temporary test workspace.
@@ -154,6 +161,7 @@ Detailed installer behavior lives in dedicated files to keep this guide readable
 | SignalStore | [SignalStore](./evolution-cli/signal-store.md) | `evo/state/signal-store`      |
 | Docker SSR  | [Docker SSR](./evolution-cli/docker-ssr.md)    | `evo/deployment/docker-ssr`   |
 | Bootstrap   | [Bootstrap](./evolution-cli/bootstrap.md)      | `evo/design-system/bootstrap` |
+| Tailwind    | [Tailwind](./evolution-cli/tailwind.md)        | `evo/design-system/tailwind`  |
 
 Use `docs/evolution-cli/*` for CLI behavior.
 Use `docs/evolutions/*` for branch reference documentation.
@@ -176,23 +184,23 @@ Examples:
 - a root SignalStore with the same name already exists;
 - a required feature route is missing;
 - feature component files already exist while using `--feature-component create`;
-- selected Bootstrap component files are partially installed;
+- selected design-system component files are partially installed;
 - Docker SSR files already exist.
 
 Unexpected installer failures include the related `evo/*` reference branch so the user can inspect or merge manually if needed.
 
 ## Future parametrized installers
 
-SignalStore and Bootstrap prove the parametrized installer model.
+SignalStore, Bootstrap and Tailwind prove the parametrized installer model.
 Future parametrized installers should use the same safety principles and document choices in dedicated files under `docs/evolution-cli/`.
 
 Example:
 
 ```text
 Which evolution?
-- Tailwind
+- Angular Material
 
-Tailwind setup?
+Angular Material setup?
 - Install baseline only
 - Install UI primitives
 
@@ -232,6 +240,7 @@ Current CLI/reference branch mapping:
 | SignalStore | `evo/state/signal-store`      | [Guide](./evolution-cli/signal-store.md) |
 | Docker SSR  | `evo/deployment/docker-ssr`   | [Guide](./evolution-cli/docker-ssr.md)   |
 | Bootstrap   | `evo/design-system/bootstrap` | [Guide](./evolution-cli/bootstrap.md)    |
+| Tailwind    | `evo/design-system/tailwind`  | [Guide](./evolution-cli/tailwind.md)     |
 
 Reference-only branches that are not CLI-installable yet must remain documented in `docs/evolutions.md` until their installers are implemented.
 
@@ -275,6 +284,8 @@ Recommended preview smoke checks:
 ```bash
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
+npm run starter:evolution -- --name tailwind --preview
+npm run starter:evolution -- --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name signal-store --preview --store-scope feature --feature-name dashboard
 npm run starter:evolution -- --name signal-store --preview --store-scope root --store-name session
@@ -286,6 +297,10 @@ Recommended package smoke checks:
 npm --cache /private/tmp/aes-npm-cache exec \
   --package ./dist/filippolacagnina-angular-enterprise-starter-0.4.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
+
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.4.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 ```
 
 For real apply testing, use a temporary copy of the repository, then run:

@@ -16,12 +16,21 @@ Preview an evolution:
 
 ```bash
 npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name tailwind --preview
 ```
 
 Apply an evolution:
 
 ```bash
 npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --apply
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name tailwind --apply
+```
+
+Parametrized design-system examples:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 ```
 
 ## Scope

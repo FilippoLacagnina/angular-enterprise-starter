@@ -7,6 +7,8 @@ import {
   getSignalStorePreview,
   installSignalStoreEvolution,
 } from './signal-store/signal-store.installer';
+import { installTailwindEvolution } from './tailwind/tailwind.installer';
+import { getTailwindPreview } from './tailwind/tailwind.preview';
 
 const GITHUB_REPOSITORY_URL = 'https://github.com/FilippoLacagnina/angular-enterprise-starter';
 
@@ -88,17 +90,19 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   tailwind: {
     name: 'tailwind',
     label: 'Tailwind',
-    dependencies: ['Tailwind CSS dependencies'],
-    creates: ['.postcssrc.json', 'docs/tailwind.md'],
-    updates: [
-      'package.json',
-      'package-lock.json',
-      'src/styles.scss',
-      '.angular-enterprise-starter.json',
+    repeatable: true,
+    dependencies: ['tailwindcss', '@tailwindcss/postcss', 'postcss'],
+    creates: ['.postcssrc.json', 'src/app/shared/components/tailwind/*'],
+    updates: ['package.json', 'src/styles.scss', '.angular-enterprise-starter.json'],
+    notes: [
+      'Adds Tailwind CSS v4 with PostCSS integration.',
+      'Generates selected starter-owned Angular standalone wrappers.',
+      'Preserves existing global styles and adds the Tailwind import only if missing.',
     ],
-    notes: ['Adds Tailwind CSS as an optional utility-first styling baseline.'],
     referenceBranch: 'evo/design-system/tailwind',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/tailwind`,
+    preview: getTailwindPreview,
+    install: installTailwindEvolution,
   },
 };
 

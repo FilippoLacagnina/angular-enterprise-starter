@@ -89,6 +89,7 @@ First CLI installers:
 | SignalStore | Generate feature/root stores with route provider registration and safe target detection. |
 | Docker SSR  | Add an SSR-oriented Docker deployment baseline.                                          |
 | Bootstrap   | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
+| Tailwind    | Add Tailwind CSS and generate selected starter-owned UI wrapper components.              |
 
 Additional installers are in active development and will be added progressively as evolutions are validated.
 
