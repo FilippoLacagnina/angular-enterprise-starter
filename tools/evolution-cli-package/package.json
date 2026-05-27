@@ -25,13 +25,26 @@
   "homepage": "https://github.com/FilippoLacagnina/angular-enterprise-starter#readme",
   "keywords": [
     "angular",
+    "angular-21",
+    "angular-cli",
+    "angular-schematics",
     "angular-starter",
-    "schematics",
+    "angular-template",
     "cli",
+    "docker",
     "enterprise",
-    "starter",
+    "enterprise-architecture",
+    "evolution-cli",
+    "front-end",
+    "ngrx",
+    "schematics",
+    "signalstore",
     "signals",
-    "ssr"
+    "starter",
+    "starter-template",
+    "ssr",
+    "tailwind",
+    "bootstrap"
   ],
   "dependencies": {
     "@angular-devkit/schematics": "^21.2.11"
