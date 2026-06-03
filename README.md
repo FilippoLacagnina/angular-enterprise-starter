@@ -86,6 +86,7 @@ First CLI installers:
 
 | Installer   | Purpose                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------- |
+| Transloco   | Add runtime i18n provider, loader and EN/IT translation assets.                          |
 | SignalStore | Generate feature/root stores with route provider registration and safe target detection. |
 | Docker SSR  | Add an SSR-oriented Docker deployment baseline.                                          |
 | Bootstrap   | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
@@ -98,7 +99,7 @@ Detailed command usage is intentionally kept out of the README and documented in
 ## Current Release
 
 ```text
-v0.4.0-alpha.0 - Versioned Evolution CLI npm package
+v0.5.0-alpha.0 - Transloco and Tailwind Evolution CLI installers
 ```
 
 Current evolution branches:
@@ -142,7 +143,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.4.0-alpha.0`
+- public alpha release: `v0.5.0-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
