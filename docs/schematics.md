@@ -87,6 +87,7 @@ npm --cache /private/tmp/aes-npm-cache exec \
 
 | Evolution   | Name           | Status      | Guide                                    | Notes                                           |
 | ----------- | -------------- | ----------- | ---------------------------------------- | ----------------------------------------------- |
+| Transloco   | `transloco`    | installable | [Guide](./evolution-cli/transloco.md)    | Runtime i18n baseline with EN/IT assets.        |
 | SignalStore | `signal-store` | installable | [Guide](./evolution-cli/signal-store.md) | Parametrized feature/root store generation.     |
 | Docker SSR  | `docker-ssr`   | installable | [Guide](./evolution-cli/docker-ssr.md)   | SSR-oriented Docker deployment baseline.        |
 | Bootstrap   | `bootstrap`    | installable | [Guide](./evolution-cli/bootstrap.md)    | Parametrized Bootstrap UI primitive generation. |
@@ -125,6 +126,7 @@ Preview examples:
 
 ```bash
 npm run starter:evolution -- --name signal-store --preview
+npm run starter:evolution -- --name transloco --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name tailwind --preview
@@ -135,6 +137,7 @@ Apply examples:
 
 ```bash
 npm run starter:evolution -- --name signal-store --apply
+npm run starter:evolution -- --name transloco --apply
 npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
 npm run starter:evolution -- --name tailwind --apply
@@ -144,6 +147,7 @@ Non-interactive apply examples:
 
 ```bash
 npm run starter:evolution -- --name signal-store --apply --yes
+npm run starter:evolution -- --name transloco --apply --yes
 npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
 npm run starter:evolution -- --name tailwind --apply --yes
@@ -158,6 +162,7 @@ Detailed installer behavior lives in dedicated files to keep this guide readable
 
 | Installer   | Guide                                          | Reference branch              |
 | ----------- | ---------------------------------------------- | ----------------------------- |
+| Transloco   | [Transloco](./evolution-cli/transloco.md)      | `evo/i18n/transloco`          |
 | SignalStore | [SignalStore](./evolution-cli/signal-store.md) | `evo/state/signal-store`      |
 | Docker SSR  | [Docker SSR](./evolution-cli/docker-ssr.md)    | `evo/deployment/docker-ssr`   |
 | Bootstrap   | [Bootstrap](./evolution-cli/bootstrap.md)      | `evo/design-system/bootstrap` |
@@ -237,6 +242,7 @@ Current CLI/reference branch mapping:
 
 | Evolution   | Reference branch              | CLI guide                                |
 | ----------- | ----------------------------- | ---------------------------------------- |
+| Transloco   | `evo/i18n/transloco`          | [Guide](./evolution-cli/transloco.md)    |
 | SignalStore | `evo/state/signal-store`      | [Guide](./evolution-cli/signal-store.md) |
 | Docker SSR  | `evo/deployment/docker-ssr`   | [Guide](./evolution-cli/docker-ssr.md)   |
 | Bootstrap   | `evo/design-system/bootstrap` | [Guide](./evolution-cli/bootstrap.md)    |
@@ -282,6 +288,7 @@ npm run lint
 Recommended preview smoke checks:
 
 ```bash
+npm run starter:evolution -- --name transloco --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 npm run starter:evolution -- --name tailwind --preview
@@ -294,6 +301,10 @@ npm run starter:evolution -- --name signal-store --preview --store-scope root --
 Recommended package smoke checks:
 
 ```bash
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.4.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name transloco --preview
+
 npm --cache /private/tmp/aes-npm-cache exec \
   --package ./dist/filippolacagnina-angular-enterprise-starter-0.4.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input

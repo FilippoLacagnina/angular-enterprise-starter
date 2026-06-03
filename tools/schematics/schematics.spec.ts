@@ -9,7 +9,13 @@ import { ngAdd } from './ng-add';
 
 const STARTER_METADATA_PATH = '/.angular-enterprise-starter.json';
 const PACKAGE_JSON_PATH = '/package.json';
+const ANGULAR_JSON_PATH = '/angular.json';
+const APP_CONFIG_PATH = '/src/app/app.config.ts';
 const GLOBAL_STYLES_PATH = '/src/styles.scss';
+const I18N_PROVIDER_PATH = '/src/app/core/i18n/i18n.provider.ts';
+const TRANSLOCO_LOADER_PATH = '/src/app/core/i18n/transloco-http-loader.ts';
+const EN_TRANSLATION_PATH = '/src/assets/i18n/en.json';
+const IT_TRANSLATION_PATH = '/src/assets/i18n/it.json';
 const DASHBOARD_STATE_PATH = '/src/app/features/dashboard/state/dashboard.state.ts';
 const DASHBOARD_STORE_PATH = '/src/app/features/dashboard/state/dashboard.store.ts';
 const APP_STATE_PATH = '/src/app/core/state/app.state.ts';
@@ -147,6 +153,34 @@ describe('Angular Enterprise Starter schematics', () => {
       'CMD ["node", "dist/angular-enterprise-starter/server/server.mjs"]',
     );
     expect(metadata.enabledEvolutions).toEqual(['docker-ssr']);
+  });
+
+  it('evolution installs Transloco i18n baseline', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree));
+    const metadata = readMetadata(result);
+    const packageJson = readPackageJson(result);
+    const angularJson = JSON.parse(readText(result, ANGULAR_JSON_PATH)) as {
+      projects: Record<string, { architect: { build: { options: { assets: unknown[] } } } }>;
+    };
+    const assets =
+      angularJson.projects['angular-enterprise-starter'].architect.build.options.assets;
+
+    expect(packageJson.dependencies?.['@jsverse/transloco']).toBe('^8.3.0');
+    expect(result.exists(I18N_PROVIDER_PATH)).toBe(true);
+    expect(result.exists(TRANSLOCO_LOADER_PATH)).toBe(true);
+    expect(result.exists(EN_TRANSLATION_PATH)).toBe(true);
+    expect(result.exists(IT_TRANSLATION_PATH)).toBe(true);
+    expect(readText(result, I18N_PROVIDER_PATH)).toContain('provideTransloco');
+    expect(readText(result, TRANSLOCO_LOADER_PATH)).toContain('./assets/i18n/${lang}.json');
+    expect(readText(result, EN_TRANSLATION_PATH)).toContain('"EXAMPLE_GROUP"');
+    expect(readText(result, APP_CONFIG_PATH)).toContain(
+      "import { provideI18n } from '@core/i18n/i18n.provider';",
+    );
+    expect(readText(result, APP_CONFIG_PATH)).toContain('provideI18n(),');
+    expect(assets).toContainEqual({ glob: '**/*', input: 'src/assets', output: 'assets' });
+    expect(metadata.enabledEvolutions).toEqual(['transloco']);
   });
 
   it('evolution installs Bootstrap dependency and preserves existing global styles', async () => {
@@ -567,6 +601,52 @@ export const dashboardRoutes: Routes = [
       null,
       2,
     ),
+  );
+
+  tree.create(
+    ANGULAR_JSON_PATH,
+    JSON.stringify(
+      {
+        projects: {
+          'angular-enterprise-starter': {
+            architect: {
+              build: {
+                options: {
+                  assets: [{ glob: '**/*', input: 'public' }],
+                },
+              },
+            },
+          },
+        },
+      },
+      null,
+      2,
+    ),
+  );
+
+  tree.create(
+    APP_CONFIG_PATH,
+    `import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { type ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideRouter } from '@angular/router';
+import { provideAppConfig } from '@core/config/app-config.provider';
+import { correlationIdInterceptor } from '@core/interceptors/correlation-id.interceptor';
+import { errorInterceptor } from '@core/interceptors/error.interceptor';
+
+import { routes } from './app.routes';
+import { environment } from '../environments/environment';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideAppConfig(environment),
+    provideHttpClient(withFetch(), withInterceptors([correlationIdInterceptor, errorInterceptor])),
+    provideRouter(routes),
+    provideClientHydration(withEventReplay()),
+  ],
+};
+`,
   );
 
   return tree;

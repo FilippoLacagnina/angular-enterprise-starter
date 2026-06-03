@@ -15,6 +15,11 @@ const SCHEMATICS_COLLECTION_PATH =
 
 const EVOLUTIONS = [
   {
+    name: 'transloco',
+    label: 'Transloco i18n',
+    description: 'Runtime i18n baseline with EN/IT translation assets.',
+  },
+  {
     name: 'signal-store',
     label: 'SignalStore',
     description: 'Feature-scoped NgRx SignalStore baseline.',

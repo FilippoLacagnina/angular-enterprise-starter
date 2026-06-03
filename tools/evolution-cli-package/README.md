@@ -20,6 +20,7 @@ The CLI is intentionally modular: install only the evolutions your project needs
 
 | Installer   | Name           | Purpose                                                         |
 | ----------- | -------------- | --------------------------------------------------------------- |
+| Transloco   | `transloco`    | Add runtime i18n provider, loader and EN/IT translation assets. |
 | SignalStore | `signal-store` | Generate feature/root NgRx SignalStore state files.             |
 | Docker SSR  | `docker-ssr`   | Add an SSR-oriented Docker deployment baseline.                 |
 | Bootstrap   | `bootstrap`    | Add Bootstrap and selected starter-owned UI wrapper components. |

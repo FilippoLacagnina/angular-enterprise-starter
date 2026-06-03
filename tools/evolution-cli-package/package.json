@@ -36,6 +36,7 @@
     "enterprise-architecture",
     "evolution-cli",
     "front-end",
+    "i18n",
     "ngrx",
     "schematics",
     "signalstore",
@@ -44,7 +45,8 @@
     "starter-template",
     "ssr",
     "tailwind",
-    "bootstrap"
+    "bootstrap",
+    "transloco"
   ],
   "dependencies": {
     "@angular-devkit/schematics": "^21.2.11"
