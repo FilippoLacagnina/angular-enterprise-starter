@@ -4,6 +4,9 @@ import { dirname, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { logging, schema } from '@angular-devkit/core';
+import { formats } from '@angular-devkit/schematics';
+import { NodeWorkflow } from '@angular-devkit/schematics/tools/index.js';
 
 const STARTER_VERSION = readStarterVersion();
 const CLI_DOCUMENTATION_URL =
@@ -107,33 +110,7 @@ async function main() {
     printPackagedSchematicsStep();
   }
 
-  const generateArgs = [
-    'ng',
-    'generate',
-    `${SCHEMATICS_COLLECTION_PATH}:evolution`,
-    '--name',
-    evolution.name,
-  ];
-
-  if (preview) {
-    generateArgs.push('--preview');
-  }
-
-  for (const [optionName, optionValue] of Object.entries(evolutionOptions)) {
-    generateArgs.push(`--${formatCliOptionName(optionName)}`, optionValue);
-  }
-
-  run('npx', generateArgs, {
-    title: preview ? 'Execute preview' : 'Execute apply',
-    description: preview
-      ? 'Inspect the planned changes without touching the workspace.'
-      : 'Apply the selected evolution to the workspace.',
-    meta: [
-      ['Evolution', evolution.label],
-      ['Mode', preview ? 'Preview' : 'Apply'],
-      ...createOptionSummary(evolutionOptions),
-    ],
-  });
+  await runSchematic(evolution, preview, evolutionOptions);
   printNextSteps(preview);
 }
 
@@ -808,6 +785,124 @@ function parseArgs(rawArgs) {
   }
 
   return parsedArgs;
+}
+
+async function runSchematic(evolution, preview, evolutionOptions) {
+  printStep({
+    title: preview ? 'Execute preview' : 'Execute apply',
+    description: preview
+      ? 'Inspect the planned changes without touching the workspace.'
+      : 'Apply the selected evolution to the workspace.',
+    meta: [
+      ['Evolution', evolution.label],
+      ['Mode', preview ? 'Preview' : 'Apply'],
+      ...createOptionSummary(evolutionOptions),
+    ],
+  });
+
+  const workflow = createSchematicWorkflow(preview);
+
+  workflow.reporter.subscribe((event) => {
+    printSchematicEvent(event);
+  });
+
+  await executeWorkflow(workflow, {
+    allowPrivate: true,
+    collection: SCHEMATICS_COLLECTION_PATH,
+    debug: false,
+    logger: createSchematicLogger(),
+    options: {
+      name: evolution.name,
+      preview,
+      ...evolutionOptions,
+    },
+    schematic: 'evolution',
+  });
+}
+
+function printStep(step) {
+  printSection(step.title);
+
+  if (step.description) {
+    console.log(color.dim(step.description));
+    console.log('');
+  }
+
+  for (const [label, value] of step.meta ?? []) {
+    console.log(`${color.dim(label)} ${color.bold(value)}`);
+  }
+
+  if (step.meta?.length) {
+    console.log('');
+  }
+}
+
+function createSchematicWorkflow(preview) {
+  const registry = new schema.CoreSchemaRegistry(formats.standardFormats);
+  registry.addPostTransform(schema.transforms.addUndefinedDefaults);
+
+  return new NodeWorkflow(process.cwd(), {
+    dryRun: preview,
+    force: false,
+    registry,
+    resolvePaths: [process.cwd(), dirname(SCHEMATICS_COLLECTION_PATH)],
+    schemaValidation: true,
+  });
+}
+
+function executeWorkflow(workflow, executionOptions) {
+  return new Promise((resolve, reject) => {
+    workflow.execute(executionOptions).subscribe({
+      complete: resolve,
+      error: reject,
+    });
+  });
+}
+
+function createSchematicLogger() {
+  const logger = new logging.Logger('aes-evolution-cli');
+  logger.subscribe((entry) => {
+    const message = entry.message;
+
+    if (!message) {
+      return;
+    }
+
+    if (entry.level === 'error') {
+      console.error(color.red(message));
+      return;
+    }
+
+    if (entry.level === 'warn') {
+      console.warn(color.yellow(message));
+      return;
+    }
+
+    console.log(message);
+  });
+
+  return logger;
+}
+
+function printSchematicEvent(event) {
+  if (event.kind === 'error') {
+    console.error(color.red(`${event.path}: ${event.description}`));
+    return;
+  }
+
+  if (event.kind === 'create') {
+    console.log(`${color.cyan('CREATE')} ${event.path}`);
+    return;
+  }
+
+  if (event.kind === 'update') {
+    console.log(`${color.cyan('UPDATE')} ${event.path}`);
+    return;
+  }
+
+  if (event.kind === 'delete') {
+    console.log(`${color.cyan('DELETE')} ${event.path}`);
+  }
 }
 
 function readStarterVersion() {

@@ -73,13 +73,14 @@ The Evolution CLI can be used through two channels.
 
 The versioned package is the long-term consumer path.
 It lets teams remove local schematic sources from their product repository while still receiving newer installer behavior through npm.
+The package executes the bundled schematics directly, so it does not require a local `ng generate` command or preinstalled `node_modules` in the target workspace.
 
 When testing a local package build before publishing, use the generated tarball:
 
 ```bash
 npm run evolution-cli:pack
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview
 ```
 
@@ -302,15 +303,15 @@ Recommended package smoke checks:
 
 ```bash
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name transloco --preview
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 ```
 

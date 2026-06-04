@@ -15,6 +15,7 @@ Use this package when:
 - you prefer a preview-first workflow before modifying the workspace.
 
 The CLI is intentionally modular: install only the evolutions your project needs.
+It executes bundled schematics directly, so the target workspace does not need a preinstalled local Angular CLI before running an installer.
 
 ## Available installers
 

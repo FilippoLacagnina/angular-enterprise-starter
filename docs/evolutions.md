@@ -76,8 +76,8 @@ Each implemented evolution branch declares the `main` baseline version it is com
 Example:
 
 ```text
-main                  -> v0.5.0-alpha.0
-evo/i18n/transloco    -> compatible with v0.5.0-alpha.0
+main                  -> v0.5.1-alpha.0
+evo/i18n/transloco    -> compatible with v0.5.0-alpha.0+
 ```
 
 This keeps versioning simple while the starter is still in alpha and avoids creating separate release lifecycles for optional variants.

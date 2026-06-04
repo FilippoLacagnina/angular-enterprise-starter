@@ -99,7 +99,7 @@ Detailed command usage is intentionally kept out of the README and documented in
 ## Current Release
 
 ```text
-v0.5.0-alpha.0 - Transloco and Tailwind Evolution CLI installers
+v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 ```
 
 Current evolution branches:
@@ -143,7 +143,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.5.0-alpha.0`
+- public alpha release: `v0.5.1-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
