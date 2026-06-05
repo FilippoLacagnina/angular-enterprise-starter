@@ -13,6 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 ![Evolution CLI](https://img.shields.io/badge/Evolution%20CLI-preview%20%7C%20apply-0f766e?logo=gnubash&logoColor=white)
+[![Interactive Builder](https://img.shields.io/badge/Interactive%20Builder-live-0891b2?logo=angular&logoColor=white)](https://angular-enterprise-starter-builder.onrender.com/)
 [![Evolution CLI npm alpha](https://img.shields.io/npm/v/%40filippolacagnina%2Fangular-enterprise-starter/alpha?label=Evolution%20CLI%20npm%20alpha&logo=npm&color=cb3837)](https://www.npmjs.com/package/@filippolacagnina/angular-enterprise-starter)
 
 **Available Evolutions**
@@ -40,7 +41,7 @@
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 baseline for building scalable applications from a minimal, documented and composable foundation.
 
-It combines a clean `main` branch with optional evolution paths and a guided **Evolution CLI** for adding validated capabilities without turning the starter into a fixed all-in-one template.
+It combines a clean `main` branch with optional evolution paths, an **Interactive Builder** and a guided **Evolution CLI** for adding validated capabilities without turning the starter into a fixed all-in-one template.
 
 > [!IMPORTANT]
 > Start from `main` for the cleanest baseline. You can add evolutions in two ways: through the guided Evolution CLI, or by starting from / merging compatible `evo/*` branches.
@@ -49,6 +50,15 @@ It combines a clean `main` branch with optional evolution paths and a guided **E
 > Choose the configuration strategy early: use Angular environment files from `main`, or use `evo/config/runtime-config` for deployable runtime configuration through `assets/config/values.yml`.
 
 See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
+
+## Interactive Builder
+
+The Interactive Builder is the visual entry point for composing an Angular Enterprise Starter baseline.
+It lets users select available evolutions, configure supported options and export a generated project from the browser.
+
+[Open the Interactive Builder](https://angular-enterprise-starter-builder.onrender.com/)
+
+The Builder complements the Evolution CLI: the UI helps explore and compose a starter visually, while the CLI remains the versioned automation path for local and scripted workflows.
 
 ## Evolution CLI
 
@@ -86,9 +96,11 @@ First CLI installers:
 
 | Installer   | Purpose                                                                                  |
 | ----------- | ---------------------------------------------------------------------------------------- |
+| Transloco   | Add runtime i18n provider, loader and EN/IT translation assets.                          |
 | SignalStore | Generate feature/root stores with route provider registration and safe target detection. |
 | Docker SSR  | Add an SSR-oriented Docker deployment baseline.                                          |
 | Bootstrap   | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
+| Tailwind    | Add Tailwind CSS and generate selected starter-owned UI wrapper components.              |
 
 Additional installers are in active development and will be added progressively as evolutions are validated.
 
@@ -97,7 +109,7 @@ Detailed command usage is intentionally kept out of the README and documented in
 ## Current Release
 
 ```text
-v0.4.0-alpha.0 - Versioned Evolution CLI npm package
+v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 ```
 
 Current evolution branches:
@@ -141,7 +153,7 @@ Avoid keeping both strategies active for the same values unless there is a clear
 
 ## Current Baseline
 
-- public alpha release: `v0.4.0-alpha.0`
+- public alpha release: `v0.5.1-alpha.0`
 - based on Angular 21
 - intentionally minimal and unstyled
 - layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
