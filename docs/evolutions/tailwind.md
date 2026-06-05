@@ -6,6 +6,7 @@
 - [Official resources](#official-resources)
 - [Current setup](#current-setup)
 - [Usage](#usage)
+- [Evolution CLI installer](#evolution-cli-installer)
 - [Guidelines](#guidelines)
 - [Merge notes](#merge-notes)
 
@@ -58,6 +59,34 @@ Example:
 
 This branch does not apply Tailwind classes to the existing layout or dashboard templates by default.
 This keeps the evolution branch easier to merge with other optional branches.
+
+## Evolution CLI installer
+
+Tailwind can be installed through the Evolution CLI.
+When available, the CLI is more powerful than using the `evo/design-system/tailwind` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
+
+CLI-specific behavior is documented in the dedicated guide:
+
+```text
+docs/evolution-cli/tailwind.md
+```
+
+Preview examples:
+
+```bash
+npm run starter:evolution -- --name tailwind --preview --tailwind-mode all
+npm run starter:evolution -- --name tailwind --preview --tailwind-mode select --tailwind-components button,input
+```
+
+The installer can also generate starter-owned UI wrappers:
+
+| Component | Selector              | Generated path                                |
+| --------- | --------------------- | --------------------------------------------- |
+| `alert`   | `app-tailwind-alert`  | `shared/components/tailwind/alert/alert.ts`   |
+| `badge`   | `app-tailwind-badge`  | `shared/components/tailwind/badge/badge.ts`   |
+| `button`  | `app-tailwind-button` | `shared/components/tailwind/button/button.ts` |
+| `card`    | `app-tailwind-card`   | `shared/components/tailwind/card/card.ts`     |
+| `input`   | `app-tailwind-input`  | `shared/components/tailwind/input/input.ts`   |
 
 ## Guidelines
 

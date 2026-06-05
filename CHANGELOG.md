@@ -8,6 +8,24 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.5.0-alpha.0 - 2026-06-03
+
+Transloco and Tailwind Evolution CLI installers.
+
+### Added
+
+- Added the `transloco` Evolution CLI installer.
+- Added the `tailwind` Evolution CLI installer with parametrized UI primitive generation.
+- Added Transloco preview metadata and schematic tests.
+- Added Tailwind preview metadata, schematic tests and installer documentation.
+- Added CLI documentation for the Transloco installer.
+- Updated the Evolution CLI visual preview to include Transloco.
+
+### Changed
+
+- Updated the starter baseline version to `0.5.0-alpha.0`.
+- Updated the versioned Evolution CLI package metadata to `0.5.0-alpha.0`.
+
 ## 0.4.0-alpha.0 - 2026-05-24
 
 Versioned Evolution CLI npm package.
