@@ -82,6 +82,16 @@
     "bootstrapComponents": {
       "type": "string",
       "description": "Comma-separated Bootstrap components to generate when --bootstrap-mode select is used."
+    },
+    "tailwindMode": {
+      "type": "string",
+      "description": "Tailwind component generation mode.",
+      "enum": ["all", "select"],
+      "default": "all"
+    },
+    "tailwindComponents": {
+      "type": "string",
+      "description": "Comma-separated Tailwind components to generate when --tailwind-mode select is used."
     }
   },
   "required": ["name"]

@@ -7,6 +7,10 @@ import {
   getSignalStorePreview,
   installSignalStoreEvolution,
 } from './signal-store/signal-store.installer';
+import { installTailwindEvolution } from './tailwind/tailwind.installer';
+import { getTailwindPreview } from './tailwind/tailwind.preview';
+import { installTranslocoEvolution } from './transloco/transloco.installer';
+import { getTranslocoPreview } from './transloco/transloco.preview';
 
 const GITHUB_REPOSITORY_URL = 'https://github.com/FilippoLacagnina/angular-enterprise-starter';
 
@@ -15,10 +19,14 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     name: 'transloco',
     label: 'Transloco i18n',
     dependencies: ['@jsverse/transloco'],
-    creates: ['src/assets/i18n/en.json', 'src/assets/i18n/it.json', 'docs/i18n-transloco.md'],
+    creates: [
+      'src/app/core/i18n/i18n.provider.ts',
+      'src/app/core/i18n/transloco-http-loader.ts',
+      'src/assets/i18n/en.json',
+      'src/assets/i18n/it.json',
+    ],
     updates: [
       'package.json',
-      'package-lock.json',
       'angular.json',
       'src/app/app.config.ts',
       '.angular-enterprise-starter.json',
@@ -26,6 +34,8 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     notes: ['Adds a runtime i18n baseline without changing existing feature texts.'],
     referenceBranch: 'evo/i18n/transloco',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/i18n/transloco`,
+    preview: getTranslocoPreview,
+    install: installTranslocoEvolution,
   },
   'runtime-config': {
     name: 'runtime-config',
@@ -88,17 +98,19 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   tailwind: {
     name: 'tailwind',
     label: 'Tailwind',
-    dependencies: ['Tailwind CSS dependencies'],
-    creates: ['.postcssrc.json', 'docs/tailwind.md'],
-    updates: [
-      'package.json',
-      'package-lock.json',
-      'src/styles.scss',
-      '.angular-enterprise-starter.json',
+    repeatable: true,
+    dependencies: ['tailwindcss', '@tailwindcss/postcss', 'postcss'],
+    creates: ['.postcssrc.json', 'src/app/shared/components/tailwind/*'],
+    updates: ['package.json', 'src/styles.scss', '.angular-enterprise-starter.json'],
+    notes: [
+      'Adds Tailwind CSS v4 with PostCSS integration.',
+      'Generates selected starter-owned Angular standalone wrappers.',
+      'Preserves existing global styles and adds the Tailwind import only if missing.',
     ],
-    notes: ['Adds Tailwind CSS as an optional utility-first styling baseline.'],
     referenceBranch: 'evo/design-system/tailwind',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/tailwind`,
+    preview: getTailwindPreview,
+    install: installTailwindEvolution,
   },
 };
 

@@ -15,4 +15,6 @@ export interface EvolutionOptions {
   readonly storeName?: string;
   readonly bootstrapMode?: 'all' | 'select';
   readonly bootstrapComponents?: string;
+  readonly tailwindMode?: 'all' | 'select';
+  readonly tailwindComponents?: string;
 }

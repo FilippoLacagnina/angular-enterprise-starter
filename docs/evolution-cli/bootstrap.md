@@ -16,7 +16,7 @@
 The Bootstrap installer adds Bootstrap and optional starter-owned Angular wrapper components through the Evolution CLI.
 
 When available, the CLI is more powerful than using the `evo/design-system/bootstrap` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
-Bootstrap is the first installer backed by the shared design-system installer utilities, so future Tailwind, Angular Material or PrimeNG primitives can reuse the same preview/apply safety model.
+Bootstrap is backed by shared design-system installer utilities, so Tailwind follows the same model and future Angular Material or PrimeNG primitives can reuse the same preview/apply safety rules.
 
 The related reference branch is:
 

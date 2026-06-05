@@ -16,7 +16,7 @@ The project is currently in alpha pre-release.
 Current package version:
 
 ```text
-0.4.0-alpha.0
+0.5.1-alpha.0
 ```
 
 The package remains marked as private:
@@ -41,13 +41,13 @@ That package can be published to npm while the root starter application remains 
 Current Git tag:
 
 ```text
-v0.4.0-alpha.0
+v0.5.1-alpha.0
 ```
 
 Current GitHub Release:
 
 ```text
-v0.4.0-alpha.0 - Versioned Evolution CLI npm package
+v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 ```
 
 ## Version strategy
@@ -61,8 +61,10 @@ Recommended flow:
 0.2.0-alpha.0   -> evolution branches and runtime configuration baseline
 0.3.0-alpha.0   -> centralized documentation and Evolution CLI preview
 0.4.0-alpha.0   -> versioned Evolution CLI npm package
-0.4.0-alpha.N   -> CLI and documentation iterations with possible breaking changes
-0.4.0-beta.0    -> structure mostly stable, feedback phase
+0.5.0-alpha.0   -> Transloco and Tailwind Evolution CLI installers
+0.5.1-alpha.0   -> Render-safe Evolution CLI schematic execution
+0.5.x-alpha.N   -> CLI and documentation iterations with possible breaking changes
+0.5.x-beta.0    -> structure mostly stable, feedback phase
 1.0.0           -> stable starter baseline
 ```
 
@@ -76,8 +78,8 @@ Each implemented evolution branch declares which `main` baseline it is compatibl
 Example:
 
 ```text
-main                  -> v0.4.0-alpha.0
-evo/i18n/transloco    -> compatible with v0.4.0-alpha.0
+main                  -> v0.5.1-alpha.0
+evo/i18n/transloco    -> compatible with v0.5.0-alpha.0+
 ```
 
 This avoids maintaining separate release lifecycles for optional variants before the starter baseline is stable.
@@ -106,19 +108,21 @@ v0.1.0-alpha.0 - First public alpha
 v0.2.0-alpha.0 - Evolution branches and runtime configuration baseline
 v0.3.0-alpha.0 - Centralized documentation and Evolution CLI preview
 v0.4.0-alpha.0 - Versioned Evolution CLI npm package
+v0.5.0-alpha.0 - Transloco and Tailwind Evolution CLI installers
+v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 ```
 
 For future releases, create and push a new tag:
 
 ```bash
-git tag v0.4.0-alpha.0
-git push origin v0.4.0-alpha.0
+git tag v0.5.1-alpha.0
+git push origin v0.5.1-alpha.0
 ```
 
 Suggested GitHub release title:
 
 ```text
-v0.4.0-alpha.0 - Versioned Evolution CLI npm package
+v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 ```
 
 ## npm publication
