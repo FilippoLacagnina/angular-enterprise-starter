@@ -1,6 +1,6 @@
 <svg width="760" height="940" viewBox="0 0 760 940" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">Angular Enterprise Starter Evolution CLI preview</title>
-  <desc id="desc">Terminal-style preview of the Angular Enterprise Starter Evolution CLI showing installable Transloco i18n, SignalStore, Docker SSR, Bootstrap and Tailwind evolutions.</desc>
+  <desc id="desc">Terminal-style preview of the Angular Enterprise Starter Evolution CLI showing installable Transloco i18n, Runtime Config, SignalStore, Docker SSR, Bootstrap and Tailwind evolutions.</desc>
   <rect width="760" height="940" rx="22" fill="#17252B"/>
   <rect x="1" y="1" width="758" height="938" rx="21" stroke="#29424B" stroke-width="2"/>
 
@@ -19,25 +19,29 @@
     <text x="34" y="427" fill="#D8E2EA" font-size="20" font-weight="700">Choose an evolution</text>
     <line x1="34" y1="459" x2="726" y2="459" stroke="#7E8B96" stroke-width="2" stroke-dasharray="7 7" opacity="0.85"/>
 
-    <text x="34" y="510" fill="#34D6C3" font-size="20" font-weight="700">1.</text>
-    <text x="70" y="510" fill="#D8E2EA" font-size="20" font-weight="700">Transloco i18n</text>
-    <text x="70" y="550" fill="#7E8B96" font-size="20">Runtime i18n baseline with EN/IT assets.</text>
+    <text x="34" y="505" fill="#34D6C3" font-size="20" font-weight="700">1.</text>
+    <text x="70" y="505" fill="#D8E2EA" font-size="20" font-weight="700">Transloco i18n</text>
+    <text x="70" y="538" fill="#7E8B96" font-size="20">Runtime i18n baseline with EN/IT assets.</text>
 
-    <text x="34" y="590" fill="#34D6C3" font-size="20" font-weight="700">2.</text>
-    <text x="70" y="590" fill="#D8E2EA" font-size="20" font-weight="700">SignalStore</text>
-    <text x="70" y="630" fill="#7E8B96" font-size="20">Feature/root NgRx SignalStore baseline.</text>
+    <text x="34" y="575" fill="#34D6C3" font-size="20" font-weight="700">2.</text>
+    <text x="70" y="575" fill="#D8E2EA" font-size="20" font-weight="700">Runtime Config</text>
+    <text x="70" y="608" fill="#7E8B96" font-size="20">Deployable values.yml configuration.</text>
 
-    <text x="34" y="670" fill="#34D6C3" font-size="20" font-weight="700">3.</text>
-    <text x="70" y="670" fill="#D8E2EA" font-size="20" font-weight="700">Docker SSR</text>
-    <text x="70" y="710" fill="#7E8B96" font-size="20">SSR-oriented Docker deployment baseline.</text>
+    <text x="34" y="645" fill="#34D6C3" font-size="20" font-weight="700">3.</text>
+    <text x="70" y="645" fill="#D8E2EA" font-size="20" font-weight="700">SignalStore</text>
+    <text x="70" y="678" fill="#7E8B96" font-size="20">Feature/root NgRx SignalStore baseline.</text>
 
-    <text x="34" y="750" fill="#34D6C3" font-size="20" font-weight="700">4.</text>
-    <text x="70" y="750" fill="#D8E2EA" font-size="20" font-weight="700">Bootstrap</text>
-    <text x="70" y="790" fill="#7E8B96" font-size="20">Parametrized Bootstrap UI primitives.</text>
+    <text x="34" y="715" fill="#34D6C3" font-size="20" font-weight="700">4.</text>
+    <text x="70" y="715" fill="#D8E2EA" font-size="20" font-weight="700">Docker SSR</text>
+    <text x="70" y="748" fill="#7E8B96" font-size="20">SSR-oriented Docker deployment baseline.</text>
 
-    <text x="34" y="830" fill="#34D6C3" font-size="20" font-weight="700">5.</text>
-    <text x="70" y="830" fill="#D8E2EA" font-size="20" font-weight="700">Tailwind</text>
-    <text x="70" y="870" fill="#7E8B96" font-size="20">Parametrized Tailwind UI primitives.</text>
+    <text x="34" y="785" fill="#34D6C3" font-size="20" font-weight="700">5.</text>
+    <text x="70" y="785" fill="#D8E2EA" font-size="20" font-weight="700">Bootstrap</text>
+    <text x="70" y="818" fill="#7E8B96" font-size="20">Parametrized Bootstrap UI primitives.</text>
+
+    <text x="34" y="855" fill="#34D6C3" font-size="20" font-weight="700">6.</text>
+    <text x="70" y="855" fill="#D8E2EA" font-size="20" font-weight="700">Tailwind</text>
+    <text x="70" y="888" fill="#7E8B96" font-size="20">Parametrized Tailwind UI primitives.</text>
 
     <text x="34" y="914" fill="#D8E2EA" font-size="20" font-weight="700">Select evolution</text>
   </g>

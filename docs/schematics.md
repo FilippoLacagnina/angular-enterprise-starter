@@ -86,13 +86,14 @@ npm --cache /private/tmp/aes-npm-cache exec \
 
 ## Installable evolutions
 
-| Evolution   | Name           | Status      | Guide                                    | Notes                                           |
-| ----------- | -------------- | ----------- | ---------------------------------------- | ----------------------------------------------- |
-| Transloco   | `transloco`    | installable | [Guide](./evolution-cli/transloco.md)    | Runtime i18n baseline with EN/IT assets.        |
-| SignalStore | `signal-store` | installable | [Guide](./evolution-cli/signal-store.md) | Parametrized feature/root store generation.     |
-| Docker SSR  | `docker-ssr`   | installable | [Guide](./evolution-cli/docker-ssr.md)   | SSR-oriented Docker deployment baseline.        |
-| Bootstrap   | `bootstrap`    | installable | [Guide](./evolution-cli/bootstrap.md)    | Parametrized Bootstrap UI primitive generation. |
-| Tailwind    | `tailwind`     | installable | [Guide](./evolution-cli/tailwind.md)     | Parametrized Tailwind UI primitive generation.  |
+| Evolution      | Name             | Status      | Guide                                      | Notes                                           |
+| -------------- | ---------------- | ----------- | ------------------------------------------ | ----------------------------------------------- |
+| Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Runtime i18n baseline with EN/IT assets.        |
+| Runtime Config | `runtime-config` | installable | [Guide](./evolution-cli/runtime-config.md) | Deployable values.yml configuration baseline.   |
+| SignalStore    | `signal-store`   | installable | [Guide](./evolution-cli/signal-store.md)   | Parametrized feature/root store generation.     |
+| Docker SSR     | `docker-ssr`     | installable | [Guide](./evolution-cli/docker-ssr.md)     | SSR-oriented Docker deployment baseline.        |
+| Bootstrap      | `bootstrap`      | installable | [Guide](./evolution-cli/bootstrap.md)      | Parametrized Bootstrap UI primitive generation. |
+| Tailwind       | `tailwind`       | installable | [Guide](./evolution-cli/tailwind.md)       | Parametrized Tailwind UI primitive generation.  |
 
 Other evolutions may exist as `evo/*` branches before they become CLI-installable.
 Those branches remain useful as implementation references, but they should not be treated as CLI installers until an installer, preview metadata and tests exist.
@@ -128,6 +129,7 @@ Preview examples:
 ```bash
 npm run starter:evolution -- --name signal-store --preview
 npm run starter:evolution -- --name transloco --preview
+npm run starter:evolution -- --name runtime-config --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name tailwind --preview
@@ -139,6 +141,7 @@ Apply examples:
 ```bash
 npm run starter:evolution -- --name signal-store --apply
 npm run starter:evolution -- --name transloco --apply
+npm run starter:evolution -- --name runtime-config --apply
 npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
 npm run starter:evolution -- --name tailwind --apply
@@ -149,6 +152,7 @@ Non-interactive apply examples:
 ```bash
 npm run starter:evolution -- --name signal-store --apply --yes
 npm run starter:evolution -- --name transloco --apply --yes
+npm run starter:evolution -- --name runtime-config --apply --yes
 npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
 npm run starter:evolution -- --name tailwind --apply --yes
@@ -161,13 +165,14 @@ Installer-specific options are documented in the dedicated guides.
 
 Detailed installer behavior lives in dedicated files to keep this guide readable:
 
-| Installer   | Guide                                          | Reference branch              |
-| ----------- | ---------------------------------------------- | ----------------------------- |
-| Transloco   | [Transloco](./evolution-cli/transloco.md)      | `evo/i18n/transloco`          |
-| SignalStore | [SignalStore](./evolution-cli/signal-store.md) | `evo/state/signal-store`      |
-| Docker SSR  | [Docker SSR](./evolution-cli/docker-ssr.md)    | `evo/deployment/docker-ssr`   |
-| Bootstrap   | [Bootstrap](./evolution-cli/bootstrap.md)      | `evo/design-system/bootstrap` |
-| Tailwind    | [Tailwind](./evolution-cli/tailwind.md)        | `evo/design-system/tailwind`  |
+| Installer      | Guide                                               | Reference branch              |
+| -------------- | --------------------------------------------------- | ----------------------------- |
+| Transloco      | [Transloco](./evolution-cli/transloco.md)           | `evo/i18n/transloco`          |
+| Runtime Config | [Runtime Config](./evolution-cli/runtime-config.md) | `evo/config/runtime-config`   |
+| SignalStore    | [SignalStore](./evolution-cli/signal-store.md)      | `evo/state/signal-store`      |
+| Docker SSR     | [Docker SSR](./evolution-cli/docker-ssr.md)         | `evo/deployment/docker-ssr`   |
+| Bootstrap      | [Bootstrap](./evolution-cli/bootstrap.md)           | `evo/design-system/bootstrap` |
+| Tailwind       | [Tailwind](./evolution-cli/tailwind.md)             | `evo/design-system/tailwind`  |
 
 Use `docs/evolution-cli/*` for CLI behavior.
 Use `docs/evolutions/*` for branch reference documentation.
@@ -190,6 +195,7 @@ Examples:
 - a root SignalStore with the same name already exists;
 - a required feature route is missing;
 - feature component files already exist while using `--feature-component create`;
+- runtime config files already exist;
 - selected design-system component files are partially installed;
 - Docker SSR files already exist.
 
@@ -241,13 +247,14 @@ When installer behavior changes and the package is intended for consumers, also 
 
 Current CLI/reference branch mapping:
 
-| Evolution   | Reference branch              | CLI guide                                |
-| ----------- | ----------------------------- | ---------------------------------------- |
-| Transloco   | `evo/i18n/transloco`          | [Guide](./evolution-cli/transloco.md)    |
-| SignalStore | `evo/state/signal-store`      | [Guide](./evolution-cli/signal-store.md) |
-| Docker SSR  | `evo/deployment/docker-ssr`   | [Guide](./evolution-cli/docker-ssr.md)   |
-| Bootstrap   | `evo/design-system/bootstrap` | [Guide](./evolution-cli/bootstrap.md)    |
-| Tailwind    | `evo/design-system/tailwind`  | [Guide](./evolution-cli/tailwind.md)     |
+| Evolution      | Reference branch              | CLI guide                                  |
+| -------------- | ----------------------------- | ------------------------------------------ |
+| Transloco      | `evo/i18n/transloco`          | [Guide](./evolution-cli/transloco.md)      |
+| Runtime Config | `evo/config/runtime-config`   | [Guide](./evolution-cli/runtime-config.md) |
+| SignalStore    | `evo/state/signal-store`      | [Guide](./evolution-cli/signal-store.md)   |
+| Docker SSR     | `evo/deployment/docker-ssr`   | [Guide](./evolution-cli/docker-ssr.md)     |
+| Bootstrap      | `evo/design-system/bootstrap` | [Guide](./evolution-cli/bootstrap.md)      |
+| Tailwind       | `evo/design-system/tailwind`  | [Guide](./evolution-cli/tailwind.md)       |
 
 Reference-only branches that are not CLI-installable yet must remain documented in `docs/evolutions.md` until their installers are implemented.
 
@@ -290,6 +297,7 @@ Recommended preview smoke checks:
 
 ```bash
 npm run starter:evolution -- --name transloco --preview
+npm run starter:evolution -- --name runtime-config --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 npm run starter:evolution -- --name tailwind --preview

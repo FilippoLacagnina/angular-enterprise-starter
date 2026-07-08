@@ -23,6 +23,11 @@ const EVOLUTIONS = [
     description: 'Runtime i18n baseline with EN/IT translation assets.',
   },
   {
+    name: 'runtime-config',
+    label: 'Runtime config',
+    description: 'Deployable values.yml configuration baseline.',
+  },
+  {
     name: 'signal-store',
     label: 'SignalStore',
     description: 'Feature-scoped NgRx SignalStore baseline.',

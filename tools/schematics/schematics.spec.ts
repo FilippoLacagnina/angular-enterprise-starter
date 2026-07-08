@@ -11,11 +11,21 @@ const STARTER_METADATA_PATH = '/.angular-enterprise-starter.json';
 const PACKAGE_JSON_PATH = '/package.json';
 const ANGULAR_JSON_PATH = '/angular.json';
 const APP_CONFIG_PATH = '/src/app/app.config.ts';
+const TSCONFIG_SPEC_PATH = '/tsconfig.spec.json';
 const GLOBAL_STYLES_PATH = '/src/styles.scss';
+const APP_CONFIG_MODEL_PATH = '/src/app/core/config/app-config.model.ts';
+const ENVIRONMENT_PATH = '/src/environments/environment.ts';
 const I18N_PROVIDER_PATH = '/src/app/core/i18n/i18n.provider.ts';
 const TRANSLOCO_LOADER_PATH = '/src/app/core/i18n/transloco-http-loader.ts';
 const EN_TRANSLATION_PATH = '/src/assets/i18n/en.json';
 const IT_TRANSLATION_PATH = '/src/assets/i18n/it.json';
+const RUNTIME_CONFIG_MODEL_PATH = '/src/app/core/runtime-config/runtime-config.model.ts';
+const RUNTIME_CONFIG_PARSER_PATH = '/src/app/core/runtime-config/runtime-config.parser.ts';
+const RUNTIME_CONFIG_PROVIDER_PATH = '/src/app/core/runtime-config/runtime-config.provider.ts';
+const RUNTIME_CONFIG_SERVICE_PATH = '/src/app/core/runtime-config/runtime-config.service.ts';
+const RUNTIME_CONFIG_TOKEN_PATH = '/src/app/core/runtime-config/runtime-config.token.ts';
+const RUNTIME_VALUES_PATH = '/src/assets/config/values.yml';
+const DASHBOARD_SERVICE_PATH = '/src/app/features/dashboard/services/dashboard.service.ts';
 const DASHBOARD_STATE_PATH = '/src/app/features/dashboard/state/dashboard.state.ts';
 const DASHBOARD_STORE_PATH = '/src/app/features/dashboard/state/dashboard.store.ts';
 const APP_STATE_PATH = '/src/app/core/state/app.state.ts';
@@ -181,6 +191,136 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(readText(result, APP_CONFIG_PATH)).toContain('provideI18n(),');
     expect(assets).toContainEqual({ glob: '**/*', input: 'src/assets', output: 'assets' });
     expect(metadata.enabledEvolutions).toEqual(['transloco']);
+  });
+
+  it('evolution installs runtime config baseline', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'runtime-config' }), tree),
+    );
+    const metadata = readMetadata(result);
+    const packageJson = readPackageJson(result);
+    const angularJson = JSON.parse(readText(result, ANGULAR_JSON_PATH)) as {
+      projects: Record<
+        string,
+        {
+          architect: {
+            build: {
+              options: { assets: unknown[]; allowedCommonJsDependencies?: string[] };
+              configurations: Record<string, Record<string, unknown>>;
+            };
+          };
+        }
+      >;
+    };
+    const build = angularJson.projects['angular-enterprise-starter'].architect.build;
+    const appConfigContent = readText(result, APP_CONFIG_PATH);
+    const dashboardServiceContent = readText(result, DASHBOARD_SERVICE_PATH);
+    const tsConfigSpecContent = readText(result, TSCONFIG_SPEC_PATH);
+
+    expect(packageJson.dependencies?.yaml).toBe('^2.9.0');
+    expect(result.exists(RUNTIME_CONFIG_MODEL_PATH)).toBe(true);
+    expect(result.exists(RUNTIME_CONFIG_PARSER_PATH)).toBe(true);
+    expect(result.exists(RUNTIME_CONFIG_PROVIDER_PATH)).toBe(true);
+    expect(result.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(true);
+    expect(result.exists(RUNTIME_CONFIG_TOKEN_PATH)).toBe(true);
+    expect(result.exists(RUNTIME_VALUES_PATH)).toBe(true);
+    expect(readText(result, RUNTIME_CONFIG_PARSER_PATH)).toContain("parse } from 'yaml'");
+    expect(readText(result, RUNTIME_CONFIG_SERVICE_PATH)).toContain('REQUEST, signal');
+    expect(readText(result, RUNTIME_VALUES_PATH)).toContain('baseUrl: http://localhost:3000');
+    expect(appConfigContent).toContain(
+      "import { provideRuntimeConfig } from '@core/runtime-config/runtime-config.provider';",
+    );
+    expect(appConfigContent).toContain('provideRuntimeConfig(),');
+    expect(appConfigContent).not.toContain('provideAppConfig');
+    expect(appConfigContent).not.toContain('../environments/environment');
+    expect(dashboardServiceContent).toContain(
+      "import { RuntimeConfigService } from '@core/runtime-config/runtime-config.service';",
+    );
+    expect(dashboardServiceContent).toContain('this.runtimeConfig.value().api.dashboard.baseUrl');
+    expect(dashboardServiceContent).not.toContain('APP_CONFIG');
+    expect(build.options.assets).toContainEqual({
+      glob: '**/*',
+      input: 'src/assets',
+      output: 'assets',
+    });
+    expect(build.options.allowedCommonJsDependencies).toContain('yaml');
+    expect(build.configurations['development']?.['fileReplacements']).toBeUndefined();
+    expect(result.exists(APP_CONFIG_MODEL_PATH)).toBe(false);
+    expect(result.exists(ENVIRONMENT_PATH)).toBe(false);
+    expect(tsConfigSpecContent).not.toContain('src/environments/environment.test.ts');
+    expect(metadata.enabledEvolutions).toEqual(['runtime-config']);
+  });
+
+  it('evolution fails before overwriting existing runtime config files', async () => {
+    const tree = createStarterTree();
+    tree.create(RUNTIME_CONFIG_SERVICE_PATH, '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow('Runtime config files already exist');
+  });
+
+  it('evolution blocks runtime config when custom files still use APP_CONFIG', async () => {
+    const tree = createStarterTree();
+    tree.create(
+      '/src/app/features/orders/services/orders.service.ts',
+      `import { inject, Injectable } from '@angular/core';
+import { APP_CONFIG } from '@core/config/app-config.token';
+
+@Injectable({ providedIn: 'root' })
+export class OrdersService {
+  private readonly config = inject(APP_CONFIG);
+
+  public readonly baseUrl = this.config.api.dashboard;
+}
+`,
+    );
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow('src/app/features/orders/services/orders.service.ts');
+
+    expect(tree.exists(APP_CONFIG_MODEL_PATH)).toBe(true);
+    expect(tree.exists(ENVIRONMENT_PATH)).toBe(true);
+    expect(tree.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(false);
+  });
+
+  it('evolution blocks runtime config when DashboardService has custom APP_CONFIG usage', async () => {
+    const tree = createStarterTree();
+
+    tree.overwrite(
+      DASHBOARD_SERVICE_PATH,
+      `import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { dashboardApiRoutes } from '@core/api/dashboard-api.routes';
+import { APP_CONFIG } from '@core/config/app-config.token';
+import { type Observable } from 'rxjs';
+
+@Injectable()
+export class DashboardService {
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
+
+  public getDashboardDetail(id: string): Observable<unknown> {
+    return this.http.get(\`${'${this.config.api.dashboard}'}${'${dashboardApiRoutes.v2.detail(id)}'}\`);
+  }
+
+  public getDashboardBaseUrl(): string {
+    return this.config.api.dashboard;
+  }
+}
+`,
+    );
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow('src/app/features/dashboard/services/dashboard.service.ts');
+
+    expect(tree.exists(APP_CONFIG_MODEL_PATH)).toBe(true);
+    expect(tree.exists(ENVIRONMENT_PATH)).toBe(true);
+    expect(tree.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(false);
   });
 
   it('evolution installs Bootstrap dependency and preserves existing global styles', async () => {
@@ -590,6 +730,26 @@ export const dashboardRoutes: Routes = [
   );
 
   tree.create(
+    DASHBOARD_SERVICE_PATH,
+    `import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { dashboardApiRoutes } from '@core/api/dashboard-api.routes';
+import { APP_CONFIG } from '@core/config/app-config.token';
+import { type Observable } from 'rxjs';
+
+@Injectable()
+export class DashboardService {
+  private readonly http = inject(HttpClient);
+  private readonly config = inject(APP_CONFIG);
+
+  public getDashboardDetail(id: string): Observable<unknown> {
+    return this.http.get(\`${'${this.config.api.dashboard}'}${'${dashboardApiRoutes.v2.detail(id)}'}\`);
+  }
+}
+`,
+  );
+
+  tree.create(
     PACKAGE_JSON_PATH,
     JSON.stringify(
       {
@@ -614,6 +774,16 @@ export const dashboardRoutes: Routes = [
                 options: {
                   assets: [{ glob: '**/*', input: 'public' }],
                 },
+                configurations: {
+                  development: {
+                    fileReplacements: [
+                      {
+                        replace: 'src/environments/environment.ts',
+                        with: 'src/environments/environment.dev.ts',
+                      },
+                    ],
+                  },
+                },
               },
             },
           },
@@ -623,6 +793,25 @@ export const dashboardRoutes: Routes = [
       2,
     ),
   );
+
+  tree.create(
+    TSCONFIG_SPEC_PATH,
+    JSON.stringify(
+      { include: ['src/**/*.spec.ts', 'src/environments/environment.test.ts'] },
+      null,
+      2,
+    ),
+  );
+
+  tree.create(APP_CONFIG_MODEL_PATH, '');
+  tree.create('/src/app/core/config/app-config.provider.ts', '');
+  tree.create('/src/app/core/config/app-config.token.ts', '');
+  tree.create('/src/app/core/config/app-environment.type.ts', '');
+  tree.create(ENVIRONMENT_PATH, '');
+  tree.create('/src/environments/environment.local.ts', '');
+  tree.create('/src/environments/environment.dev.ts', '');
+  tree.create('/src/environments/environment.test.ts', '');
+  tree.create('/src/environments/environment.prod.ts', '');
 
   tree.create(
     APP_CONFIG_PATH,

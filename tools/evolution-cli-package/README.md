@@ -19,13 +19,14 @@ It executes bundled schematics directly, so the target workspace does not need a
 
 ## Available installers
 
-| Installer   | Name           | Purpose                                                         |
-| ----------- | -------------- | --------------------------------------------------------------- |
-| Transloco   | `transloco`    | Add runtime i18n provider, loader and EN/IT translation assets. |
-| SignalStore | `signal-store` | Generate feature/root NgRx SignalStore state files.             |
-| Docker SSR  | `docker-ssr`   | Add an SSR-oriented Docker deployment baseline.                 |
-| Bootstrap   | `bootstrap`    | Add Bootstrap and selected starter-owned UI wrapper components. |
-| Tailwind    | `tailwind`     | Add Tailwind CSS and selected starter-owned UI wrappers.        |
+| Installer      | Name             | Purpose                                                         |
+| -------------- | ---------------- | --------------------------------------------------------------- |
+| Transloco      | `transloco`      | Add runtime i18n provider, loader and EN/IT translation assets. |
+| Runtime Config | `runtime-config` | Add deployable values.yml runtime configuration.                |
+| SignalStore    | `signal-store`   | Generate feature/root NgRx SignalStore state files.             |
+| Docker SSR     | `docker-ssr`     | Add an SSR-oriented Docker deployment baseline.                 |
+| Bootstrap      | `bootstrap`      | Add Bootstrap and selected starter-owned UI wrapper components. |
+| Tailwind       | `tailwind`       | Add Tailwind CSS and selected starter-owned UI wrappers.        |
 
 ## Usage
 

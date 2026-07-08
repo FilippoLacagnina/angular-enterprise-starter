@@ -3,6 +3,8 @@ import { installBootstrapEvolution } from './bootstrap/bootstrap.installer';
 import { getBootstrapPreview } from './bootstrap/bootstrap.preview';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { type EvolutionDefinition } from './evolution-definition';
+import { installRuntimeConfigEvolution } from './runtime-config/runtime-config.installer';
+import { getRuntimeConfigPreview } from './runtime-config/runtime-config.preview';
 import {
   getSignalStorePreview,
   installSignalStoreEvolution,
@@ -40,16 +42,32 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
   'runtime-config': {
     name: 'runtime-config',
     label: 'Runtime config',
-    dependencies: ['runtime YAML parser dependency'],
+    dependencies: ['yaml'],
     creates: [
       'src/assets/config/values.yml',
-      'src/app/core/config/runtime-config.*',
-      'docs/runtime-config.md',
+      'src/app/core/runtime-config/runtime-config.model.ts',
+      'src/app/core/runtime-config/runtime-config.parser.ts',
+      'src/app/core/runtime-config/runtime-config.provider.ts',
+      'src/app/core/runtime-config/runtime-config.service.ts',
+      'src/app/core/runtime-config/runtime-config.token.ts',
     ],
-    updates: ['angular.json', 'src/app/app.config.ts', '.angular-enterprise-starter.json'],
-    notes: ['Changes the configuration strategy, so it should be selected early.'],
+    updates: [
+      'package.json',
+      'angular.json',
+      'src/app/app.config.ts',
+      'src/app/features/dashboard/services/dashboard.service.ts',
+      'tsconfig.spec.json',
+      '.angular-enterprise-starter.json',
+    ],
+    notes: [
+      'Replaces Angular environment-file configuration with deployable runtime values.yml loading.',
+      'Changes the configuration strategy, so it should be selected early.',
+      'Updates the baseline DashboardService when it still uses the default APP_CONFIG pattern.',
+    ],
     referenceBranch: 'evo/config/runtime-config',
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/config/runtime-config`,
+    preview: getRuntimeConfigPreview,
+    install: installRuntimeConfigEvolution,
   },
   'signal-store': {
     name: 'signal-store',
