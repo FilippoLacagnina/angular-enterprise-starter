@@ -80,7 +80,7 @@ When testing a local package build before publishing, use the generated tarball:
 ```bash
 npm run evolution-cli:pack
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.6.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview
 ```
 
@@ -186,6 +186,7 @@ The CLI follows a conservative safety model:
 - do not modify existing components;
 - do not silently resolve ambiguous project structure;
 - ask for explicit choices when a parametrized installer needs them;
+- run preflight guards before destructive configuration changes;
 - keep reference branches available for manual inspection.
 
 Expected user-action conflicts stop with a direct message.
@@ -196,6 +197,7 @@ Examples:
 - a required feature route is missing;
 - feature component files already exist while using `--feature-component create`;
 - runtime config files already exist;
+- Runtime Config detects custom `APP_CONFIG`, `@core/config` or environment-file references;
 - selected design-system component files are partially installed;
 - Docker SSR files already exist.
 
@@ -311,15 +313,19 @@ Recommended package smoke checks:
 
 ```bash
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.6.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name transloco --preview
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.6.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name runtime-config --preview
+
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.6.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.5.1-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.6.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 ```
 

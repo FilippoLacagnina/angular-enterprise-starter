@@ -2,7 +2,7 @@
 
 ## Date
 
-June 3, 2026
+July 8, 2026
 
 ## Completed
 
@@ -48,6 +48,21 @@ June 3, 2026
 - Refreshed README.
 - Added architecture, configuration, API, routing/SSR and state management guides.
 
+8. Evolution model
+
+- Documented optional `evo/*` branches as reference implementations.
+- Added the guided Evolution CLI as the recommended installation path when an installer exists.
+- Published the Evolution CLI as a versioned npm package.
+- Added the Interactive Builder as the visual composition entry point.
+
+9. CLI-installable evolutions
+
+- Added Transloco i18n installer.
+- Added Runtime Config installer with deployable `assets/config/values.yml` generation and safety guards.
+- Added SignalStore installer with feature/root store generation.
+- Added Docker SSR installer.
+- Added Bootstrap and Tailwind design-system installers with parametrized UI primitive generation.
+
 ## Current Design Choice
 
 The starter remains design-neutral so adopters can bring their own:
@@ -61,4 +76,5 @@ The starter remains design-neutral so adopters can bring their own:
 
 - `npm run lint` passes
 - `npm run format:check` passes
-- `npx tsc -p tsconfig.app.json --noEmit` passes
+- `npm run schematics:build` passes
+- `npm run schematics:test` passes

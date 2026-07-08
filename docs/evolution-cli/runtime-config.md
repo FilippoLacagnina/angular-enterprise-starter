@@ -50,6 +50,24 @@ npm run starter:evolution -- --name runtime-config --apply --yes
 
 Use `--apply` only after reviewing preview output.
 
+## Safety Guard
+
+The installer runs a preflight guard before modifying the workspace.
+
+It blocks the evolution when custom application files still reference the environment-based configuration strategy, for example:
+
+- `APP_CONFIG`;
+- `@core/config`;
+- `provideAppConfig`;
+- `src/environments`;
+- relative imports to `../environments/environment`.
+
+The guard intentionally runs before package updates, file creation or baseline file deletion.
+If it reports a blocking file, migrate that file to `RuntimeConfigService` first and run the installer again.
+
+The baseline `app.config.ts` and default `DashboardService` are handled automatically only when they still match the starter-owned patterns.
+If `DashboardService` was customized and still uses `APP_CONFIG`, the installer stops instead of applying a partial migration.
+
 ## Generated Structure
 
 ```text

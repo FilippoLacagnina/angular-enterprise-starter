@@ -8,6 +8,36 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.6.0-alpha.0 - 2026-07-08
+
+Runtime Config Evolution CLI installer.
+
+### Added
+
+- Added the `runtime-config` Evolution CLI installer.
+- Added Runtime Config preview metadata and installer documentation.
+- Added deployable `src/assets/config/values.yml` generation.
+- Added runtime config model, parser, provider, service and token generation.
+- Added safety checks for custom `APP_CONFIG`, `@core/config` and environment-file references before applying the installer.
+- Added schematic tests for Runtime Config installation and guarded failure scenarios.
+
+### Changed
+
+- Updated the starter baseline version to `0.6.0-alpha.0`.
+- Updated the versioned Evolution CLI package metadata to `0.6.0-alpha.0`.
+- Updated Evolution CLI documentation and package smoke-test references for the new release.
+
+## 0.5.1-alpha.0 - 2026-06-04
+
+Render-safe Evolution CLI schematic execution.
+
+### Changed
+
+- Updated the Evolution CLI to execute bundled schematics programmatically through Angular DevKit.
+- Removed the internal dependency on shelling out to `npx ng generate`.
+- Improved hosted/export flows where generated workspaces intentionally do not have local dependencies installed yet.
+- Updated local package smoke-test references to `0.5.1-alpha.0`.
+
 ## 0.5.0-alpha.0 - 2026-06-03
 
 Transloco and Tailwind Evolution CLI installers.
