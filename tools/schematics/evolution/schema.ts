@@ -4,7 +4,8 @@ export type EvolutionName =
   | 'signal-store'
   | 'docker-ssr'
   | 'bootstrap'
-  | 'tailwind';
+  | 'tailwind'
+  | 'ai-genkit';
 
 export interface EvolutionOptions {
   readonly name: EvolutionName;
@@ -17,4 +18,7 @@ export interface EvolutionOptions {
   readonly bootstrapComponents?: string;
   readonly tailwindMode?: 'all' | 'select';
   readonly tailwindComponents?: string;
+  readonly aiProvider?: 'google-ai';
+  readonly aiExample?: 'none' | 'summary';
+  readonly aiModel?: string;
 }

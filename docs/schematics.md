@@ -86,14 +86,15 @@ npm --cache /private/tmp/aes-npm-cache exec \
 
 ## Installable evolutions
 
-| Evolution      | Name             | Status      | Guide                                      | Notes                                           |
-| -------------- | ---------------- | ----------- | ------------------------------------------ | ----------------------------------------------- |
-| Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Runtime i18n baseline with EN/IT assets.        |
-| Runtime Config | `runtime-config` | installable | [Guide](./evolution-cli/runtime-config.md) | Deployable values.yml configuration baseline.   |
-| SignalStore    | `signal-store`   | installable | [Guide](./evolution-cli/signal-store.md)   | Parametrized feature/root store generation.     |
-| Docker SSR     | `docker-ssr`     | installable | [Guide](./evolution-cli/docker-ssr.md)     | SSR-oriented Docker deployment baseline.        |
-| Bootstrap      | `bootstrap`      | installable | [Guide](./evolution-cli/bootstrap.md)      | Parametrized Bootstrap UI primitive generation. |
-| Tailwind       | `tailwind`       | installable | [Guide](./evolution-cli/tailwind.md)       | Parametrized Tailwind UI primitive generation.  |
+| Evolution      | Name             | Status      | Guide                                      | Notes                                                     |
+| -------------- | ---------------- | ----------- | ------------------------------------------ | --------------------------------------------------------- |
+| Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Runtime i18n baseline with EN/IT assets.                  |
+| Runtime Config | `runtime-config` | installable | [Guide](./evolution-cli/runtime-config.md) | Deployable values.yml configuration baseline.             |
+| SignalStore    | `signal-store`   | installable | [Guide](./evolution-cli/signal-store.md)   | Parametrized feature/root store generation.               |
+| Docker SSR     | `docker-ssr`     | installable | [Guide](./evolution-cli/docker-ssr.md)     | SSR-oriented Docker deployment baseline.                  |
+| Bootstrap      | `bootstrap`      | installable | [Guide](./evolution-cli/bootstrap.md)      | Parametrized Bootstrap UI primitive generation.           |
+| Tailwind       | `tailwind`       | installable | [Guide](./evolution-cli/tailwind.md)       | Parametrized Tailwind UI primitive generation.            |
+| AI Genkit      | `ai-genkit`      | installable | [Guide](./evolution-cli/ai-genkit.md)      | Server AI foundation and explicit opt-in summary example. |
 
 Other evolutions may exist as `evo/*` branches before they become CLI-installable.
 Those branches remain useful as implementation references, but they should not be treated as CLI installers until an installer, preview metadata and tests exist.
@@ -133,6 +134,7 @@ npm run starter:evolution -- --name runtime-config --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name tailwind --preview
+npm run starter:evolution -- --name ai-genkit --preview
 npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview
 ```
 
@@ -145,6 +147,7 @@ npm run starter:evolution -- --name runtime-config --apply
 npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
 npm run starter:evolution -- --name tailwind --apply
+npm run starter:evolution -- --name ai-genkit --apply
 ```
 
 Non-interactive apply examples:
@@ -156,6 +159,7 @@ npm run starter:evolution -- --name runtime-config --apply --yes
 npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
 npm run starter:evolution -- --name tailwind --apply --yes
+npm run starter:evolution -- --name ai-genkit --apply --yes --ai-example summary
 ```
 
 Use `--yes` only after validating the command in preview mode or inside a temporary test workspace.
@@ -173,6 +177,7 @@ Detailed installer behavior lives in dedicated files to keep this guide readable
 | Docker SSR     | [Docker SSR](./evolution-cli/docker-ssr.md)         | `evo/deployment/docker-ssr`   |
 | Bootstrap      | [Bootstrap](./evolution-cli/bootstrap.md)           | `evo/design-system/bootstrap` |
 | Tailwind       | [Tailwind](./evolution-cli/tailwind.md)             | `evo/design-system/tailwind`  |
+| AI Genkit      | [AI Genkit](./evolution-cli/ai-genkit.md)           | `evo/ai/genkit`               |
 
 Use `docs/evolution-cli/*` for CLI behavior.
 Use `docs/evolutions/*` for branch reference documentation.
@@ -200,6 +205,9 @@ Examples:
 - Runtime Config detects custom `APP_CONFIG`, `@core/config` or environment-file references;
 - selected design-system component files are partially installed;
 - Docker SSR files already exist.
+- AI Genkit core, provider adapter or summary files are only partially installed;
+- the `/api/ai` route is already owned by another implementation;
+- server-side AI environment configuration is incomplete.
 
 Unexpected installer failures include the related `evo/*` reference branch so the user can inspect or merge manually if needed.
 

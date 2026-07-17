@@ -2,7 +2,7 @@
 
 ## Date
 
-July 8, 2026
+July 16, 2026
 
 ## Completed
 
@@ -62,6 +62,7 @@ July 8, 2026
 - Added SignalStore installer with feature/root store generation.
 - Added Docker SSR installer.
 - Added Bootstrap and Tailwind design-system installers with parametrized UI primitive generation.
+- Added AI Genkit with a server-only multi-provider foundation, managed provider catalog, Gemini adapter and explicit opt-in summary example.
 
 ## Current Design Choice
 

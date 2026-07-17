@@ -102,6 +102,7 @@ First CLI installers:
 | Docker SSR     | Add an SSR-oriented Docker deployment baseline.                                          |
 | Bootstrap      | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
 | Tailwind       | Add Tailwind CSS and generate selected starter-owned UI wrapper components.              |
+| AI Genkit      | Add a server-side Genkit foundation with Gemini; the summary example is explicit opt-in. |
 
 Additional installers are in active development and will be added progressively as evolutions are validated.
 
@@ -126,6 +127,7 @@ Current evolution branches:
 | `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
 | `evo/state/signal-store`             | NgRx SignalStore state baseline     |
 | `evo/tooling/dependency-monitoring`  | Dependency monitoring report        |
+| `evo/ai/genkit`                      | Server-side Genkit AI foundation    |
 
 ## Why This Starter
 
@@ -303,6 +305,7 @@ Evolution guides are centralized on `main`; evolution branches should focus on i
 - [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/docker-ssr.md)
 - [Signal Store Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/signal-store.md)
 - [Dependency Monitoring Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/dependency-monitoring.md)
+- [AI Genkit Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/ai-genkit.md)
 
 ## Community
 

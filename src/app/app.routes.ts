@@ -11,4 +11,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/dashboard/dashboard.routes').then((routes) => routes.dashboardRoutes),
   },
+  {
+    path: 'ai-summary',
+    loadChildren: () =>
+      import('./features/ai-summary/ai-summary.routes').then((routes) => routes.aiSummaryRoutes),
+  },
 ];

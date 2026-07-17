@@ -8,22 +8,14 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 
+import { createAiSummaryRouter } from './server/ai/examples/summary/summary.routes';
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+app.use('/api/ai', createAiSummaryRouter());
 
 /**
  * Serve static files from /browser

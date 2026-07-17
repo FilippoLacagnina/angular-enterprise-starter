@@ -6,7 +6,18 @@ The project is public and currently in alpha pre-release.
 
 ## Unreleased
 
-No unreleased changes yet.
+### Added
+
+- Added the repeatable `ai-genkit` Evolution CLI installer with preview and safety guards.
+- Added a provider-neutral Genkit runtime and multi-provider capability registry.
+- Added the Google AI Gemini provider adapter with server-only credential configuration.
+- Added an optional removable summary example with standard and streaming APIs and typed Angular clients.
+- Made foundation-only the default AI Genkit installation mode.
+- Separated the provider-neutral core, managed provider catalog and provider adapter install sets.
+- Denied unauthenticated summary example access by default and forwarded guard errors to the application error pipeline.
+- Added explicit timeout, cancellation, `429` handling and privacy-safe structured request logging.
+- Added mocked provider, streaming, HTTP and schematic test coverage.
+- Added AI Genkit branch and installer documentation.
 
 ## 0.6.0-alpha.0 - 2026-07-08
 

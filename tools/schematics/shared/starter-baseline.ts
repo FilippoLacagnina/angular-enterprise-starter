@@ -49,7 +49,31 @@ export function readStarterMetadata(tree: Tree): StarterMetadata {
 }
 
 export function writeStarterMetadata(tree: Tree, metadata: StarterMetadata): void {
-  tree.overwrite(STARTER_METADATA_PATH, `${JSON.stringify(metadata, null, 2)}\n`);
+  tree.overwrite(STARTER_METADATA_PATH, formatStarterMetadata(metadata));
+}
+
+function formatStarterMetadata(metadata: StarterMetadata): string {
+  const inlineEvolutions = `  "enabledEvolutions": ${JSON.stringify(metadata.enabledEvolutions)}`;
+  const enabledEvolutions =
+    inlineEvolutions.length <= 100
+      ? inlineEvolutions
+      : [
+          '  "enabledEvolutions": [',
+          ...metadata.enabledEvolutions.map(
+            (evolution, index) =>
+              `    ${JSON.stringify(evolution)}${index < metadata.enabledEvolutions.length - 1 ? ',' : ''}`,
+          ),
+          '  ]',
+        ].join('\n');
+
+  return [
+    '{',
+    `  "schemaVersion": ${JSON.stringify(metadata.schemaVersion)},`,
+    `  "baselineVersion": ${JSON.stringify(metadata.baselineVersion)},`,
+    enabledEvolutions,
+    '}',
+    '',
+  ].join('\n');
 }
 
 function hasFilesInDirectory(tree: Tree, directory: string): boolean {

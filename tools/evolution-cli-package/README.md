@@ -27,6 +27,7 @@ It executes bundled schematics directly, so the target workspace does not need a
 | Docker SSR     | `docker-ssr`     | Add an SSR-oriented Docker deployment baseline.                 |
 | Bootstrap      | `bootstrap`      | Add Bootstrap and selected starter-owned UI wrapper components. |
 | Tailwind       | `tailwind`       | Add Tailwind CSS and selected starter-owned UI wrappers.        |
+| AI Genkit      | `ai-genkit`      | Add a server-side Genkit foundation and opt-in summary demo.    |
 
 ## Usage
 
