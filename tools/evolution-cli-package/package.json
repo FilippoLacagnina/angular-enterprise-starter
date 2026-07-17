@@ -30,11 +30,14 @@
     "angular-schematics",
     "angular-starter",
     "angular-template",
+    "ai",
     "cli",
     "docker",
     "enterprise",
     "enterprise-architecture",
     "evolution-cli",
+    "gemini",
+    "genkit",
     "front-end",
     "i18n",
     "ngrx",
@@ -50,7 +53,8 @@
   ],
   "dependencies": {
     "@angular-devkit/core": "^21.2.11",
-    "@angular-devkit/schematics": "^21.2.11"
+    "@angular-devkit/schematics": "^21.2.11",
+    "jsonc-parser": "^3.3.1"
   },
   "peerDependencies": {
     "@angular/cli": ">=21 <22"

@@ -1,4 +1,6 @@
 import { type EvolutionName } from '../evolution/schema';
+import { installAiGenkitEvolution } from './ai-genkit/ai-genkit.installer';
+import { getAiGenkitPreview } from './ai-genkit/ai-genkit.preview';
 import { installBootstrapEvolution } from './bootstrap/bootstrap.installer';
 import { getBootstrapPreview } from './bootstrap/bootstrap.preview';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
@@ -129,6 +131,30 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/design-system/tailwind`,
     preview: getTailwindPreview,
     install: installTailwindEvolution,
+  },
+  'ai-genkit': {
+    name: 'ai-genkit',
+    label: 'AI Genkit',
+    repeatable: true,
+    dependencies: ['genkit', '@genkit-ai/google-genai'],
+    creates: ['src/server/ai/*', 'src/app/features/ai-summary/*', 'src/contracts/ai/*'],
+    updates: [
+      'package.json',
+      '.env.example',
+      '.gitignore',
+      'src/server.ts',
+      'src/app/app.routes.ts',
+      '.angular-enterprise-starter.json',
+    ],
+    notes: [
+      'Adds a server-only Genkit foundation with a provider registry and Google AI adapter.',
+      'Can install the foundation alone or include a removable summary example.',
+      'Never writes provider credentials or exposes them through Angular configuration.',
+    ],
+    referenceBranch: 'evo/ai/genkit',
+    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/evo/ai/genkit`,
+    preview: getAiGenkitPreview,
+    install: installAiGenkitEvolution,
   },
 };
 

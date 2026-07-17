@@ -1,0 +1,159 @@
+<section
+  class="ai-summary"
+  aria-labelledby="ai-summary-title"
+>
+  <header>
+    <p class="eyebrow">Optional AI example</p>
+    <h1 id="ai-summary-title">Summarize with AI</h1>
+    <p class="introduction">
+      Submit text to the server-side Genkit flow through the configured AI provider, using a
+      standard response or progressive streaming. Both modes return a validated final result, and
+      the browser never receives the provider credential.
+    </p>
+  </header>
+
+  <form
+    (submit)="submitForm($event)"
+    novalidate
+  >
+    <fieldset
+      class="response-mode"
+      [disabled]="state().status === 'loading'"
+    >
+      <legend>Response mode</legend>
+
+      <div class="mode-options">
+        <label class="mode-option">
+          <input
+            type="radio"
+            name="response-mode"
+            value="standard"
+            [checked]="mode() === 'standard'"
+            (change)="selectMode('standard')"
+          />
+          <span>
+            <strong>Standard</strong>
+            <small>Wait for one complete, schema-validated response.</small>
+          </span>
+        </label>
+
+        <label class="mode-option">
+          <input
+            type="radio"
+            name="response-mode"
+            value="stream"
+            [checked]="mode() === 'stream'"
+            (change)="selectMode('stream')"
+          />
+          <span>
+            <strong>Streaming</strong>
+            <small>Render progressive text, then replace it with the validated result.</small>
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    <label for="summary-source">Text to summarize</label>
+    <textarea
+      id="summary-source"
+      [formControl]="text"
+      [attr.aria-describedby]="
+        inputError ? 'summary-source-error summary-source-count' : 'summary-source-count'
+      "
+      [attr.aria-invalid]="inputError ? 'true' : 'false'"
+      [attr.maxlength]="maxInputLength"
+      placeholder="Paste the source text here"
+      rows="10"
+    ></textarea>
+
+    <div class="field-meta">
+      <div>
+        @if (inputError) {
+          <p
+            id="summary-source-error"
+            class="validation-error"
+            role="alert"
+          >
+            {{ inputError }}
+          </p>
+        }
+      </div>
+      <span id="summary-source-count">{{ text.value.length }} / {{ maxInputLength }}</span>
+    </div>
+
+    <div class="actions">
+      <button
+        type="submit"
+        [disabled]="state().status === 'loading'"
+      >
+        Summarize
+      </button>
+
+      @if (state().status === 'loading') {
+        <button
+          type="button"
+          class="secondary"
+          (click)="cancel()"
+        >
+          Cancel request
+        </button>
+      }
+    </div>
+  </form>
+
+  <section
+    class="result"
+    aria-live="polite"
+    aria-atomic="false"
+    [attr.aria-busy]="state().status === 'loading'"
+  >
+    @let currentState = state();
+    @switch (currentState.status) {
+      @case ('idle') {
+        <p class="muted">The generated summary will appear here.</p>
+      }
+      @case ('loading') {
+        <p class="status">
+          {{ mode() === 'stream' ? 'Streaming summary…' : 'Generating summary…' }}
+        </p>
+
+        @if (mode() === 'stream' && currentState.summary) {
+          <h2>Summary in progress</h2>
+          <p>{{ currentState.summary }}</p>
+        }
+      }
+      @case ('success') {
+        <h2>Summary</h2>
+        <p>{{ currentState.summary }}</p>
+      }
+      @case ('cancelled') {
+        <h2>Request cancelled</h2>
+        <p>No result was returned. You can edit the text and try again.</p>
+      }
+      @case ('error') {
+        <h2>Unable to generate the summary</h2>
+        <p>{{ currentState.error.message }}</p>
+        <p class="error-code">Error: {{ currentState.error.code }}</p>
+
+        @if (currentState.error.requestId) {
+          <p class="request-id">Request ID: {{ currentState.error.requestId }}</p>
+        }
+
+        @if (currentState.error.retryable) {
+          <button
+            type="button"
+            class="secondary"
+            (click)="summarize()"
+          >
+            Try again
+          </button>
+        }
+      }
+    }
+  </section>
+
+  <p class="privacy-note">
+    The text is processed by the configured AI provider. Prompts and generated content are excluded
+    from application logs.
+  </p>
+</section>

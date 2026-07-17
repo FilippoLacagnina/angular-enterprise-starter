@@ -13,7 +13,8 @@
         "signal-store",
         "docker-ssr",
         "bootstrap",
-        "tailwind"
+        "tailwind",
+        "ai-genkit"
       ],
       "x-prompt": {
         "message": "Which evolution do you want to add?",
@@ -42,6 +43,10 @@
           {
             "value": "tailwind",
             "label": "Tailwind"
+          },
+          {
+            "value": "ai-genkit",
+            "label": "AI Genkit"
           }
         ]
       }
@@ -92,6 +97,23 @@
     "tailwindComponents": {
       "type": "string",
       "description": "Comma-separated Tailwind components to generate when --tailwind-mode select is used."
+    },
+    "aiProvider": {
+      "type": "string",
+      "description": "AI provider adapter to install.",
+      "enum": ["google-ai"],
+      "default": "google-ai"
+    },
+    "aiExample": {
+      "type": "string",
+      "description": "Optional AI application example to generate.",
+      "enum": ["none", "summary"],
+      "default": "none"
+    },
+    "aiModel": {
+      "type": "string",
+      "description": "Server-side model identifier written to .env.example.",
+      "default": "gemini-3.5-flash"
     }
   },
   "required": ["name"]

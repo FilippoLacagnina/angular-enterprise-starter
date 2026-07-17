@@ -50,6 +50,15 @@ const TAILWIND_INPUT_PATH = '/src/app/shared/components/tailwind/input/input.ts'
 const TAILWIND_INPUT_TEMPLATE_PATH = '/src/app/shared/components/tailwind/input/input.html';
 const TAILWIND_STYLE_IMPORT = "@use 'tailwindcss';";
 const POSTCSS_CONFIG_PATH = '/.postcssrc.json';
+const SERVER_PATH = '/src/server.ts';
+const APP_ROUTES_PATH = '/src/app/app.routes.ts';
+const AI_RUNTIME_PATH = '/src/server/ai/ai.runtime.ts';
+const AI_PROVIDER_REGISTRY_PATH = '/src/server/ai/providers/ai-provider.registry.ts';
+const AI_PROVIDER_CATALOG_PATH = '/src/server/ai/providers/installed-ai-providers.ts';
+const GOOGLE_AI_PROVIDER_PATH = '/src/server/ai/providers/google-gemini.provider.ts';
+const AI_SUMMARY_ROUTE_PATH = '/src/server/ai/examples/summary/summary.routes.ts';
+const AI_SUMMARY_COMPONENT_PATH =
+  '/src/app/features/ai-summary/views/ai-summary/ai-summary.component.ts';
 
 const runner = new SchematicTestRunner(
   'angular-enterprise-starter',
@@ -89,6 +98,16 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(readText(result, DASHBOARD_ROUTES_PATH)).toContain('providers: [DashboardStore]');
     expect(packageJson.dependencies?.['@ngrx/signals']).toBe('^21.1.0');
     expect(metadata.enabledEvolutions).toEqual(['signal-store']);
+    expect(readText(result, STARTER_METADATA_PATH)).toBe(
+      [
+        '{',
+        '  "schemaVersion": 1,',
+        '  "baselineVersion": "0.5.0-alpha.0",',
+        '  "enabledEvolutions": ["signal-store"]',
+        '}',
+        '',
+      ].join('\n'),
+    );
   });
 
   it('evolution installs a root SignalStore when requested', async () => {
@@ -215,6 +234,7 @@ describe('Angular Enterprise Starter schematics', () => {
       >;
     };
     const build = angularJson.projects['angular-enterprise-starter'].architect.build;
+    const angularJsonContent = readText(result, ANGULAR_JSON_PATH);
     const appConfigContent = readText(result, APP_CONFIG_PATH);
     const dashboardServiceContent = readText(result, DASHBOARD_SERVICE_PATH);
     const tsConfigSpecContent = readText(result, TSCONFIG_SPEC_PATH);
@@ -238,7 +258,13 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(dashboardServiceContent).toContain(
       "import { RuntimeConfigService } from '@core/runtime-config/runtime-config.service';",
     );
-    expect(dashboardServiceContent).toContain('this.runtimeConfig.value().api.dashboard.baseUrl');
+    expect(dashboardServiceContent).toContain(
+      [
+        '    return this.http.get(',
+        '      `${this.runtimeConfig.value().api.dashboard.baseUrl}${dashboardApiRoutes.v2.detail(id)}`,',
+        '    );',
+      ].join('\n'),
+    );
     expect(dashboardServiceContent).not.toContain('APP_CONFIG');
     expect(build.options.assets).toContainEqual({
       glob: '**/*',
@@ -246,11 +272,25 @@ describe('Angular Enterprise Starter schematics', () => {
       output: 'assets',
     });
     expect(build.options.allowedCommonJsDependencies).toContain('yaml');
+    expect(angularJsonContent).toContain('"allowedCommonJsDependencies": ["yaml"]');
     expect(build.configurations['development']?.['fileReplacements']).toBeUndefined();
     expect(result.exists(APP_CONFIG_MODEL_PATH)).toBe(false);
     expect(result.exists(ENVIRONMENT_PATH)).toBe(false);
+    expect(tsConfigSpecContent).toContain('"include": ["src/**/*.d.ts", "src/**/*.spec.ts"]');
+    expect(tsConfigSpecContent).toContain('/* To learn more about TypeScript configuration:');
     expect(tsConfigSpecContent).not.toContain('src/environments/environment.test.ts');
     expect(metadata.enabledEvolutions).toEqual(['runtime-config']);
+  });
+
+  it('evolution blocks Runtime Config when tsconfig.spec.json contains invalid JSONC', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(TSCONFIG_SPEC_PATH, '{ "include": [');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow(
+      'tsconfig.spec.json is not valid JSONC. Correct it before applying Runtime Config.',
+    );
   });
 
   it('evolution fails before overwriting existing runtime config files', async () => {
@@ -674,6 +714,213 @@ export class DashboardService {
     );
   });
 
+  it('evolution defaults to the server-only AI Genkit foundation without examples', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), tree));
+    const packageJson = readPackageJson(result);
+    const metadata = readMetadata(result);
+
+    expect(result.exists(AI_RUNTIME_PATH)).toBe(true);
+    expect(result.exists(AI_PROVIDER_REGISTRY_PATH)).toBe(true);
+    expect(result.exists(AI_PROVIDER_CATALOG_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(false);
+    expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(false);
+    expect(packageJson.dependencies?.genkit).toBe('^1.40.0');
+    expect(packageJson.dependencies?.['@genkit-ai/google-genai']).toBe('^1.40.0');
+    expect(readText(result, '/.env.example')).toContain(
+      'AI_GENKIT_GOOGLE_AI_MODEL=gemini-3.5-flash',
+    );
+    expect(readText(result, '/.env.example')).toContain(
+      'GEMINI_API_KEY=replace-with-server-side-api-key',
+    );
+    expect(result.exists('/.env')).toBe(false);
+    expect(readText(result, SERVER_PATH)).not.toContain('createAiSummaryRouter');
+    expect(readText(result, AI_PROVIDER_CATALOG_PATH)).toContain('// <ai-genkit-provider-imports>');
+    expect(readText(result, AI_PROVIDER_CATALOG_PATH)).toContain('googleGeminiProviderDefinition,');
+    expect(metadata.enabledEvolutions).toEqual(['ai-genkit']);
+  });
+
+  it('evolution installs the removable standard and streaming AI summary example', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary' }), tree),
+    );
+
+    expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(true);
+    expect(readText(result, SERVER_PATH)).toContain("app.use('/api/ai', createAiSummaryRouter());");
+    expect(readText(result, APP_ROUTES_PATH)).toContain("path: 'ai-summary'");
+    expect(readText(result, '/.env.example')).toContain(
+      'AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE=false',
+    );
+    expect(readText(result, '/src/app/layout/sidebar/sidebar.html')).toBe('');
+  });
+
+  it('composes Runtime Config followed by the AI Genkit summary example', async () => {
+    const tree = createStarterTree();
+    const runtimeConfig = await lastValueFrom(
+      runner.callRule(evolution({ name: 'runtime-config' }), tree),
+    );
+    const runtimeValues = readText(runtimeConfig, RUNTIME_VALUES_PATH);
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary' }), runtimeConfig),
+    );
+
+    expect(readText(result, RUNTIME_VALUES_PATH)).toBe(runtimeValues);
+    expect(runtimeValues).not.toContain('GEMINI_API_KEY');
+    expect(result.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(true);
+    expect(readText(result, '/.env.example')).toContain(
+      'GEMINI_API_KEY=replace-with-server-side-api-key',
+    );
+    expect(readText(result, '/.env.example')).toContain(
+      'AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE=false',
+    );
+    const dependencyNames = Object.keys(readPackageJson(result).dependencies ?? {});
+    expect(dependencyNames).toEqual(
+      [...dependencyNames].sort((first, second) => first.localeCompare(second)),
+    );
+    expect(readMetadata(result).enabledEvolutions).toEqual(['ai-genkit', 'runtime-config']);
+  });
+
+  it('composes the AI Genkit summary example followed by Runtime Config', async () => {
+    const tree = createStarterTree();
+    const aiGenkit = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary' }), tree),
+    );
+    const serverEnvironment = readText(aiGenkit, '/.env.example');
+    const providerCatalog = readText(aiGenkit, AI_PROVIDER_CATALOG_PATH);
+    const server = readText(aiGenkit, SERVER_PATH);
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'runtime-config' }), aiGenkit),
+    );
+
+    expect(readText(result, '/.env.example')).toBe(serverEnvironment);
+    expect(readText(result, AI_PROVIDER_CATALOG_PATH)).toBe(providerCatalog);
+    expect(readText(result, SERVER_PATH)).toBe(server);
+    expect(readText(result, RUNTIME_VALUES_PATH)).not.toContain('GEMINI_API_KEY');
+    expect(result.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(true);
+    expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(true);
+    expect(readMetadata(result).enabledEvolutions).toEqual(['ai-genkit', 'runtime-config']);
+  });
+
+  it('evolution can add the summary example after installing the AI foundation', async () => {
+    const tree = createStarterTree();
+    const foundation = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'none' }), tree),
+    );
+    const foundationEnvironment = readText(foundation, '/.env.example');
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary' }), foundation),
+    );
+
+    expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(true);
+    expect(foundationEnvironment).not.toContain('AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE');
+    expect(readText(result, '/.env.example')).toContain(
+      'AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE=false',
+    );
+    expect(readMetadata(result).enabledEvolutions).toEqual(['ai-genkit']);
+  });
+
+  it('evolution preserves other managed provider catalog entries on repeat', async () => {
+    const tree = createStarterTree();
+    const foundation = await lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), tree));
+    const catalog = readText(foundation, AI_PROVIDER_CATALOG_PATH)
+      .replace(
+        '// </ai-genkit-provider-imports>',
+        "import { futureProviderDefinition } from './future.provider.definition';\n// </ai-genkit-provider-imports>",
+      )
+      .replace(
+        '  // </ai-genkit-provider-entries>',
+        '  futureProviderDefinition,\n  // </ai-genkit-provider-entries>',
+      );
+    foundation.overwrite(AI_PROVIDER_CATALOG_PATH, catalog);
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit' }), foundation),
+    );
+
+    expect(readText(result, AI_PROVIDER_CATALOG_PATH)).toContain(
+      "import { futureProviderDefinition } from './future.provider.definition';",
+    );
+    expect(readText(result, AI_PROVIDER_CATALOG_PATH)).toContain('futureProviderDefinition,');
+  });
+
+  it('evolution stops on a partial AI Genkit core', async () => {
+    const tree = createStarterTree();
+    tree.create(AI_RUNTIME_PATH, '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'none' }), tree)),
+    ).rejects.toThrow('AI Genkit core installation is incomplete.');
+  });
+
+  it('evolution stops on a partial provider adapter', async () => {
+    const tree = createStarterTree();
+    tree.create(GOOGLE_AI_PROVIDER_PATH, '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), tree)),
+    ).rejects.toThrow('google-ai AI Genkit provider adapter installation is incomplete.');
+  });
+
+  it('evolution stops when managed provider catalog markers are incomplete', async () => {
+    const tree = createStarterTree();
+    const foundation = await lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), tree));
+    foundation.overwrite(
+      AI_PROVIDER_CATALOG_PATH,
+      readText(foundation, AI_PROVIDER_CATALOG_PATH).replace(
+        '// </ai-genkit-provider-entries>',
+        '',
+      ),
+    );
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), foundation)),
+    ).rejects.toThrow('managed AI provider catalog markers are missing');
+  });
+
+  it('evolution stops on a partial provider environment configuration', async () => {
+    const tree = createStarterTree();
+    tree.create('/.env.example', 'AI_GENKIT_GOOGLE_AI_ENABLED=true\n');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit' }), tree)),
+    ).rejects.toThrow('.env.example contains a partial google-ai provider configuration.');
+  });
+
+  it('evolution rejects an older existing Genkit dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      genkit: '^1.20.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, JSON.stringify(packageJson, null, 2));
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'none' }), tree)),
+    ).rejects.toThrow('genkit ^1.20.0 is not compatible with the required ^1.40.0 range.');
+  });
+
+  it('AI Genkit preview does not create files or update metadata', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary', preview: true }), tree),
+    );
+
+    expect(result.exists(AI_RUNTIME_PATH)).toBe(false);
+    expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(false);
+    expect(readMetadata(result).enabledEvolutions).toEqual([]);
+  });
+
   it('evolution registry exposes one definition for each supported evolution', () => {
     const evolutionNames = getEvolutionDefinitions().map((definition) => definition.name);
 
@@ -684,6 +931,7 @@ export class DashboardService {
       'docker-ssr',
       'bootstrap',
       'tailwind',
+      'ai-genkit',
     ]);
   });
 });
@@ -756,6 +1004,8 @@ export class DashboardService {
         name: 'angular-enterprise-starter',
         dependencies: {
           '@angular/core': '^21.2.0',
+          '@angular/ssr': '^21.2.3',
+          express: '^5.1.0',
         },
       },
       null,
@@ -796,11 +1046,11 @@ export class DashboardService {
 
   tree.create(
     TSCONFIG_SPEC_PATH,
-    JSON.stringify(
-      { include: ['src/**/*.spec.ts', 'src/environments/environment.test.ts'] },
-      null,
-      2,
-    ),
+    `/* To learn more about TypeScript configuration: https://www.typescriptlang.org/tsconfig. */
+{
+  "include": ["src/**/*.d.ts", "src/**/*.spec.ts", "src/environments/environment.test.ts"]
+}
+`,
   );
 
   tree.create(APP_CONFIG_MODEL_PATH, '');
@@ -812,6 +1062,38 @@ export class DashboardService {
   tree.create('/src/environments/environment.dev.ts', '');
   tree.create('/src/environments/environment.test.ts', '');
   tree.create('/src/environments/environment.prod.ts', '');
+  tree.create('/src/app/layout/sidebar/sidebar.html', '');
+  tree.create('/src/app/layout/sidebar/sidebar.scss', '');
+  tree.create('/.gitignore', 'node_modules\n');
+  tree.create(
+    APP_ROUTES_PATH,
+    `import { type Routes } from '@angular/router';
+
+export const routes: Routes = [
+  {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.routes').then((routes) => routes.dashboardRoutes),
+  },
+];
+`,
+  );
+  tree.create(
+    SERVER_PATH,
+    `import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
+import express from 'express';
+
+const app = express();
+const angularApp = new AngularNodeAppEngine();
+
+export const reqHandler = createNodeRequestHandler(app);
+`,
+  );
 
   tree.create(
     APP_CONFIG_PATH,

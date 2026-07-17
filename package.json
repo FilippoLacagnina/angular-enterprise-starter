@@ -54,7 +54,7 @@
     "test": "ng test",
     "serve:ssr": "node dist/angular-enterprise-starter/server/server.mjs",
     "schematics:build": "tsc -p tools/schematics/tsconfig.json && node tools/schematics/copy-assets.mjs",
-    "schematics:test": "vitest run tools/schematics",
+    "schematics:test": "vitest run tools/schematics --exclude \"tools/schematics/evolutions/**/files/**\"",
     "evolution-cli:package": "npm run schematics:build && node tools/evolution-cli-package/build.mjs",
     "evolution-cli:pack": "npm run evolution-cli:package && npm pack ./dist/evolution-cli-package --pack-destination ./dist --cache ./dist/.npm-cache"
   },
@@ -87,6 +87,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "jsdom": "^28.0.0",
+    "jsonc-parser": "^3.3.1",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

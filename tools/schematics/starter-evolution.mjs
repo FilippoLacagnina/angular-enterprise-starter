@@ -47,7 +47,14 @@ const EVOLUTIONS = [
     label: 'Tailwind',
     description: 'Tailwind design-system baseline.',
   },
+  {
+    name: 'ai-genkit',
+    label: 'AI Genkit',
+    description: 'Server-side Genkit foundation with a Google AI provider adapter.',
+  },
 ];
+
+const DEFAULT_AI_GENKIT_MODEL = 'gemini-3.5-flash';
 
 const DESIGN_SYSTEM_COMPONENTS = [
   ['alert', 'Alert', 'Contextual feedback message.'],
@@ -120,6 +127,10 @@ async function main() {
 }
 
 async function resolveEvolutionOptions(evolution, shouldAskOptions) {
+  if (evolution.name === 'ai-genkit') {
+    return resolveAiGenkitOptions(shouldAskOptions);
+  }
+
   if (evolution.name === 'signal-store') {
     return resolveSignalStoreOptions(shouldAskOptions);
   }
@@ -147,6 +158,32 @@ async function resolveEvolutionOptions(evolution, shouldAskOptions) {
   }
 
   return {};
+}
+
+async function resolveAiGenkitOptions(shouldAskOptions) {
+  if (!shouldAskOptions) {
+    return createAiGenkitOptions({
+      aiProvider: args.aiProvider,
+      aiExample: args.aiExample,
+      aiModel: args.aiModel,
+    });
+  }
+
+  const aiExample = await askChoice('AI Genkit setup', [
+    [
+      'none',
+      'Foundation only',
+      'Install the server-side provider foundation without UI or API examples.',
+    ],
+    [
+      'summary',
+      'Foundation and summary example',
+      'Generate standard and streaming endpoints with a typed Angular client.',
+    ],
+  ]);
+  const aiModel = await askText('Google AI model', DEFAULT_AI_GENKIT_MODEL);
+
+  return createAiGenkitOptions({ aiExample, aiModel });
 }
 
 async function resolveSignalStoreOptions(shouldAskOptions) {
@@ -612,6 +649,26 @@ function createDesignSystemOptions({
   };
 }
 
+function createAiGenkitOptions(options) {
+  const aiProvider = options.aiProvider ?? 'google-ai';
+  const aiExample = options.aiExample ?? 'none';
+  const aiModel = options.aiModel?.trim() || DEFAULT_AI_GENKIT_MODEL;
+
+  if (aiProvider !== 'google-ai') {
+    throw new Error(`Unsupported AI provider: ${aiProvider}.`);
+  }
+
+  if (!['none', 'summary'].includes(aiExample)) {
+    throw new Error(`Unsupported AI example: ${aiExample}.`);
+  }
+
+  if (!/^[a-z0-9][a-z0-9._-]*$/i.test(aiModel)) {
+    throw new Error('Invalid AI model identifier.');
+  }
+
+  return { aiProvider, aiExample, aiModel };
+}
+
 function normalizeFeatureName(value) {
   const normalized = value
     .trim()
@@ -782,6 +839,24 @@ function parseArgs(rawArgs) {
 
     if (arg === '--tailwind-components') {
       parsedArgs.tailwindComponents = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--ai-provider') {
+      parsedArgs.aiProvider = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--ai-example') {
+      parsedArgs.aiExample = rawArgs[index + 1];
+      index += 1;
+      continue;
+    }
+
+    if (arg === '--ai-model') {
+      parsedArgs.aiModel = rawArgs[index + 1];
       index += 1;
       continue;
     }

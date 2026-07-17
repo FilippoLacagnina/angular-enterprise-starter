@@ -1,4 +1,14 @@
 import { SchematicsException, type SchematicContext, type Tree } from '@angular-devkit/schematics';
+import {
+  applyEdits,
+  findNodeAtLocation,
+  modify,
+  parse,
+  parseTree,
+  type JSONPath,
+  type Node,
+  type ParseError,
+} from 'jsonc-parser';
 
 import { type EvolutionOptions } from '../../evolution/schema';
 import {
@@ -237,12 +247,15 @@ function addPackageDependency(tree: Tree, packageName: string, version: string):
 }
 
 function updateAngularJson(tree: Tree): void {
-  const angularJson = JSON.parse(tree.readText(ANGULAR_JSON_PATH)) as AngularJson;
-  const firstProject = Object.values(angularJson.projects ?? {})[0];
+  const content = tree.readText(ANGULAR_JSON_PATH);
+  const angularJson = JSON.parse(content) as AngularJson;
+  const firstProjectEntry = Object.entries(angularJson.projects ?? {})[0];
+  const projectName = firstProjectEntry?.[0];
+  const firstProject = firstProjectEntry?.[1];
   const build = firstProject?.architect?.build;
   const buildOptions = build?.options;
 
-  if (!buildOptions) {
+  if (!projectName || !buildOptions) {
     throw new SchematicsException(
       'Missing build options in angular.json. Cannot register runtime config assets.',
     );
@@ -251,9 +264,58 @@ function updateAngularJson(tree: Tree): void {
   buildOptions.assets ??= [];
   addAssetsEntry(buildOptions.assets);
   addAllowedCommonJsDependency(buildOptions, 'yaml');
-  removeEnvironmentFileReplacements(build?.configurations);
 
-  tree.overwrite(ANGULAR_JSON_PATH, `${JSON.stringify(angularJson, null, 2)}\n`);
+  const buildOptionsPath: JSONPath = ['projects', projectName, 'architect', 'build', 'options'];
+  let updatedContent = updateJsoncValue(
+    content,
+    [...buildOptionsPath, 'assets'],
+    buildOptions.assets,
+  );
+  updatedContent = updateJsoncValue(
+    updatedContent,
+    [...buildOptionsPath, 'allowedCommonJsDependencies'],
+    buildOptions.allowedCommonJsDependencies,
+  );
+  updatedContent = compactJsonStringArray(
+    updatedContent,
+    [...buildOptionsPath, 'allowedCommonJsDependencies'],
+    buildOptions.allowedCommonJsDependencies ?? [],
+  );
+
+  for (const [configurationName, configuration] of Object.entries(build?.configurations ?? {})) {
+    const fileReplacements = configuration['fileReplacements'];
+
+    if (!Array.isArray(fileReplacements)) {
+      continue;
+    }
+
+    const nextFileReplacements = fileReplacements.filter((replacement) => {
+      return (
+        !isRecord(replacement) ||
+        !String(replacement['replace'] ?? '').startsWith('src/environments/')
+      );
+    });
+
+    if (nextFileReplacements.length === fileReplacements.length) {
+      continue;
+    }
+
+    updatedContent = updateJsoncValue(
+      updatedContent,
+      [
+        'projects',
+        projectName,
+        'architect',
+        'build',
+        'configurations',
+        configurationName,
+        'fileReplacements',
+      ],
+      nextFileReplacements.length ? nextFileReplacements : undefined,
+    );
+  }
+
+  tree.overwrite(ANGULAR_JSON_PATH, updatedContent);
 }
 
 function addAssetsEntry(assets: unknown[]): void {
@@ -287,32 +349,6 @@ function addAllowedCommonJsDependency(
   if (!buildOptions.allowedCommonJsDependencies.includes(dependencyName)) {
     buildOptions.allowedCommonJsDependencies.push(dependencyName);
     buildOptions.allowedCommonJsDependencies.sort();
-  }
-}
-
-function removeEnvironmentFileReplacements(
-  configurations: Record<string, Record<string, unknown>> | undefined,
-): void {
-  for (const configuration of Object.values(configurations ?? {})) {
-    const fileReplacements = configuration['fileReplacements'];
-
-    if (!Array.isArray(fileReplacements)) {
-      continue;
-    }
-
-    const nextFileReplacements = fileReplacements.filter((replacement) => {
-      return (
-        !isRecord(replacement) ||
-        !String(replacement['replace'] ?? '').startsWith('src/environments/')
-      );
-    });
-
-    if (nextFileReplacements.length) {
-      configuration['fileReplacements'] = nextFileReplacements;
-      continue;
-    }
-
-    delete configuration['fileReplacements'];
   }
 }
 
@@ -380,19 +416,18 @@ function updateTsConfigSpec(tree: Tree): void {
     return;
   }
 
-  const tsConfigSpec = JSON.parse(
-    stripJsonComments(tree.readText(TSCONFIG_SPEC_PATH)),
-  ) as TsConfigSpec;
+  const content = tree.readText(TSCONFIG_SPEC_PATH);
+  const tsConfigSpec = parseTsConfigSpec(content);
 
   if (!Array.isArray(tsConfigSpec.include)) {
     return;
   }
 
-  tsConfigSpec.include = tsConfigSpec.include.filter(
-    (includePath) => !includePath.startsWith('src/environments/'),
-  );
+  const updatedContent = removeEnvironmentIncludes(content);
 
-  tree.overwrite(TSCONFIG_SPEC_PATH, `${JSON.stringify(tsConfigSpec, null, 2)}\n`);
+  if (updatedContent !== content) {
+    tree.overwrite(TSCONFIG_SPEC_PATH, updatedContent);
+  }
 }
 
 function updateDashboardService(tree: Tree): void {
@@ -415,8 +450,12 @@ function updateDashboardService(tree: Tree): void {
     '  private readonly runtimeConfig = inject(RuntimeConfigService);\n',
   );
   serviceContent = serviceContent.replace(
-    '`${this.config.api.dashboard}${dashboardApiRoutes.v2.detail(id)}`',
-    '`${this.runtimeConfig.value().api.dashboard.baseUrl}${dashboardApiRoutes.v2.detail(id)}`',
+    '    return this.http.get(`${this.config.api.dashboard}${dashboardApiRoutes.v2.detail(id)}`);',
+    [
+      '    return this.http.get(',
+      '      `${this.runtimeConfig.value().api.dashboard.baseUrl}${dashboardApiRoutes.v2.detail(id)}`,',
+      '    );',
+    ].join('\n'),
   );
 
   tree.overwrite(DASHBOARD_SERVICE_PATH, serviceContent);
@@ -647,8 +686,88 @@ api:
 `;
 }
 
-function stripJsonComments(value: string): string {
-  return value.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
+function parseTsConfigSpec(value: string): TsConfigSpec {
+  const errors: ParseError[] = [];
+  const parsedValue: unknown = parse(value, errors, { allowTrailingComma: true });
+
+  if (errors.length > 0 || !isRecord(parsedValue)) {
+    throw new EvolutionUserActionRequiredError(
+      'tsconfig.spec.json is not valid JSONC. Correct it before applying Runtime Config.',
+    );
+  }
+
+  return parsedValue as TsConfigSpec;
+}
+
+function updateJsoncValue(value: string, path: JSONPath, nextValue: unknown): string {
+  return applyEdits(
+    value,
+    modify(value, path, nextValue, {
+      formattingOptions: {
+        eol: '\n',
+        insertSpaces: true,
+        tabSize: 2,
+      },
+    }),
+  );
+}
+
+function compactJsonStringArray(value: string, path: JSONPath, entries: readonly string[]): string {
+  const root = parseTree(value);
+  const arrayNode = root ? findNodeAtLocation(root, path) : undefined;
+
+  if (!arrayNode) {
+    return value;
+  }
+
+  const compactValue = `[${entries.map((entry) => JSON.stringify(entry)).join(', ')}]`;
+  const lineStart = value.lastIndexOf('\n', arrayNode.offset) + 1;
+  const lineLength = arrayNode.offset - lineStart + compactValue.length;
+
+  return lineLength <= 100
+    ? replaceRange(value, arrayNode.offset, arrayNode.length, compactValue)
+    : value;
+}
+
+function removeEnvironmentIncludes(value: string): string {
+  let updatedValue = value;
+
+  while (true) {
+    const root = parseTree(updatedValue);
+    const includeNode = root ? findNodeAtLocation(root, ['include']) : undefined;
+    const children = includeNode?.children ?? [];
+    const environmentIndex = children.findIndex(
+      (child) => typeof child.value === 'string' && child.value.startsWith('src/environments/'),
+    );
+
+    if (!includeNode || environmentIndex < 0) {
+      return updatedValue;
+    }
+
+    updatedValue = removeArrayNode(updatedValue, includeNode, children, environmentIndex);
+  }
+}
+
+function removeArrayNode(
+  value: string,
+  arrayNode: Node,
+  children: readonly Node[],
+  index: number,
+): string {
+  if (children.length === 1) {
+    return replaceRange(value, arrayNode.offset, arrayNode.length, '[]');
+  }
+
+  const node = children[index];
+  const isLast = index === children.length - 1;
+  const start = isLast ? children[index - 1].offset + children[index - 1].length : node.offset;
+  const end = isLast ? node.offset + node.length : children[index + 1].offset;
+
+  return replaceRange(value, start, end - start, '');
+}
+
+function replaceRange(value: string, offset: number, length: number, replacement: string): string {
+  return `${value.slice(0, offset)}${replacement}${value.slice(offset + length)}`;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
