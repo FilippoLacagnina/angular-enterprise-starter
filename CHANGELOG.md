@@ -25,6 +25,8 @@ AI Genkit Evolution CLI installer.
 
 ### Changed
 
+- Updated the Angular framework to `21.2.18` and CLI, build, SSR and schematics tooling to the `21.2.19` LTS patches.
+- Refreshed transitive production and development dependencies to remove the remaining known npm audit findings.
 - Updated Genkit and the Google GenAI plugin installer ranges to `^1.40.0`.
 - Improved the Runtime Config installer to preserve JSONC comments, formatting and glob patterns during targeted configuration updates.
 - Normalized multi-evolution starter metadata formatting so generated workspaces remain Prettier-compliant.
