@@ -8,6 +8,29 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.7.0-alpha.0 - 2026-07-18
+
+AI Genkit Evolution CLI installer.
+
+### Added
+
+- Added the optional `ai-genkit` Evolution CLI installer with preview, apply and safety guards.
+- Added a provider-neutral, multi-provider-ready server architecture with Google AI as the initial provider.
+- Added centralized Genkit configuration with server-only environment variables and Gemini `3.5 Flash` as the default model.
+- Added an explicit opt-in summary example with typed contracts, validated flows, non-streaming and streaming endpoints under `/api/ai`.
+- Added a typed Angular client example with loading, timeout, cancellation, rate-limit and provider error handling.
+- Added structured request logging without prompts, user content, credentials or generated responses.
+- Added unit and schematic coverage that does not perform real provider calls.
+- Added installation, configuration, request-flow, multi-provider and example-removal documentation.
+
+### Changed
+
+- Updated Genkit and the Google GenAI plugin installer ranges to `^1.40.0`.
+- Improved the Runtime Config installer to preserve JSONC comments, formatting and glob patterns during targeted configuration updates.
+- Normalized multi-evolution starter metadata formatting so generated workspaces remain Prettier-compliant.
+- Updated the starter baseline and versioned Evolution CLI package metadata to `0.7.0-alpha.0`.
+- Updated Evolution CLI documentation, visual preview and package smoke-test references for the new release.
+
 ## 0.6.0-alpha.0 - 2026-07-08
 
 Runtime Config Evolution CLI installer.

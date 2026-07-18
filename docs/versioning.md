@@ -16,7 +16,7 @@ The project is currently in alpha pre-release.
 Current package version:
 
 ```text
-0.6.0-alpha.0
+0.7.0-alpha.0
 ```
 
 The package remains marked as private:
@@ -41,13 +41,13 @@ That package can be published to npm while the root starter application remains 
 Current Git tag:
 
 ```text
-v0.6.0-alpha.0
+v0.7.0-alpha.0
 ```
 
 Current GitHub Release:
 
 ```text
-v0.6.0-alpha.0 - Runtime Config Evolution CLI installer
+v0.7.0-alpha.0 - AI Genkit Evolution CLI installer
 ```
 
 ## Version strategy
@@ -64,8 +64,9 @@ Recommended flow:
 0.5.0-alpha.0   -> Transloco and Tailwind Evolution CLI installers
 0.5.1-alpha.0   -> Render-safe Evolution CLI schematic execution
 0.6.0-alpha.0   -> Runtime Config Evolution CLI installer
-0.6.x-alpha.N   -> CLI and documentation iterations with possible breaking changes
-0.6.x-beta.0    -> structure mostly stable, feedback phase
+0.7.0-alpha.0   -> AI Genkit Evolution CLI installer
+0.7.x-alpha.N   -> CLI and documentation iterations with possible breaking changes
+0.7.x-beta.0    -> structure mostly stable, feedback phase
 1.0.0           -> stable starter baseline
 ```
 
@@ -79,7 +80,7 @@ Each implemented evolution branch declares which `main` baseline it is compatibl
 Example:
 
 ```text
-main                  -> v0.6.0-alpha.0
+main                  -> v0.7.0-alpha.0
 evo/i18n/transloco    -> compatible with v0.5.0-alpha.0+
 ```
 
@@ -112,19 +113,20 @@ v0.4.0-alpha.0 - Versioned Evolution CLI npm package
 v0.5.0-alpha.0 - Transloco and Tailwind Evolution CLI installers
 v0.5.1-alpha.0 - Render-safe Evolution CLI schematic execution
 v0.6.0-alpha.0 - Runtime Config Evolution CLI installer
+v0.7.0-alpha.0 - AI Genkit Evolution CLI installer
 ```
 
 For future releases, create and push a new tag:
 
 ```bash
-git tag v0.6.0-alpha.0
-git push origin v0.6.0-alpha.0
+git tag v0.7.0-alpha.0
+git push origin v0.7.0-alpha.0
 ```
 
 Suggested GitHub release title:
 
 ```text
-v0.6.0-alpha.0 - Runtime Config Evolution CLI installer
+v0.7.0-alpha.0 - AI Genkit Evolution CLI installer
 ```
 
 ## npm publication

@@ -785,6 +785,9 @@ export class DashboardService {
       [...dependencyNames].sort((first, second) => first.localeCompare(second)),
     );
     expect(readMetadata(result).enabledEvolutions).toEqual(['ai-genkit', 'runtime-config']);
+    expect(readText(result, STARTER_METADATA_PATH)).toContain(
+      '  "enabledEvolutions": ["ai-genkit", "runtime-config"]',
+    );
   });
 
   it('composes the AI Genkit summary example followed by Runtime Config', async () => {
@@ -808,6 +811,9 @@ export class DashboardService {
     expect(result.exists(AI_SUMMARY_ROUTE_PATH)).toBe(true);
     expect(result.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(true);
     expect(readMetadata(result).enabledEvolutions).toEqual(['ai-genkit', 'runtime-config']);
+    expect(readText(result, STARTER_METADATA_PATH)).toContain(
+      '  "enabledEvolutions": ["ai-genkit", "runtime-config"]',
+    );
   });
 
   it('evolution can add the summary example after installing the AI foundation', async () => {

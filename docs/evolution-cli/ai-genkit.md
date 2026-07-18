@@ -62,7 +62,7 @@ src/server/ai/
 
 It also:
 
-- adds `genkit` and `@genkit-ai/google-genai` runtime dependencies;
+- adds `genkit` and `@genkit-ai/google-genai` `^1.40.0` runtime dependencies;
 - registers the adapter inside the managed provider catalog;
 - merges server-only environment placeholders into `.env.example`;
 - adds `.env` ignore rules;

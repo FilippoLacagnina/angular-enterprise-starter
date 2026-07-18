@@ -53,7 +53,10 @@ export function writeStarterMetadata(tree: Tree, metadata: StarterMetadata): voi
 }
 
 function formatStarterMetadata(metadata: StarterMetadata): string {
-  const inlineEvolutions = `  "enabledEvolutions": ${JSON.stringify(metadata.enabledEvolutions)}`;
+  const compactEvolutions = `[${metadata.enabledEvolutions
+    .map((evolution) => JSON.stringify(evolution))
+    .join(', ')}]`;
+  const inlineEvolutions = `  "enabledEvolutions": ${compactEvolutions}`;
   const enabledEvolutions =
     inlineEvolutions.length <= 100
       ? inlineEvolutions
