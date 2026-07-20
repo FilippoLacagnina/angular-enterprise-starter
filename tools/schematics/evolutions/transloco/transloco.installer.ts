@@ -1,10 +1,15 @@
 import { SchematicsException, type SchematicContext, type Tree } from '@angular-devkit/schematics';
+import { applyEdits, modify } from 'jsonc-parser';
 
+import { getEvolutionDependencyRequirement } from '../../evolution/evolution-manifest';
 import { type EvolutionOptions } from '../../evolution/schema';
-import { type EvolutionDefinition } from '../evolution-definition';
+import { ensurePackageDependency } from '../../shared/package-dependency';
+import {
+  type EvolutionDefinition,
+  EvolutionUserActionRequiredError,
+} from '../evolution-definition';
 
-const TRANSLOCO_VERSION = '^8.3.0';
-const PACKAGE_JSON_PATH = '/package.json';
+const TRANSLOCO_DEPENDENCY = getEvolutionDependencyRequirement('transloco', '@jsverse/transloco');
 const ANGULAR_JSON_PATH = '/angular.json';
 const APP_CONFIG_PATH = '/src/app/app.config.ts';
 const I18N_PROVIDER_PATH = '/src/app/core/i18n/i18n.provider.ts';
@@ -34,12 +39,6 @@ interface AngularJson {
   [key: string]: unknown;
 }
 
-interface PackageJson {
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  [key: string]: unknown;
-}
-
 export function installTranslocoEvolution(
   tree: Tree,
   context: SchematicContext,
@@ -47,7 +46,7 @@ export function installTranslocoEvolution(
   _options: EvolutionOptions,
 ): void {
   validateTranslocoInstallation(tree);
-  addPackageDependency(tree, '@jsverse/transloco', TRANSLOCO_VERSION);
+  ensurePackageDependency(tree, TRANSLOCO_DEPENDENCY);
   addAssetsEntry(tree);
   createFile(tree, I18N_PROVIDER_PATH, createI18nProviderContent());
   createFile(tree, TRANSLOCO_LOADER_PATH, createTranslocoLoaderContent());
@@ -60,48 +59,80 @@ export function installTranslocoEvolution(
 }
 
 function validateTranslocoInstallation(tree: Tree): void {
-  if (!tree.exists(PACKAGE_JSON_PATH)) {
-    throw new SchematicsException('Missing package.json. Cannot add Transloco dependency.');
-  }
-
-  if (!tree.exists(ANGULAR_JSON_PATH)) {
-    throw new SchematicsException('Missing angular.json. Cannot register i18n assets.');
-  }
-
-  if (!tree.exists(APP_CONFIG_PATH)) {
-    throw new SchematicsException(
-      'Missing src/app/app.config.ts. Cannot register Transloco provider.',
-    );
-  }
-
   const existingFiles = GENERATED_FILES.filter((path) => tree.exists(path));
+  const blockingNotes = getTranslocoPreflightBlockingNotes(tree);
 
   if (existingFiles.length > 0) {
-    throw new SchematicsException(`Transloco files already exist: ${existingFiles.join(', ')}.`);
+    blockingNotes.unshift(`Transloco files already exist: ${existingFiles.join(', ')}.`);
+  }
+
+  if (blockingNotes.length > 0) {
+    throw new EvolutionUserActionRequiredError(
+      `Transloco preflight failed:\n- ${blockingNotes.join('\n- ')}`,
+    );
   }
 }
 
-function addPackageDependency(tree: Tree, packageName: string, version: string): void {
-  const packageJson = JSON.parse(tree.readText(PACKAGE_JSON_PATH)) as PackageJson;
+export function getTranslocoPreflightBlockingNotes(tree: Tree): string[] {
+  const blockingNotes: string[] = [];
 
-  if (packageJson.dependencies?.[packageName] || packageJson.devDependencies?.[packageName]) {
+  inspectAngularJson(tree, blockingNotes);
+  inspectAppConfig(tree, blockingNotes);
+
+  return blockingNotes;
+}
+
+function inspectAngularJson(tree: Tree, blockingNotes: string[]): void {
+  if (!tree.exists(ANGULAR_JSON_PATH)) {
+    blockingNotes.push('Missing angular.json. Cannot register i18n assets.');
     return;
   }
 
-  packageJson.dependencies = sortObject({
-    ...packageJson.dependencies,
-    [packageName]: version,
-  });
+  try {
+    const angularJson = JSON.parse(tree.readText(ANGULAR_JSON_PATH)) as AngularJson;
+    const firstProject = Object.values(angularJson.projects ?? {})[0];
+    const buildOptions = firstProject?.architect?.build?.options;
 
-  tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+    if (!buildOptions) {
+      blockingNotes.push('Missing build options in angular.json. Cannot register i18n assets.');
+      return;
+    }
+
+    if (buildOptions.assets !== undefined && !Array.isArray(buildOptions.assets)) {
+      blockingNotes.push('angular.json build assets must be an array.');
+    }
+  } catch {
+    blockingNotes.push('angular.json contains invalid JSON.');
+  }
+}
+
+function inspectAppConfig(tree: Tree, blockingNotes: string[]): void {
+  if (!tree.exists(APP_CONFIG_PATH)) {
+    blockingNotes.push('Missing src/app/app.config.ts. Cannot register Transloco provider.');
+    return;
+  }
+
+  const content = tree.readText(APP_CONFIG_PATH);
+
+  if (
+    !content.includes('provideI18n()') &&
+    !content.includes('    provideAppConfig(environment),\n') &&
+    !content.includes('    provideRouter(routes),\n')
+  ) {
+    blockingNotes.push(
+      'src/app/app.config.ts does not contain a supported provider anchor for Transloco.',
+    );
+  }
 }
 
 function addAssetsEntry(tree: Tree): void {
-  const angularJson = JSON.parse(tree.readText(ANGULAR_JSON_PATH)) as AngularJson;
-  const firstProject = Object.values(angularJson.projects ?? {})[0];
+  const angularJsonContent = tree.readText(ANGULAR_JSON_PATH);
+  const angularJson = JSON.parse(angularJsonContent) as AngularJson;
+  const [firstProjectName] = Object.keys(angularJson.projects ?? {});
+  const firstProject = firstProjectName ? angularJson.projects?.[firstProjectName] : undefined;
   const buildOptions = firstProject?.architect?.build?.options;
 
-  if (!buildOptions) {
+  if (!firstProjectName || !buildOptions) {
     throw new SchematicsException(
       'Missing build options in angular.json. Cannot register i18n assets.',
     );
@@ -123,13 +154,31 @@ function addAssetsEntry(tree: Tree): void {
     return;
   }
 
-  buildOptions.assets.push({
-    glob: '**/*',
-    input: 'src/assets',
-    output: 'assets',
-  });
-
-  tree.overwrite(ANGULAR_JSON_PATH, `${JSON.stringify(angularJson, null, 2)}\n`);
+  tree.overwrite(
+    ANGULAR_JSON_PATH,
+    applyEdits(
+      angularJsonContent,
+      modify(
+        angularJsonContent,
+        ['projects', firstProjectName, 'architect', 'build', 'options', 'assets'],
+        [
+          ...buildOptions.assets,
+          {
+            glob: '**/*',
+            input: 'src/assets',
+            output: 'assets',
+          },
+        ],
+        {
+          formattingOptions: {
+            eol: '\n',
+            insertSpaces: true,
+            tabSize: 2,
+          },
+        },
+      ),
+    ),
+  );
 }
 
 function updateAppConfig(tree: Tree): void {
@@ -240,10 +289,4 @@ function createItalianTranslationContent(): string {
   }
 }
 `;
-}
-
-function sortObject(value: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(value).sort(([first], [second]) => first.localeCompare(second)),
-  );
 }

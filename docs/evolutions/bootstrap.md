@@ -16,6 +16,10 @@ This evolution adds a minimal Bootstrap baseline.
 
 The goal is to make Bootstrap available as a styling foundation without turning the starter into a pre-designed UI kit.
 
+This document owns Bootstrap architecture, wrapper API and usage conventions. For preview, apply,
+component selection, safety and troubleshooting, see the
+[Bootstrap CLI Installer](../evolution-cli/bootstrap.md).
+
 ## Official resources
 
 - [Bootstrap documentation](https://getbootstrap.com/)
@@ -40,17 +44,9 @@ The import is intentionally global because Bootstrap is a design-system-level de
 ## Evolution CLI installer
 
 Bootstrap can be installed through the Evolution CLI.
-When available, the CLI is more powerful than using the `evo/design-system/bootstrap` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
-
-Use the branch as the reference implementation.
-Use the CLI when you want to add Bootstrap to an existing Angular Enterprise Starter baseline with guided choices.
-
-The installer supports two modes:
-
-| Mode     | Description                                                      |
-| -------- | ---------------------------------------------------------------- |
-| `all`    | Generates every Bootstrap wrapper component provided by the CLI. |
-| `select` | Generates only the requested Bootstrap wrapper components.       |
+Use the branch as the reference implementation and the
+[operational installer guide](../evolution-cli/bootstrap.md) for commands, component selection,
+repeatability and safety behavior.
 
 Available starter-owned wrapper components:
 
@@ -69,13 +65,6 @@ The generated wrappers intentionally expose a small API:
 | `card`    | `title`, `subtitle`, `imageSrc`, `imageAlt`, `imagePosition` (`top` or `bottom`).   |
 | `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attrs. |
 
-Examples:
-
-```bash
-npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode all
-npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
-```
-
 Generated wrappers are exported from:
 
 ```text
@@ -87,11 +76,6 @@ Feature code should import only what it uses:
 ```ts
 import { BootstrapButton, BootstrapCard } from '@shared/components/bootstrap';
 ```
-
-The installer is repeatable.
-After Bootstrap is enabled, teams can run it again to add missing wrapper components without duplicating starter metadata.
-Complete wrapper components are skipped safely.
-Partially installed wrapper components stop the installer, so teams can manually inspect the incomplete files before continuing.
 
 ## Usage
 

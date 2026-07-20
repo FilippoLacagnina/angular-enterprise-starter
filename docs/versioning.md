@@ -151,6 +151,12 @@ Publish alpha versions with the `alpha` dist-tag:
 npm publish ./dist/evolution-cli-package --access public --tag alpha
 ```
 
+After verification, assign the same published version to `latest`:
+
+```bash
+npm dist-tag add @filippolacagnina/angular-enterprise-starter@<version> latest
+```
+
 The generated tarball is created under:
 
 ```text
@@ -168,8 +174,8 @@ Before publishing a new CLI package version:
 The public consumer command is:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+npx @filippolacagnina/angular-enterprise-starter evolution
 ```
 
-Use npm pre-release versions while the starter is still in alpha.
-Use the `latest` dist-tag only when the starter reaches a stable release line.
+The project intentionally exposes the verified public alpha through both `latest` and `alpha`.
+Use the untagged command for the default supported release and `@alpha` when a workflow should explicitly track the alpha line.

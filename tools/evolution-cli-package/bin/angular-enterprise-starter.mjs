@@ -9,14 +9,16 @@ const command = rawArgs[0];
 
 process.env.AES_SKIP_SCHEMATICS_BUILD = 'true';
 process.env.AES_CLI_PACKAGE_JSON_PATH = resolve(packageRoot, 'package.json');
+process.env.AES_EVOLUTION_MANIFEST_PATH = resolve(
+  packageRoot,
+  'schematics/evolution/evolution-manifest.json',
+);
 process.env.AES_SCHEMATICS_COLLECTION_PATH = resolve(packageRoot, 'schematics/collection.json');
 
 if (!command || command === '--help' || command === '-h') {
-  printHelp();
-  process.exit(0);
-}
-
-if (command === '--version' || command === '-v') {
+  process.argv = [process.argv[0], process.argv[1], '--help'];
+  await import(pathToFileURL(resolve(packageRoot, 'bin/starter-evolution.mjs')).href);
+} else if (command === '--version' || command === '-v') {
   process.argv = [process.argv[0], process.argv[1], '--version'];
   await import(pathToFileURL(resolve(packageRoot, 'bin/starter-evolution.mjs')).href);
 } else if (command === 'evolution') {
@@ -28,20 +30,7 @@ if (command === '--version' || command === '-v') {
 } else {
   console.error(`Unsupported command: ${command}`);
   console.error('');
-  printHelp();
-  process.exit(1);
-}
-
-function printHelp() {
-  console.log(`Angular Enterprise Starter CLI
-
-Usage:
-  angular-enterprise-starter evolution [options]
-  aes evolution [options]
-
-Examples:
-  angular-enterprise-starter evolution
-  angular-enterprise-starter evolution --name bootstrap --preview
-  angular-enterprise-starter --version
-`);
+  process.exitCode = 1;
+  process.argv = [process.argv[0], process.argv[1], '--help'];
+  await import(pathToFileURL(resolve(packageRoot, 'bin/starter-evolution.mjs')).href);
 }

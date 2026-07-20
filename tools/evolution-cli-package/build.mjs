@@ -13,7 +13,10 @@ mkdirSync(resolve(packageOutputRoot, 'bin'), { recursive: true });
 
 packageJson.version = rootPackageJson.version;
 
-writeFileSync(resolve(packageOutputRoot, 'package.json'), `${JSON.stringify(packageJson, null, 2)}\n`);
+writeFileSync(
+  resolve(packageOutputRoot, 'package.json'),
+  `${JSON.stringify(packageJson, null, 2)}\n`,
+);
 copyFileSync(resolve(packageSourceRoot, 'README.md'), resolve(packageOutputRoot, 'README.md'));
 copyFileSync(
   resolve(packageSourceRoot, 'bin/angular-enterprise-starter.mjs'),
@@ -22,6 +25,10 @@ copyFileSync(
 copyFileSync(
   resolve(repoRoot, 'tools/schematics/starter-evolution.mjs'),
   resolve(packageOutputRoot, 'bin/starter-evolution.mjs'),
+);
+copyFileSync(
+  resolve(repoRoot, 'tools/schematics/starter-evolution-cli.mjs'),
+  resolve(packageOutputRoot, 'bin/starter-evolution-cli.mjs'),
 );
 cpSync(schematicsOutputRoot, resolve(packageOutputRoot, 'schematics'), { recursive: true });
 

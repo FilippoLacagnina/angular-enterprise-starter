@@ -6,7 +6,23 @@ The project is public and currently in alpha pre-release.
 
 ## Unreleased
 
-No unreleased changes yet.
+### Added
+
+- Added a manifest-backed Evolution CLI catalog shared by parsing, help, registry metadata and packaging.
+- Added strict CLI argument validation and evolution-specific option scoping.
+- Added centralized semver dependency compatibility guards with explicit blocking diagnostics.
+- Added atomic preflight coverage for installer target files and ambiguous partial states.
+- Added standardized operational guides and an automated documentation contract check.
+- Added generated-file formatting regressions for Transloco, Bootstrap and Tailwind.
+
+### Changed
+
+- Hardened preview and apply behavior across all seven CLI-installable evolutions.
+- Expanded schematic, parser, dependency and packaging coverage.
+- Standardized Evolution CLI documentation around purpose, prerequisites, safety, verification and rollback.
+- Refocused the README on the starter foundation while giving the Interactive Builder a first-class composition path.
+- Aligned npm documentation with the intentional `latest` and `alpha` dist-tag policy.
+- Extended CI to validate documentation, schematics and Evolution CLI packaging.
 
 ## 0.7.0-alpha.0 - 2026-07-18
 

@@ -17,6 +17,10 @@ This evolution adds a minimal Docker baseline for the Angular SSR runtime.
 
 The goal is to containerize the existing Angular Node server without changing application code or introducing a deployment platform opinion.
 
+This document owns container architecture and reference-branch decisions. For preview, apply,
+preflight behavior, compatibility and troubleshooting, see the
+[Docker SSR CLI Installer](../evolution-cli/docker-ssr.md).
+
 ## Current setup
 
 This evolution adds:

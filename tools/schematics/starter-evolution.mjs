@@ -8,6 +8,8 @@ import { logging, schema } from '@angular-devkit/core';
 import { formats } from '@angular-devkit/schematics';
 import { NodeWorkflow } from '@angular-devkit/schematics/tools/index.js';
 
+import { createCliHelp, parseCliArgs } from './starter-evolution-cli.mjs';
+
 const STARTER_VERSION = readStarterVersion();
 const CLI_DOCUMENTATION_URL =
   'https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md';
@@ -15,55 +17,16 @@ const HEADER_CONTENT_WIDTH = Math.max(70, CLI_DOCUMENTATION_URL.length - 4);
 const SHOULD_BUILD_LOCAL_SCHEMATICS = process.env['AES_SKIP_SCHEMATICS_BUILD'] !== 'true';
 const SCHEMATICS_COLLECTION_PATH =
   process.env['AES_SCHEMATICS_COLLECTION_PATH'] ?? './dist/schematics/collection.json';
+const EVOLUTION_MANIFEST_PATH =
+  process.env['AES_EVOLUTION_MANIFEST_PATH'] ??
+  resolve(dirname(fileURLToPath(import.meta.url)), 'evolution/evolution-manifest.json');
 
-const EVOLUTIONS = [
-  {
-    name: 'transloco',
-    label: 'Transloco i18n',
-    description: 'Runtime i18n baseline with EN/IT translation assets.',
-  },
-  {
-    name: 'runtime-config',
-    label: 'Runtime config',
-    description: 'Deployable values.yml configuration baseline.',
-  },
-  {
-    name: 'signal-store',
-    label: 'SignalStore',
-    description: 'Feature-scoped NgRx SignalStore baseline.',
-  },
-  {
-    name: 'docker-ssr',
-    label: 'Docker SSR',
-    description: 'SSR-oriented Docker deployment baseline.',
-  },
-  {
-    name: 'bootstrap',
-    label: 'Bootstrap',
-    description: 'Bootstrap design-system baseline.',
-  },
-  {
-    name: 'tailwind',
-    label: 'Tailwind',
-    description: 'Tailwind design-system baseline.',
-  },
-  {
-    name: 'ai-genkit',
-    label: 'AI Genkit',
-    description: 'Server-side Genkit foundation with a Google AI provider adapter.',
-  },
-];
-
-const DEFAULT_AI_GENKIT_MODEL = 'gemini-3.5-flash';
-
-const DESIGN_SYSTEM_COMPONENTS = [
-  ['alert', 'Alert', 'Contextual feedback message.'],
-  ['badge', 'Badge', 'Small count or status label.'],
-  ['button', 'Button', 'Action button wrapper.'],
-  ['card', 'Card', 'Content container.'],
-  ['input', 'Input', 'Basic form-control input.'],
-];
-const DESIGN_SYSTEM_DEFAULT_COMPONENTS = 'button,input,card';
+let evolutionManifest;
+let evolutions;
+let designSystemComponents;
+let designSystemDefaultComponents;
+let defaultAiGenkitModel;
+let args;
 
 const color = {
   bold: (value) => `\x1b[1m${value}\x1b[0m`,
@@ -74,8 +37,6 @@ const color = {
   yellow: (value) => `\x1b[33m${value}\x1b[0m`,
 };
 
-const args = parseArgs(process.argv.slice(2));
-
 main().catch((error) => {
   console.error('');
   console.error(color.red('Evolution failed.'));
@@ -84,6 +45,14 @@ main().catch((error) => {
 });
 
 async function main() {
+  initializeEvolutionManifest();
+  args = parseCliArgs(process.argv.slice(2), evolutionManifest);
+
+  if (args.help) {
+    console.log(createCliHelp(evolutionManifest, STARTER_VERSION, args.name));
+    return;
+  }
+
   if (args.version) {
     console.log(`Angular Enterprise Starter Evolution CLI v${STARTER_VERSION}`);
     return;
@@ -169,19 +138,11 @@ async function resolveAiGenkitOptions(shouldAskOptions) {
     });
   }
 
-  const aiExample = await askChoice('AI Genkit setup', [
-    [
-      'none',
-      'Foundation only',
-      'Install the server-side provider foundation without UI or API examples.',
-    ],
-    [
-      'summary',
-      'Foundation and summary example',
-      'Generate standard and streaming endpoints with a typed Angular client.',
-    ],
-  ]);
-  const aiModel = await askText('Google AI model', DEFAULT_AI_GENKIT_MODEL);
+  const aiExample = await askChoice(
+    'AI Genkit setup',
+    getManifestChoices('ai-genkit', 'aiExample'),
+  );
+  const aiModel = await askText('Google AI model', defaultAiGenkitModel);
 
   return createAiGenkitOptions({ aiExample, aiModel });
 }
@@ -196,23 +157,27 @@ async function resolveSignalStoreOptions(shouldAskOptions) {
     });
   }
 
-  const storeScope = await askChoice('SignalStore scope', [
-    ['feature', 'Feature', 'Generate state under src/app/features/<feature>/state.'],
-    ['root', 'Root', 'Generate a root-provided store under src/app/core/state.'],
-  ]);
+  const storeScope = await askChoice(
+    'SignalStore scope',
+    getManifestChoices('signal-store', 'storeScope'),
+  );
 
   if (storeScope === 'root') {
-    const storeName = await askAvailableRootStoreName('app');
+    const storeName = await askAvailableRootStoreName(
+      getManifestOptionDefault('signal-store', 'storeName'),
+    );
 
     return createSignalStoreOptions({ storeScope, storeName });
   }
 
   while (true) {
-    const featureName = await askAvailableSignalStoreFeatureName('dashboard');
-    const featureComponent = await askChoice('Feature component', [
-      ['existing', 'Already exists', 'Create state/store only.'],
-      ['create', 'Create it', 'Create a minimal route and standalone component.'],
-    ]);
+    const featureName = await askAvailableSignalStoreFeatureName(
+      getManifestOptionDefault('signal-store', 'featureName'),
+    );
+    const featureComponent = await askChoice(
+      'Feature component',
+      getManifestChoices('signal-store', 'featureComponent'),
+    );
 
     if (featureComponent !== 'create') {
       return createSignalStoreOptions({
@@ -267,10 +232,11 @@ async function resolveDesignSystemOptions({
     });
   }
 
-  const mode = await askChoice(`${systemName} setup`, [
-    ['all', 'Install all starter UI components', `Generate every ${systemName} wrapper component.`],
-    ['select', 'Select UI components', `Choose only the ${systemName} wrappers you need.`],
-  ]);
+  const evolutionName = systemName.toLowerCase();
+  const mode = await askChoice(
+    `${systemName} setup`,
+    getManifestChoices(evolutionName, modeOptionName),
+  );
 
   if (mode === 'all') {
     return createDesignSystemOptions({
@@ -332,7 +298,7 @@ async function askEvolutionName() {
   try {
     printSection('Choose an evolution');
 
-    for (const [index, evolution] of EVOLUTIONS.entries()) {
+    for (const [index, evolution] of evolutions.entries()) {
       console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(evolution.label)}`);
       console.log(`   ${color.dim(evolution.description)}`);
     }
@@ -340,7 +306,7 @@ async function askEvolutionName() {
     console.log('');
     const answer = await rl.question(`${color.bold('Select evolution')} `);
     const selectedIndex = Number.parseInt(answer, 10) - 1;
-    const selectedEvolution = EVOLUTIONS[selectedIndex];
+    const selectedEvolution = evolutions[selectedIndex];
 
     if (!selectedEvolution) {
       throw new Error('Invalid evolution selection.');
@@ -434,12 +400,12 @@ async function askDesignSystemComponents(systemName) {
     );
     console.log(
       `${color.dim('Recommended starter set')} ${color.bold(
-        formatDesignSystemComponentSelection(DESIGN_SYSTEM_DEFAULT_COMPONENTS.split(',')),
+        formatDesignSystemComponentSelection(designSystemDefaultComponents.split(',')),
       )}`,
     );
     console.log('');
 
-    const answer = await askText('Components', DESIGN_SYSTEM_DEFAULT_COMPONENTS);
+    const answer = await askText('Components', designSystemDefaultComponents);
 
     try {
       const selectedComponents = parseDesignSystemComponentSelection(answer, systemName);
@@ -459,7 +425,7 @@ async function askDesignSystemComponents(systemName) {
 }
 
 function printDesignSystemComponentChoices() {
-  for (const [index, [name, label, description]] of DESIGN_SYSTEM_COMPONENTS.entries()) {
+  for (const [index, [name, label, description]] of designSystemComponents.entries()) {
     console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(label)} ${color.dim(`(${name})`)}`);
     console.log(`   ${color.dim(description)}`);
   }
@@ -598,7 +564,7 @@ function printSection(title) {
 }
 
 function getEvolution(evolutionName) {
-  const evolution = EVOLUTIONS.find((candidate) => candidate.name === evolutionName);
+  const evolution = evolutions.find((candidate) => candidate.name === evolutionName);
 
   if (!evolution) {
     throw new Error(`Unsupported evolution: ${evolutionName}`);
@@ -608,19 +574,34 @@ function getEvolution(evolutionName) {
 }
 
 function createSignalStoreOptions(options) {
-  const storeScope = options.storeScope ?? 'feature';
+  const storeScope = options.storeScope ?? getManifestOptionDefault('signal-store', 'storeScope');
+
+  if (!getManifestChoiceValues('signal-store', 'storeScope').includes(storeScope)) {
+    throw new Error(`Unsupported SignalStore scope: ${storeScope}.`);
+  }
 
   if (storeScope === 'root') {
     return {
       storeScope,
-      storeName: normalizeFeatureName(options.storeName ?? 'app'),
+      storeName: normalizeFeatureName(
+        options.storeName ?? getManifestOptionDefault('signal-store', 'storeName'),
+      ),
     };
+  }
+
+  const featureComponent =
+    options.featureComponent ?? getManifestOptionDefault('signal-store', 'featureComponent');
+
+  if (!getManifestChoiceValues('signal-store', 'featureComponent').includes(featureComponent)) {
+    throw new Error(`Unsupported feature component mode: ${featureComponent}.`);
   }
 
   return {
     storeScope,
-    featureName: normalizeFeatureName(options.featureName ?? 'dashboard'),
-    featureComponent: options.featureComponent ?? 'existing',
+    featureName: normalizeFeatureName(
+      options.featureName ?? getManifestOptionDefault('signal-store', 'featureName'),
+    ),
+    featureComponent,
   };
 }
 
@@ -631,9 +612,11 @@ function createDesignSystemOptions({
   modeValue,
   componentsValue,
 }) {
-  const mode = modeValue ?? 'all';
+  const evolutionName = systemName.toLowerCase();
+  const mode = modeValue ?? getManifestOptionDefault(evolutionName, modeOptionName);
+  const supportedModes = getManifestChoiceValues(evolutionName, modeOptionName);
 
-  if (!['all', 'select'].includes(mode)) {
+  if (!supportedModes.includes(mode)) {
     throw new Error(`Unsupported ${systemName} mode: ${mode}.`);
   }
 
@@ -650,15 +633,15 @@ function createDesignSystemOptions({
 }
 
 function createAiGenkitOptions(options) {
-  const aiProvider = options.aiProvider ?? 'google-ai';
-  const aiExample = options.aiExample ?? 'none';
-  const aiModel = options.aiModel?.trim() || DEFAULT_AI_GENKIT_MODEL;
+  const aiProvider = options.aiProvider ?? getManifestOptionDefault('ai-genkit', 'aiProvider');
+  const aiExample = options.aiExample ?? getManifestOptionDefault('ai-genkit', 'aiExample');
+  const aiModel = options.aiModel?.trim() || defaultAiGenkitModel;
 
-  if (aiProvider !== 'google-ai') {
+  if (!getManifestChoiceValues('ai-genkit', 'aiProvider').includes(aiProvider)) {
     throw new Error(`Unsupported AI provider: ${aiProvider}.`);
   }
 
-  if (!['none', 'summary'].includes(aiExample)) {
+  if (!getManifestChoiceValues('ai-genkit', 'aiExample').includes(aiExample)) {
     throw new Error(`Unsupported AI example: ${aiExample}.`);
   }
 
@@ -702,14 +685,14 @@ function resolveDesignSystemComponentName(value, systemName) {
   const componentIndex = Number.parseInt(value, 10);
 
   if (Number.isInteger(componentIndex) && String(componentIndex) === value) {
-    const component = DESIGN_SYSTEM_COMPONENTS[componentIndex - 1];
+    const component = designSystemComponents[componentIndex - 1];
 
     if (component) {
       return component[0];
     }
   }
 
-  if (DESIGN_SYSTEM_COMPONENTS.some(([componentName]) => componentName === value)) {
+  if (designSystemComponents.some(([componentName]) => componentName === value)) {
     return value;
   }
 
@@ -721,11 +704,11 @@ function resolveDesignSystemComponentName(value, systemName) {
 }
 
 function getDesignSystemComponentNames() {
-  return DESIGN_SYSTEM_COMPONENTS.map(([componentName]) => componentName);
+  return designSystemComponents.map(([componentName]) => componentName);
 }
 
 function createDesignSystemSelectionHint() {
-  return `Use numbers 1-${DESIGN_SYSTEM_COMPONENTS.length}, component names (${getDesignSystemComponentNames().join(
+  return `Use numbers 1-${designSystemComponents.length}, component names (${getDesignSystemComponentNames().join(
     ', ',
   )}), or a mix like 3,input.`;
 }
@@ -733,7 +716,7 @@ function createDesignSystemSelectionHint() {
 function formatDesignSystemComponentSelection(componentNames) {
   return componentNames
     .map((componentName) => {
-      const component = DESIGN_SYSTEM_COMPONENTS.find(([name]) => name === componentName);
+      const component = designSystemComponents.find(([name]) => name === componentName);
 
       return component?.[1] ?? componentName;
     })
@@ -757,114 +740,6 @@ function formatOptionSummaryValue(name, value) {
 
 function formatOptionName(value) {
   return value.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, (first) => first.toUpperCase());
-}
-
-function formatCliOptionName(value) {
-  return value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-}
-
-function parseArgs(rawArgs) {
-  const parsedArgs = {};
-
-  for (let index = 0; index < rawArgs.length; index += 1) {
-    const arg = rawArgs[index];
-
-    if (arg === '--version' || arg === '-v') {
-      parsedArgs.version = true;
-      continue;
-    }
-
-    if (arg === '--name') {
-      parsedArgs.name = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--preview') {
-      parsedArgs.preview = true;
-      continue;
-    }
-
-    if (arg === '--apply') {
-      parsedArgs.preview = false;
-      continue;
-    }
-
-    if (arg === '--yes' || arg === '-y') {
-      parsedArgs.yes = true;
-      continue;
-    }
-
-    if (arg === '--store-scope') {
-      parsedArgs.storeScope = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--feature-name') {
-      parsedArgs.featureName = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--feature-component') {
-      parsedArgs.featureComponent = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--store-name') {
-      parsedArgs.storeName = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--bootstrap-mode') {
-      parsedArgs.bootstrapMode = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--bootstrap-components') {
-      parsedArgs.bootstrapComponents = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--tailwind-mode') {
-      parsedArgs.tailwindMode = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--tailwind-components') {
-      parsedArgs.tailwindComponents = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--ai-provider') {
-      parsedArgs.aiProvider = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--ai-example') {
-      parsedArgs.aiExample = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    if (arg === '--ai-model') {
-      parsedArgs.aiModel = rawArgs[index + 1];
-      index += 1;
-      continue;
-    }
-
-    throw new Error(`Unsupported argument: ${arg}`);
-  }
-
-  return parsedArgs;
 }
 
 async function runSchematic(evolution, preview, evolutionOptions) {
@@ -983,6 +858,188 @@ function printSchematicEvent(event) {
   if (event.kind === 'delete') {
     console.log(`${color.cyan('DELETE')} ${event.path}`);
   }
+}
+
+function initializeEvolutionManifest() {
+  evolutionManifest = readEvolutionManifest();
+  validateEvolutionManifest(evolutionManifest);
+  evolutions = evolutionManifest.evolutions;
+
+  designSystemComponents = getManifestOptionCatalog('starterUiComponents').map((component) => [
+    component.value,
+    component.label,
+    component.description,
+  ]);
+
+  const bootstrapDefaultComponents = getManifestOptionSuggestedValue(
+    'bootstrap',
+    'bootstrapComponents',
+  );
+  const tailwindDefaultComponents = getManifestOptionSuggestedValue(
+    'tailwind',
+    'tailwindComponents',
+  );
+
+  if (bootstrapDefaultComponents !== tailwindDefaultComponents) {
+    throw new Error(
+      'Invalid evolution manifest: Bootstrap and Tailwind starter component defaults must match.',
+    );
+  }
+
+  designSystemDefaultComponents = bootstrapDefaultComponents;
+  defaultAiGenkitModel = getManifestOptionDefault('ai-genkit', 'aiModel');
+}
+
+function readEvolutionManifest() {
+  if (!existsSync(EVOLUTION_MANIFEST_PATH)) {
+    throw new Error(`Evolution manifest not found: ${EVOLUTION_MANIFEST_PATH}`);
+  }
+
+  try {
+    return JSON.parse(readFileSync(EVOLUTION_MANIFEST_PATH, 'utf8'));
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+
+    throw new Error(`Invalid evolution manifest at ${EVOLUTION_MANIFEST_PATH}: ${reason}`);
+  }
+}
+
+function validateEvolutionManifest(manifest) {
+  if (!manifest || typeof manifest !== 'object') {
+    throw new Error('Invalid evolution manifest: expected a JSON object.');
+  }
+
+  if (manifest.schemaVersion !== 1) {
+    throw new Error(
+      `Unsupported evolution manifest schema version: ${String(manifest.schemaVersion)}.`,
+    );
+  }
+
+  if (!Array.isArray(manifest.evolutions) || manifest.evolutions.length === 0) {
+    throw new Error('Invalid evolution manifest: evolutions must be a non-empty array.');
+  }
+
+  const evolutionNames = new Set();
+
+  for (const evolution of manifest.evolutions) {
+    validateManifestString(evolution?.name, 'evolution name');
+    validateManifestString(evolution?.label, `${evolution.name} label`);
+    validateManifestString(evolution?.description, `${evolution.name} description`);
+
+    if (evolutionNames.has(evolution.name)) {
+      throw new Error(`Invalid evolution manifest: duplicate evolution "${evolution.name}".`);
+    }
+
+    evolutionNames.add(evolution.name);
+
+    if (!Array.isArray(evolution.options) || !Array.isArray(evolution.dependencies)) {
+      throw new Error(
+        `Invalid evolution manifest: "${evolution.name}" requires options and dependencies arrays.`,
+      );
+    }
+
+    for (const option of evolution.options) {
+      validateManifestString(option?.name, `${evolution.name} option name`);
+      validateManifestString(option?.cliFlag, `${evolution.name}.${option?.name} CLI flag`);
+      validateManifestString(option?.type, `${evolution.name}.${option?.name} type`);
+      validateManifestString(option?.description, `${evolution.name}.${option?.name} description`);
+    }
+  }
+}
+
+function validateManifestString(value, fieldName) {
+  if (typeof value !== 'string' || !value.trim()) {
+    throw new Error(`Invalid evolution manifest: ${fieldName} must be a non-empty string.`);
+  }
+}
+
+function getManifestEvolution(evolutionName) {
+  const evolution = evolutionManifest.evolutions.find(
+    (candidate) => candidate.name === evolutionName,
+  );
+
+  if (!evolution) {
+    throw new Error(`Evolution manifest does not define "${evolutionName}".`);
+  }
+
+  return evolution;
+}
+
+function getManifestOption(evolutionName, optionName) {
+  const option = getManifestEvolution(evolutionName).options.find(
+    (candidate) => candidate.name === optionName,
+  );
+
+  if (!option) {
+    throw new Error(
+      `Evolution manifest does not define option "${optionName}" for "${evolutionName}".`,
+    );
+  }
+
+  return option;
+}
+
+function getManifestChoices(evolutionName, optionName) {
+  const choices = getManifestOption(evolutionName, optionName).choices;
+
+  if (!Array.isArray(choices) || choices.length === 0) {
+    throw new Error(`Evolution manifest option "${evolutionName}.${optionName}" requires choices.`);
+  }
+
+  return choices.map((choice) => {
+    validateManifestString(choice?.value, `${evolutionName}.${optionName} choice value`);
+    validateManifestString(choice?.label, `${evolutionName}.${optionName} choice label`);
+    validateManifestString(
+      choice?.description,
+      `${evolutionName}.${optionName} choice description`,
+    );
+
+    return [choice.value, choice.label, choice.description];
+  });
+}
+
+function getManifestChoiceValues(evolutionName, optionName) {
+  return getManifestChoices(evolutionName, optionName).map(([value]) => value);
+}
+
+function getManifestOptionDefault(evolutionName, optionName) {
+  const defaultValue = getManifestOption(evolutionName, optionName).default;
+
+  if (typeof defaultValue !== 'string' || !defaultValue.trim()) {
+    throw new Error(
+      `Evolution manifest option "${evolutionName}.${optionName}" requires a string default.`,
+    );
+  }
+
+  return defaultValue;
+}
+
+function getManifestOptionSuggestedValue(evolutionName, optionName) {
+  const suggestedValue = getManifestOption(evolutionName, optionName).suggestedValue;
+
+  if (typeof suggestedValue !== 'string' || !suggestedValue.trim()) {
+    throw new Error(
+      `Evolution manifest option "${evolutionName}.${optionName}" requires a suggested value.`,
+    );
+  }
+
+  return suggestedValue;
+}
+
+function getManifestOptionCatalog(catalogName) {
+  const catalog = evolutionManifest.optionCatalogs?.[catalogName];
+
+  if (!Array.isArray(catalog) || catalog.length === 0) {
+    throw new Error(`Evolution manifest option catalog "${catalogName}" is missing or empty.`);
+  }
+
+  for (const option of catalog) {
+    validateManifestString(option?.value, `${catalogName} value`);
+    validateManifestString(option?.label, `${catalogName} label`);
+    validateManifestString(option?.description, `${catalogName} description`);
+  }
+
+  return catalog;
 }
 
 function readStarterVersion() {

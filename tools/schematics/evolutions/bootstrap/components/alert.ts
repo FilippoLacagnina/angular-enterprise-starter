@@ -33,11 +33,7 @@ export class BootstrapAlert {
   protected readonly dismissed = signal(false);
 
   protected readonly alertClasses = computed(() =>
-    [
-      'alert',
-      \`alert-\${this.variant()}\`,
-      this.dismissible() ? 'alert-dismissible fade show' : '',
-    ]
+    ['alert', \`alert-\${this.variant()}\`, this.dismissible() ? 'alert-dismissible fade show' : '']
       .filter(Boolean)
       .join(' '),
   );
@@ -51,7 +47,10 @@ export class BootstrapAlert {
     {
       path: '/src/app/shared/components/bootstrap/alert/alert.html',
       content: `@if (!dismissed()) {
-  <div [class]="alertClasses()" role="alert">
+  <div
+    [class]="alertClasses()"
+    role="alert"
+  >
     <ng-content />
 
     @if (dismissible()) {

@@ -25,10 +25,9 @@ export class TailwindAlert {
   protected readonly dismissed = signal(false);
 
   protected readonly alertClasses = computed(() =>
-    [
-      'rounded-lg border px-4 py-3 text-sm shadow-sm',
-      this.variantClasses()[this.variant()],
-    ].join(' '),
+    ['rounded-lg border px-4 py-3 text-sm shadow-sm', this.variantClasses()[this.variant()]].join(
+      ' ',
+    ),
   );
 
   private variantClasses(): Record<TailwindAlertVariant, string> {
@@ -50,7 +49,10 @@ export class TailwindAlert {
     {
       path: '/src/app/shared/components/tailwind/alert/alert.html',
       content: `@if (!dismissed()) {
-  <div [class]="alertClasses()" role="alert">
+  <div
+    [class]="alertClasses()"
+    role="alert"
+  >
     <div class="flex items-start gap-3">
       <div class="min-w-0 flex-1">
         <ng-content />

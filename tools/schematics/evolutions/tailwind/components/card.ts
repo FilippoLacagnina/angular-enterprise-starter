@@ -31,7 +31,11 @@ export class TailwindCard {
       path: '/src/app/shared/components/tailwind/card/card.html',
       content: `<article class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
   @if (imageSrc() && imagePosition() === 'top') {
-    <img class="h-48 w-full object-cover" [alt]="imageAlt()" [src]="imageSrc()" />
+    <img
+      class="h-48 w-full object-cover"
+      [alt]="imageAlt()"
+      [src]="imageSrc()"
+    />
   }
 
   <div class="space-y-3 p-5">
@@ -49,7 +53,11 @@ export class TailwindCard {
   </div>
 
   @if (imageSrc() && imagePosition() === 'bottom') {
-    <img class="h-48 w-full object-cover" [alt]="imageAlt()" [src]="imageSrc()" />
+    <img
+      class="h-48 w-full object-cover"
+      [alt]="imageAlt()"
+      [src]="imageSrc()"
+    />
   }
 </article>
 `,

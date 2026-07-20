@@ -31,7 +31,11 @@ export class BootstrapCard {
       path: '/src/app/shared/components/bootstrap/card/card.html',
       content: `<article class="card">
   @if (imageSrc() && imagePosition() === 'top') {
-    <img class="card-img-top" [alt]="imageAlt()" [src]="imageSrc()" />
+    <img
+      class="card-img-top"
+      [alt]="imageAlt()"
+      [src]="imageSrc()"
+    />
   }
 
   <div class="card-body">
@@ -49,7 +53,11 @@ export class BootstrapCard {
   </div>
 
   @if (imageSrc() && imagePosition() === 'bottom') {
-    <img class="card-img-bottom" [alt]="imageAlt()" [src]="imageSrc()" />
+    <img
+      class="card-img-bottom"
+      [alt]="imageAlt()"
+      [src]="imageSrc()"
+    />
   }
 </article>
 `,

@@ -8,6 +8,7 @@
 - [Installable evolutions](#installable-evolutions)
 - [Command usage](#command-usage)
 - [Installer guides](#installer-guides)
+- [Documentation ownership](#documentation-ownership)
 - [Safety model](#safety-model)
 - [Future parametrized installers](#future-parametrized-installers)
 - [Maintenance rules](#maintenance-rules)
@@ -66,10 +67,11 @@ Apply should be used only after the generated changes are understood.
 
 The Evolution CLI can be used through two channels.
 
-| Channel             | Command                                                            | Best for                                                                 |
-| ------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| Local starter tools | `npm run starter:evolution`                                        | Maintainers and fresh clones that still keep the local installer source. |
-| Versioned package   | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` | Product repositories that removed local installer tooling.               |
+| Channel              | Command                                                            | Best for                                                                 |
+| -------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------ |
+| Local starter tools  | `npm run starter:evolution`                                        | Maintainers and fresh clones that still keep the local installer source. |
+| npm `latest`         | `npx @filippolacagnina/angular-enterprise-starter evolution`       | Product repositories that removed local installer tooling.               |
+| Explicit alpha track | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` | Workflows that intentionally follow the public alpha line.               |
 
 The versioned package is the long-term consumer path.
 It lets teams remove local schematic sources from their product repository while still receiving newer installer behavior through npm.
@@ -115,14 +117,14 @@ npm run starter:evolution
 Package mode:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+npx @filippolacagnina/angular-enterprise-starter evolution
 ```
 
 Version check:
 
 ```bash
 npm run starter:evolution -- --version
-npx @filippolacagnina/angular-enterprise-starter@alpha --version
+npx @filippolacagnina/angular-enterprise-starter --version
 ```
 
 Preview examples:
@@ -135,7 +137,7 @@ npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name tailwind --preview
 npm run starter:evolution -- --name ai-genkit --preview
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name bootstrap --preview
+npx @filippolacagnina/angular-enterprise-starter evolution --name bootstrap --preview
 ```
 
 Apply examples:
@@ -167,20 +169,28 @@ Installer-specific options are documented in the dedicated guides.
 
 ## Installer guides
 
-Detailed installer behavior lives in dedicated files to keep this guide readable:
-
-| Installer      | Guide                                               | Reference branch              |
-| -------------- | --------------------------------------------------- | ----------------------------- |
-| Transloco      | [Transloco](./evolution-cli/transloco.md)           | `evo/i18n/transloco`          |
-| Runtime Config | [Runtime Config](./evolution-cli/runtime-config.md) | `evo/config/runtime-config`   |
-| SignalStore    | [SignalStore](./evolution-cli/signal-store.md)      | `evo/state/signal-store`      |
-| Docker SSR     | [Docker SSR](./evolution-cli/docker-ssr.md)         | `evo/deployment/docker-ssr`   |
-| Bootstrap      | [Bootstrap](./evolution-cli/bootstrap.md)           | `evo/design-system/bootstrap` |
-| Tailwind       | [Tailwind](./evolution-cli/tailwind.md)             | `evo/design-system/tailwind`  |
-| AI Genkit      | [AI Genkit](./evolution-cli/ai-genkit.md)           | `evo/ai/genkit`               |
+The [installable evolution catalog](#installable-evolutions) links to every operational guide.
+Reference branches and their architecture documents are cataloged in
+[Evolutions](./evolutions.md).
 
 Use `docs/evolution-cli/*` for CLI behavior.
 Use `docs/evolutions/*` for branch reference documentation.
+
+## Documentation ownership
+
+Documentation has one owner for each concern:
+
+- this guide owns the shared CLI workflow, catalog and safety model;
+- `docs/evolution-cli/<evolution>.md` owns installation, configuration, verification and
+  troubleshooting;
+- `docs/evolutions/<evolution>.md` owns architecture and reference-branch decisions;
+- `tools/schematics/evolution/evolution-manifest.json` owns structured CLI metadata.
+
+The standard installer-guide structure and maintenance contract are documented in
+[Evolution CLI Guide Contract](./evolution-cli/README.md).
+
+Avoid copying complete architecture sections into installer guides or repeating command matrices in
+architecture documentation. Use links between the two layers instead.
 
 ## Safety model
 
@@ -204,7 +214,7 @@ Examples:
 - runtime config files already exist;
 - Runtime Config detects custom `APP_CONFIG`, `@core/config` or environment-file references;
 - selected design-system component files are partially installed;
-- Docker SSR files already exist.
+- Docker SSR files already exist;
 - AI Genkit core, provider adapter or summary files are only partially installed;
 - the `/api/ai` route is already owned by another implementation;
 - server-side AI environment configuration is incomplete.
@@ -255,16 +265,8 @@ If it exists, update:
 
 When installer behavior changes and the package is intended for consumers, also rebuild and publish a new npm package version.
 
-Current CLI/reference branch mapping:
-
-| Evolution      | Reference branch              | CLI guide                                  |
-| -------------- | ----------------------------- | ------------------------------------------ |
-| Transloco      | `evo/i18n/transloco`          | [Guide](./evolution-cli/transloco.md)      |
-| Runtime Config | `evo/config/runtime-config`   | [Guide](./evolution-cli/runtime-config.md) |
-| SignalStore    | `evo/state/signal-store`      | [Guide](./evolution-cli/signal-store.md)   |
-| Docker SSR     | `evo/deployment/docker-ssr`   | [Guide](./evolution-cli/docker-ssr.md)     |
-| Bootstrap      | `evo/design-system/bootstrap` | [Guide](./evolution-cli/bootstrap.md)      |
-| Tailwind       | `evo/design-system/tailwind`  | [Guide](./evolution-cli/tailwind.md)       |
+The evolution manifest owns the current CLI-to-branch mapping. `npm run docs:check` verifies that
+every manifest entry has a matching operational guide, command and reference branch.
 
 Reference-only branches that are not CLI-installable yet must remain documented in `docs/evolutions.md` until their installers are implemented.
 

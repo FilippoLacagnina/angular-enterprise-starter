@@ -28,6 +28,24 @@ export function installDesignSystemComponents<TComponent extends DesignSystemCom
   plan,
   displayName,
 }: InstallDesignSystemComponentsOptions<TComponent>): void {
+  assertDesignSystemComponentsInstallable({ tree, plan, displayName });
+
+  const componentStatuses = getDesignSystemComponentStatuses((path) => tree.exists(path), plan);
+
+  for (const componentStatus of componentStatuses) {
+    if (componentStatus.status === 'complete') {
+      continue;
+    }
+
+    for (const file of componentStatus.missingFiles) {
+      tree.create(file.path, file.content);
+    }
+  }
+}
+
+export function assertDesignSystemComponentsInstallable<
+  TComponent extends DesignSystemComponentDefinition,
+>({ tree, plan, displayName }: InstallDesignSystemComponentsOptions<TComponent>): void {
   const componentStatuses = getDesignSystemComponentStatuses((path) => tree.exists(path), plan);
   const partiallyInstalledComponents = componentStatuses.filter(
     (componentStatus) => componentStatus.status === 'partial',
@@ -48,16 +66,6 @@ export function installDesignSystemComponents<TComponent extends DesignSystemCom
         })
         .join('; ')}.`,
     );
-  }
-
-  for (const componentStatus of componentStatuses) {
-    if (componentStatus.status === 'complete') {
-      continue;
-    }
-
-    for (const file of componentStatus.missingFiles) {
-      tree.create(file.path, file.content);
-    }
   }
 }
 

@@ -6,6 +6,10 @@ The `evo/ai/genkit` branch provides an optional enterprise-oriented foundation f
 
 It uses Genkit as the orchestration layer and initially integrates Google Gemini through `@genkit-ai/google-genai`. Angular never receives provider credentials and never invokes Gemini directly.
 
+This document owns architecture and design decisions. For installation commands, configuration,
+verification and troubleshooting, see the
+[AI Genkit CLI Installer](../evolution-cli/ai-genkit.md).
+
 ## Scope
 
 The first version includes:

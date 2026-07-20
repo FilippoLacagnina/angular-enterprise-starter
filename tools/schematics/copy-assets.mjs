@@ -3,6 +3,10 @@ import { dirname, join } from 'node:path';
 
 const files = [
   ['tools/schematics/collection.json', 'dist/schematics/collection.json'],
+  [
+    'tools/schematics/evolution/evolution-manifest.json',
+    'dist/schematics/evolution/evolution-manifest.json',
+  ],
   ['tools/schematics/evolution/schema.json', 'dist/schematics/evolution/schema.json'],
 ];
 

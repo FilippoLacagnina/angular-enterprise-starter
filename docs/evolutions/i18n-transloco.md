@@ -17,6 +17,10 @@ This evolution adds a minimal Transloco runtime i18n baseline.
 
 The goal is to provide a clean internationalization setup without turning the starter into a business-specific application.
 
+This document owns runtime architecture and translation conventions. For preview, apply,
+verification, compatibility and troubleshooting, see the
+[Transloco CLI Installer](../evolution-cli/transloco.md).
+
 ## Official resources
 
 - [Transloco GitHub repository](https://github.com/jsverse/transloco)

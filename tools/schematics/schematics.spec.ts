@@ -1,9 +1,12 @@
 import { HostTree, type Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import { format } from 'prettier';
 import { lastValueFrom } from 'rxjs';
 import { describe, expect, it } from 'vitest';
 
 import { evolution } from './evolution';
+import evolutionManifest from './evolution/evolution-manifest.json';
+import evolutionSchema from './evolution/schema.json';
 import { getEvolutionDefinitions } from './evolutions/evolution-registry';
 import { ngAdd } from './ng-add';
 
@@ -143,6 +146,45 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(metadata.enabledEvolutions).toEqual(['signal-store']);
   });
 
+  it('evolution preserves a compatible existing SignalStore dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@ngrx/signals': '^21.1.1',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({ name: 'signal-store', storeScope: 'root', storeName: 'session' }),
+        tree,
+      ),
+    );
+
+    expect(readPackageJson(result).dependencies?.['@ngrx/signals']).toBe('^21.1.1');
+    expect(readMetadata(result).enabledEvolutions).toContain('signal-store');
+  });
+
+  it('evolution blocks an incompatible existing SignalStore dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@ngrx/signals': '^20.0.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(
+          evolution({ name: 'signal-store', storeScope: 'root', storeName: 'session' }),
+          tree,
+        ),
+      ),
+    ).rejects.toThrow('@ngrx/signals ^20.0.0 is not compatible with the required ^21.1.0 range.');
+  });
+
   it('evolution can create a feature SignalStore with a new feature component', async () => {
     const tree = createStarterTree();
 
@@ -210,6 +252,65 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(readText(result, APP_CONFIG_PATH)).toContain('provideI18n(),');
     expect(assets).toContainEqual({ glob: '**/*', input: 'src/assets', output: 'assets' });
     expect(metadata.enabledEvolutions).toEqual(['transloco']);
+  });
+
+  it('evolution preserves Prettier-compliant angular.json formatting for Transloco', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(
+      ANGULAR_JSON_PATH,
+      await format(readText(tree, ANGULAR_JSON_PATH), createPrettierOptions('json')),
+    );
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree));
+
+    await expectTreeFileToBeFormatted(result, ANGULAR_JSON_PATH);
+  });
+
+  it('evolution preserves a compatible existing Transloco dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@jsverse/transloco': '^8.4.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree));
+
+    expect(readPackageJson(result).dependencies?.['@jsverse/transloco']).toBe('^8.4.0');
+    expect(readMetadata(result).enabledEvolutions).toContain('transloco');
+  });
+
+  it('evolution blocks an incompatible existing Transloco dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@jsverse/transloco': '^8.0.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree)),
+    ).rejects.toThrow(
+      '@jsverse/transloco ^8.0.0 is not compatible with the required ^8.3.0 range.',
+    );
+  });
+
+  it('Transloco validates app configuration before changing dependencies or assets', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(APP_CONFIG_PATH, 'export const appConfig = {};\n');
+    const angularJson = readText(tree, ANGULAR_JSON_PATH);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree)),
+    ).rejects.toThrow(
+      'src/app/app.config.ts does not contain a supported provider anchor for Transloco.',
+    );
+
+    expect(readPackageJson(tree).dependencies?.['@jsverse/transloco']).toBeUndefined();
+    expect(readText(tree, ANGULAR_JSON_PATH)).toBe(angularJson);
+    expect(tree.exists(I18N_PROVIDER_PATH)).toBe(false);
   });
 
   it('evolution installs runtime config baseline', async () => {
@@ -282,15 +383,51 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(metadata.enabledEvolutions).toEqual(['runtime-config']);
   });
 
+  it('evolution preserves a compatible existing YAML dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      yaml: '~2.9.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    const result = await lastValueFrom(
+      runner.callRule(evolution({ name: 'runtime-config' }), tree),
+    );
+
+    expect(readPackageJson(result).dependencies?.yaml).toBe('~2.9.0');
+    expect(readMetadata(result).enabledEvolutions).toContain('runtime-config');
+  });
+
+  it('evolution blocks an incompatible existing YAML dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      yaml: '^1.10.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow('yaml ^1.10.0 is not compatible with the required ^2.9.0 range.');
+  });
+
   it('evolution blocks Runtime Config when tsconfig.spec.json contains invalid JSONC', async () => {
     const tree = createStarterTree();
     tree.overwrite(TSCONFIG_SPEC_PATH, '{ "include": [');
+    const angularJson = readText(tree, ANGULAR_JSON_PATH);
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
     ).rejects.toThrow(
       'tsconfig.spec.json is not valid JSONC. Correct it before applying Runtime Config.',
     );
+
+    expect(readPackageJson(tree).dependencies?.yaml).toBeUndefined();
+    expect(readText(tree, ANGULAR_JSON_PATH)).toBe(angularJson);
+    expect(tree.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(false);
   });
 
   it('evolution fails before overwriting existing runtime config files', async () => {
@@ -300,6 +437,22 @@ describe('Angular Enterprise Starter schematics', () => {
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
     ).rejects.toThrow('Runtime config files already exist');
+
+    expect(readPackageJson(tree).dependencies?.yaml).toBeUndefined();
+  });
+
+  it('Runtime Config validates app configuration before changing dependencies or files', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(APP_CONFIG_PATH, 'export const appConfig = {};\n');
+    const angularJson = readText(tree, ANGULAR_JSON_PATH);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'runtime-config' }), tree)),
+    ).rejects.toThrow('Missing known provider anchor in app.config.ts.');
+
+    expect(readPackageJson(tree).dependencies?.yaml).toBeUndefined();
+    expect(readText(tree, ANGULAR_JSON_PATH)).toBe(angularJson);
+    expect(tree.exists(RUNTIME_CONFIG_SERVICE_PATH)).toBe(false);
   });
 
   it('evolution blocks runtime config when custom files still use APP_CONFIG', async () => {
@@ -392,6 +545,16 @@ export class DashboardService {
     expect(metadata.enabledEvolutions).toEqual(['bootstrap']);
   });
 
+  it('evolution generates Prettier-compliant Bootstrap wrappers', async () => {
+    const tree = createStarterTree();
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'bootstrap' }), tree));
+
+    await expectTreeFilesToBeFormatted(
+      result,
+      getTreeFilePaths(result, '/src/app/shared/components/bootstrap'),
+    );
+  });
+
   it('evolution installs only selected Bootstrap components when requested', async () => {
     const tree = createStarterTree();
 
@@ -442,6 +605,20 @@ export class DashboardService {
 
     expect(packageJson.dependencies?.bootstrap).toBe('^5.3.8');
     expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n`);
+  });
+
+  it('evolution blocks an incompatible existing Bootstrap dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      bootstrap: '^4.6.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'bootstrap' }), tree)),
+    ).rejects.toThrow('bootstrap ^4.6.0 is not compatible with the required ^5.3.8 range.');
   });
 
   it('evolution can add another Bootstrap component after the capability is enabled', async () => {
@@ -540,6 +717,16 @@ export class DashboardService {
     expect(metadata.enabledEvolutions).toEqual(['tailwind']);
   });
 
+  it('evolution generates Prettier-compliant Tailwind wrappers', async () => {
+    const tree = createStarterTree();
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'tailwind' }), tree));
+
+    await expectTreeFilesToBeFormatted(
+      result,
+      getTreeFilePaths(result, '/src/app/shared/components/tailwind'),
+    );
+  });
+
   it('evolution installs only selected Tailwind components when requested', async () => {
     const tree = createStarterTree();
 
@@ -564,6 +751,48 @@ export class DashboardService {
       "export { TailwindInput } from './input/input';",
     );
     expect(readText(result, TAILWIND_INDEX_PATH)).not.toContain('TailwindCard');
+  });
+
+  it('evolution preserves compatible existing Tailwind dependencies', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      '@tailwindcss/postcss': '^4.3.3',
+      postcss: '^8.5.20',
+      tailwindcss: '^4.3.3',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'tailwind',
+          tailwindMode: 'select',
+          tailwindComponents: 'button',
+        }),
+        tree,
+      ),
+    );
+    const dependencies = readPackageJson(result).devDependencies;
+
+    expect(dependencies?.tailwindcss).toBe('^4.3.3');
+    expect(dependencies?.['@tailwindcss/postcss']).toBe('^4.3.3');
+    expect(dependencies?.postcss).toBe('^8.5.20');
+  });
+
+  it('evolution blocks an incompatible existing Tailwind dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.devDependencies = {
+      ...packageJson.devDependencies,
+      tailwindcss: '^3.4.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'tailwind' }), tree)),
+    ).rejects.toThrow('tailwindcss ^3.4.0 is not compatible with the required ^4.3.0 range.');
   });
 
   it('evolution can generate another SignalStore after the capability is enabled', async () => {
@@ -614,6 +843,9 @@ export class DashboardService {
         ),
       ),
     ).rejects.toThrow('Bootstrap component installation is incomplete');
+
+    expect(readPackageJson(tree).dependencies?.bootstrap).toBeUndefined();
+    expect(tree.exists(GLOBAL_STYLES_PATH)).toBe(false);
   });
 
   it('evolution keeps enabled evolutions sorted', async () => {
@@ -692,6 +924,35 @@ export class DashboardService {
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
     ).rejects.toThrow('Missing route file for feature "dashboard".');
+
+    expect(readPackageJson(tree).dependencies?.['@ngrx/signals']).toBeUndefined();
+    expect(tree.exists(DASHBOARD_STATE_PATH)).toBe(false);
+    expect(tree.exists(DASHBOARD_STORE_PATH)).toBe(false);
+  });
+
+  it('SignalStore validates route structure before changing dependencies or files', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(DASHBOARD_ROUTES_PATH, 'export const dashboardRoutes = [];\n');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'signal-store' }), tree)),
+    ).rejects.toThrow('Cannot safely add SignalStore import to the route file.');
+
+    expect(readPackageJson(tree).dependencies?.['@ngrx/signals']).toBeUndefined();
+    expect(tree.exists(DASHBOARD_STATE_PATH)).toBe(false);
+    expect(tree.exists(DASHBOARD_STORE_PATH)).toBe(false);
+  });
+
+  it('Tailwind validates PostCSS before changing dependencies or styles', async () => {
+    const tree = createStarterTree();
+    tree.create(POSTCSS_CONFIG_PATH, '{');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'tailwind' }), tree)),
+    ).rejects.toThrow('.postcssrc.json contains invalid JSON.');
+
+    expect(readPackageJson(tree).devDependencies?.tailwindcss).toBeUndefined();
+    expect(tree.exists(GLOBAL_STYLES_PATH)).toBe(false);
   });
 
   it('evolution fails before overwriting existing Docker SSR files', async () => {
@@ -700,18 +961,43 @@ export class DashboardService {
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
-    ).rejects.toThrow(/evo\/deployment\/docker-ssr/);
+    ).rejects.toThrow('Dockerfile already exists and will not be overwritten.');
+
+    expect(tree.exists('/.dockerignore')).toBe(false);
   });
 
-  it('evolution blocking errors include the reference branch URL', async () => {
+  it('Docker SSR user-action errors do not include branch fallback guidance', async () => {
     const tree = createStarterTree();
     tree.create('/Dockerfile', '');
 
     await expect(
       lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
+    ).rejects.not.toThrow('evo/deployment/docker-ssr');
+  });
+
+  it('Docker SSR validates every target before creating files', async () => {
+    const tree = createStarterTree();
+    tree.create('/.dockerignore', '');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
+    ).rejects.toThrow('.dockerignore already exists and will not be overwritten.');
+
+    expect(tree.exists('/Dockerfile')).toBe(false);
+  });
+
+  it('Docker SSR requires the npm lockfile before creating files', async () => {
+    const tree = createStarterTree();
+    tree.delete('/package-lock.json');
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'docker-ssr' }), tree)),
     ).rejects.toThrow(
-      'https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/evo/deployment/docker-ssr',
+      'package-lock.json is required because the generated Dockerfile runs npm ci.',
     );
+
+    expect(tree.exists('/Dockerfile')).toBe(false);
+    expect(tree.exists('/.dockerignore')).toBe(false);
   });
 
   it('evolution defaults to the server-only AI Genkit foundation without examples', async () => {
@@ -915,6 +1201,35 @@ export class DashboardService {
     ).rejects.toThrow('genkit ^1.20.0 is not compatible with the required ^1.40.0 range.');
   });
 
+  it('evolution rejects an incompatible AI provider dependency', async () => {
+    const tree = createStarterTree();
+    const packageJson = readPackageJson(tree);
+    packageJson.dependencies = {
+      ...packageJson.dependencies,
+      '@genkit-ai/google-genai': '^1.39.0',
+    };
+    tree.overwrite(PACKAGE_JSON_PATH, JSON.stringify(packageJson, null, 2));
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'none' }), tree)),
+    ).rejects.toThrow(
+      '@genkit-ai/google-genai ^1.39.0 is not compatible with the required ^1.40.0 range.',
+    );
+  });
+
+  it('AI Genkit validates summary wiring before changing dependencies or files', async () => {
+    const tree = createStarterTree();
+    tree.overwrite(SERVER_PATH, "import express from 'express';\n");
+
+    await expect(
+      lastValueFrom(runner.callRule(evolution({ name: 'ai-genkit', aiExample: 'summary' }), tree)),
+    ).rejects.toThrow('src/server.ts no longer matches the supported starter backend structure.');
+
+    expect(readPackageJson(tree).dependencies?.genkit).toBeUndefined();
+    expect(tree.exists(AI_RUNTIME_PATH)).toBe(false);
+    expect(tree.exists(AI_SUMMARY_COMPONENT_PATH)).toBe(false);
+  });
+
   it('AI Genkit preview does not create files or update metadata', async () => {
     const tree = createStarterTree();
 
@@ -940,7 +1255,65 @@ export class DashboardService {
       'ai-genkit',
     ]);
   });
+
+  it('evolution manifest stays aligned with the schematic schema and registry', () => {
+    const definitions = getEvolutionDefinitions();
+    const manifestNames = evolutionManifest.evolutions.map((evolution) => evolution.name);
+    const schemaNames = evolutionSchema.properties.name.enum;
+
+    expect(evolutionManifest.schemaVersion).toBe(1);
+    expect(manifestNames).toEqual(schemaNames);
+    expect(manifestNames).toEqual(definitions.map((definition) => definition.name));
+
+    for (const manifestEvolution of evolutionManifest.evolutions) {
+      const definition = definitions.find((candidate) => candidate.name === manifestEvolution.name);
+
+      expect(definition).toBeDefined();
+      expect(manifestEvolution.label).toBe(definition?.label);
+      expect(manifestEvolution.repeatable).toBe(definition?.repeatable ?? false);
+      expect(manifestEvolution.referenceBranch).toBe(definition?.referenceBranch);
+      expect(manifestEvolution.dependencies.map((dependency) => dependency.name)).toEqual(
+        definition?.dependencies,
+      );
+      expect(definition?.install).toBeTypeOf('function');
+      expect(definition?.preview).toBeTypeOf('function');
+      expect(definition?.referenceUrl).toBe(
+        `https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/${manifestEvolution.referenceBranch}`,
+      );
+
+      for (const option of manifestEvolution.options) {
+        const schemaOption =
+          evolutionSchema.properties[option.name as keyof typeof evolutionSchema.properties];
+
+        expect(schemaOption).toBeDefined();
+        expect(option.cliFlag).toBe(toCliFlag(option.name));
+        expect(option.type).toBe(schemaOption?.type);
+        expect(option.description).toBe(schemaOption?.description);
+
+        if ('default' in option) {
+          expect(option.default).toBe(schemaOption?.default);
+        }
+
+        if ('choices' in option && 'enum' in (schemaOption ?? {})) {
+          expect(option.choices?.map((choice) => choice.value)).toEqual(schemaOption?.enum);
+        }
+      }
+    }
+
+    const manifestOptionNames = evolutionManifest.evolutions
+      .flatMap((evolution) => evolution.options.map((option) => option.name))
+      .sort();
+    const schemaOptionNames = Object.keys(evolutionSchema.properties)
+      .filter((optionName) => !['name', 'preview'].includes(optionName))
+      .sort();
+
+    expect(manifestOptionNames).toEqual(schemaOptionNames);
+  });
 });
+
+function toCliFlag(optionName: string): string {
+  return `--${optionName.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}`;
+}
 
 function createStarterTree(enabledEvolutions: readonly string[] = []): Tree {
   const tree = new HostTree();
@@ -1008,6 +1381,9 @@ export class DashboardService {
     JSON.stringify(
       {
         name: 'angular-enterprise-starter',
+        scripts: {
+          build: 'ng build',
+        },
         dependencies: {
           '@angular/core': '^21.2.0',
           '@angular/ssr': '^21.2.3',
@@ -1018,6 +1394,7 @@ export class DashboardService {
       2,
     ),
   );
+  tree.create('/package-lock.json', '{}\n');
 
   tree.create(
     ANGULAR_JSON_PATH,
@@ -1029,6 +1406,11 @@ export class DashboardService {
               build: {
                 options: {
                   assets: [{ glob: '**/*', input: 'public' }],
+                  server: 'src/main.server.ts',
+                  outputMode: 'server',
+                  ssr: {
+                    entry: 'src/server.ts',
+                  },
                 },
                 configurations: {
                   development: {
@@ -1164,4 +1546,55 @@ function readText(tree: Tree, path: string): string {
 
 function countOccurrences(value: string, searchValue: string): number {
   return value.split(searchValue).length - 1;
+}
+
+function getTreeFilePaths(tree: Tree, rootPath: string): string[] {
+  const paths: string[] = [];
+
+  tree.getDir(rootPath).visit((path) => paths.push(path));
+
+  return paths;
+}
+
+async function expectTreeFilesToBeFormatted(tree: Tree, paths: readonly string[]): Promise<void> {
+  for (const path of paths) {
+    await expectTreeFileToBeFormatted(tree, path);
+  }
+}
+
+async function expectTreeFileToBeFormatted(tree: Tree, path: string): Promise<void> {
+  const content = readText(tree, path);
+
+  expect(content).toBe(await format(content, createPrettierOptions(getPrettierParser(path))));
+}
+
+function createPrettierOptions(parser: 'angular' | 'json' | 'scss' | 'typescript') {
+  return {
+    arrowParens: 'always' as const,
+    bracketSpacing: true,
+    parser,
+    printWidth: 100,
+    semi: true,
+    singleAttributePerLine: true,
+    singleQuote: true,
+    tabWidth: 2,
+    trailingComma: 'all' as const,
+    useTabs: false,
+  };
+}
+
+function getPrettierParser(path: string): 'angular' | 'json' | 'scss' | 'typescript' {
+  if (path.endsWith('.html')) {
+    return 'angular';
+  }
+
+  if (path.endsWith('.json')) {
+    return 'json';
+  }
+
+  if (path.endsWith('.scss')) {
+    return 'scss';
+  }
+
+  return 'typescript';
 }

@@ -113,6 +113,7 @@ Canonical documentation lives under:
 
 ```text
 docs/
+docs/evolution-cli/
 docs/evolutions/
 ```
 
@@ -121,11 +122,15 @@ This keeps documentation readable from every branch and reduces merge conflicts 
 Recommended rules:
 
 - Keep general documentation on `main`.
+- Keep CLI installation and operational guides under `docs/evolution-cli/` on `main`.
 - Keep evolution-specific guides under `docs/evolutions/` on `main`.
 - Link from README files to canonical `main` documentation.
 - Avoid duplicating full guides inside every `evo/*` branch.
 - When an evolution changes behavior, update the canonical guide before or together with the merge to `main`.
 - If a branch needs a local note, keep it short and point back to the canonical documentation.
+
+The ownership and standard guide structure are defined in the
+[Evolution CLI Guide Contract](./evolution-cli/README.md).
 
 ## Evolution CLI model
 

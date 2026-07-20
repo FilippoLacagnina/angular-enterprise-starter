@@ -1,155 +1,198 @@
 # Bootstrap CLI Installer
 
-## Index
-
-- [Purpose](#purpose)
-- [Generated output](#generated-output)
-- [Setup modes](#setup-modes)
-- [Available components](#available-components)
-- [Wrapper API](#wrapper-api)
-- [Usage examples](#usage-examples)
-- [Repeatable usage](#repeatable-usage)
-- [Safety rules](#safety-rules)
+<!-- evolution-guide-standard -->
 
 ## Purpose
 
-The Bootstrap installer adds Bootstrap and optional starter-owned Angular wrapper components through the Evolution CLI.
+The `bootstrap` evolution installs Bootstrap and generates optional starter-owned Angular wrapper
+components.
 
-When available, the CLI is more powerful than using the `evo/design-system/bootstrap` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
-Bootstrap is backed by shared design-system installer utilities, so Tailwind follows the same model and future Angular Material or PrimeNG primitives can reuse the same preview/apply safety rules.
-
-The related reference branch is:
+Reference branch:
 
 ```text
 evo/design-system/bootstrap
 ```
 
-## Generated output
+## When to use it
 
-The installer always:
+Use Bootstrap when the product wants Bootstrap CSS and a small set of Angular-owned primitives
+without coupling feature code directly to generated framework markup everywhere.
 
-- adds the `bootstrap` dependency when missing;
-- adds the global Bootstrap CSS import when missing;
-- keeps existing layout and feature templates untouched.
+Choose one primary design-system evolution for a real product. Combining Bootstrap with another
+global CSS framework requires an explicit integration and ownership strategy.
 
-Generated wrappers live under:
+## Prerequisites
 
-```text
-src/app/shared/components/bootstrap/
-```
+Before applying:
 
-The installer also maintains:
+- decide whether all wrappers or only selected wrappers are needed;
+- review existing global style imports;
+- verify that selected component targets are not partially installed;
+- decide which application layer will own additional Bootstrap customization or theming.
 
-```text
-src/app/shared/components/bootstrap/index.ts
-```
+## Generated changes
 
-Feature code should import only the components it needs:
+The evolution:
+
+- adds the Bootstrap CSS import to `src/styles.scss` when missing;
+- generates selected wrappers under `src/app/shared/components/bootstrap/`;
+- creates or updates the shared `index.ts`;
+- leaves existing layout and feature templates unchanged.
+
+Available wrappers:
+
+| Component | Selector               |
+| --------- | ---------------------- |
+| `alert`   | `app-bootstrap-alert`  |
+| `badge`   | `app-bootstrap-badge`  |
+| `button`  | `app-bootstrap-button` |
+| `card`    | `app-bootstrap-card`   |
+| `input`   | `app-bootstrap-input`  |
+
+Feature code imports only the primitives it uses:
 
 ```ts
 import { BootstrapButton, BootstrapCard } from '@shared/components/bootstrap';
 ```
 
-## Setup modes
+## Dependencies
 
-| Mode     | Description                                                      |
-| -------- | ---------------------------------------------------------------- |
-| `all`    | Generates every Bootstrap wrapper component provided by the CLI. |
-| `select` | Generates only the requested Bootstrap wrapper components.       |
+| Package     | Supported range | Target         |
+| ----------- | --------------- | -------------- |
+| `bootstrap` | `^5.3.8`        | `dependencies` |
 
-Examples:
+Compatible existing declarations are preserved. Invalid ranges, incompatible ranges and
+declarations in the wrong dependency section block installation.
+
+## Options
+
+| Option                   | Default | Description                                            |
+| ------------------------ | ------- | ------------------------------------------------------ |
+| `--bootstrap-mode`       | `all`   | Generates `all` wrappers or a selected subset.         |
+| `--bootstrap-components` | —       | Comma-separated component names used in `select` mode. |
+
+Supported component values are `alert`, `badge`, `button`, `card` and `input`.
+
+The interactive CLI also accepts displayed numbers or a mixture of numbers and names. Explicit
+non-interactive commands should use component names.
+
+## Preview and apply
+
+Preview all wrappers:
 
 ```bash
-npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode all
-npm run starter:evolution -- --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
+npm run starter:evolution -- \
+  --name bootstrap \
+  --preview \
+  --bootstrap-mode all
 ```
 
-When using interactive mode with `select`, the CLI accepts:
+Preview a subset:
 
-| Input style | Example        |
-| ----------- | -------------- |
-| Numbers     | `3,5`          |
-| Names       | `button,input` |
-| Mixed       | `3,input`      |
-
-The recommended starter selection is:
-
-```text
-button,input,card
+```bash
+npm run starter:evolution -- \
+  --name bootstrap \
+  --preview \
+  --bootstrap-mode select \
+  --bootstrap-components button,input,card
 ```
 
-## Available components
+Apply after reviewing the preview:
 
-| Component | Selector               | Generated path                                 |
-| --------- | ---------------------- | ---------------------------------------------- |
-| `alert`   | `app-bootstrap-alert`  | `shared/components/bootstrap/alert/alert.ts`   |
-| `badge`   | `app-bootstrap-badge`  | `shared/components/bootstrap/badge/badge.ts`   |
-| `button`  | `app-bootstrap-button` | `shared/components/bootstrap/button/button.ts` |
-| `card`    | `app-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
-| `input`   | `app-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
-
-## Wrapper API
-
-Generated wrappers expose only a small starter-owned API surface.
-
-| Component | Supported options                                                                   |
-| --------- | ----------------------------------------------------------------------------------- |
-| `card`    | `title`, `subtitle`, `imageSrc`, `imageAlt`, `imagePosition` (`top` or `bottom`).   |
-| `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attrs. |
-
-## Usage examples
-
-Button:
-
-```html
-<app-bootstrap-button variant="primary">Save</app-bootstrap-button>
+```bash
+npm run starter:evolution -- \
+  --name bootstrap \
+  --apply \
+  --bootstrap-mode select \
+  --bootstrap-components button,input,card
 ```
 
-Input:
+## Configuration
 
-```html
-<app-bootstrap-input
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Insert email"
-/>
-```
+The installer adds a supported Bootstrap stylesheet import only when one is not already present.
+Existing global styles are preserved.
 
-Card:
+Generated wrappers expose a deliberately small starter-owned API. Extend those wrappers rather than
+scattering inconsistent Bootstrap variants across features.
+
+Example:
 
 ```html
 <app-bootstrap-card
   title="Dashboard"
   subtitle="Overview"
-  imageSrc="assets/images/dashboard.png"
-  imageAlt="Dashboard preview"
 >
   Dashboard content
 </app-bootstrap-card>
 ```
 
-Alert:
+Wrapper inputs and selectors are documented in
+[Bootstrap Evolution](../evolutions/bootstrap.md#evolution-cli-installer).
 
-```html
-<app-bootstrap-alert variant="warning">Review pending configuration.</app-bootstrap-alert>
-```
-
-Badge:
-
-```html
-<app-bootstrap-badge variant="success">Active</app-bootstrap-badge>
-```
-
-## Repeatable usage
+## Safety and repeatability
 
 Bootstrap is repeatable.
 
-After Bootstrap is enabled, teams can run it again to add missing wrapper components without duplicating starter metadata.
-Complete wrapper components are skipped safely.
+Later invocations can add missing wrappers. Complete selected components are skipped safely, while a
+component with only some expected files blocks the entire preflight.
 
-## Safety rules
+All component and dependency checks run before package or stylesheet changes. Existing generated
+files are never overwritten or silently completed.
 
-The installer stops when a selected Bootstrap component is partially installed.
+## Compatibility
 
-This prevents the CLI from silently completing or overwriting ambiguous component state.
+Bootstrap can be combined with Transloco, Runtime Config, SignalStore, Docker SSR and AI Genkit
+because those evolutions own different architectural areas.
+
+Avoid installing Tailwind as a second global design system in production unless the project
+explicitly owns:
+
+- CSS reset and specificity interaction;
+- design-token ownership;
+- bundle impact;
+- component conventions;
+- migration and maintenance responsibility.
+
+## Verification
+
+After apply:
+
+```bash
+npm install
+npm run format:check
+npm run lint
+npm test -- --watch=false
+npm run build
+```
+
+Render each selected wrapper in an isolated feature or component test before adopting it in product
+layouts.
+
+## Removal and rollback
+
+The CLI does not provide automatic uninstall.
+
+To remove Bootstrap:
+
+1. remove application imports and usages of generated wrappers;
+2. delete `src/app/shared/components/bootstrap/`;
+3. remove the Bootstrap stylesheet import;
+4. remove the `bootstrap` dependency when unused;
+5. update starter metadata.
+
+If only one wrapper is no longer needed, remove its export and files while keeping the remaining
+installation intact.
+
+## Troubleshooting
+
+| Symptom                                | Likely cause                               | Action                                                       |
+| -------------------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+| Preview reports a partial component    | Only some wrapper files exist.             | Reconcile or remove that wrapper before applying.            |
+| Component name is rejected             | The value is not in the manifest catalog.  | Use one of the documented component names.                   |
+| Bootstrap styles are missing           | Global stylesheet import was removed.      | Restore the supported Bootstrap import in `src/styles.scss`. |
+| Styles conflict with another framework | Multiple global design systems are active. | Define explicit ownership or remove one framework.           |
+
+## Architecture reference
+
+See [Bootstrap Evolution](../evolutions/bootstrap.md) for wrapper API details, usage examples,
+guidelines and reference-branch merge notes.

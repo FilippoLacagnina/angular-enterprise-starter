@@ -50,7 +50,11 @@ export class BootstrapInput {
       path: '/src/app/shared/components/bootstrap/input/input.html',
       content: `<div>
   @if (label()) {
-    <label class="form-label" [for]="id()">{{ label() }}</label>
+    <label
+      class="form-label"
+      [for]="id()"
+      >{{ label() }}</label
+    >
   }
 
   <input

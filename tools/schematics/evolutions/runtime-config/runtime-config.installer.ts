@@ -10,13 +10,15 @@ import {
   type ParseError,
 } from 'jsonc-parser';
 
+import { getEvolutionDependencyRequirements } from '../../evolution/evolution-manifest';
 import { type EvolutionOptions } from '../../evolution/schema';
+import { ensurePackageDependencies } from '../../shared/package-dependency';
 import {
   EvolutionUserActionRequiredError,
   type EvolutionDefinition,
 } from '../evolution-definition';
 
-const YAML_VERSION = '^2.9.0';
+const RUNTIME_CONFIG_DEPENDENCIES = getEvolutionDependencyRequirements('runtime-config');
 const PACKAGE_JSON_PATH = '/package.json';
 const ANGULAR_JSON_PATH = '/angular.json';
 const APP_CONFIG_PATH = '/src/app/app.config.ts';
@@ -80,12 +82,6 @@ interface AngularJson {
   [key: string]: unknown;
 }
 
-interface PackageJson {
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  [key: string]: unknown;
-}
-
 interface TsConfigSpec {
   include?: string[];
   [key: string]: unknown;
@@ -98,7 +94,7 @@ export function installRuntimeConfigEvolution(
   _options: EvolutionOptions,
 ): void {
   validateRuntimeConfigInstallation(tree);
-  addPackageDependency(tree, 'yaml', YAML_VERSION);
+  ensurePackageDependencies(tree, RUNTIME_CONFIG_DEPENDENCIES);
   updateAngularJson(tree);
   updateAppConfig(tree);
   updateDashboardService(tree);
@@ -117,34 +113,94 @@ export function installRuntimeConfigEvolution(
 }
 
 function validateRuntimeConfigInstallation(tree: Tree): void {
-  if (!tree.exists(PACKAGE_JSON_PATH)) {
-    throw new SchematicsException('Missing package.json. Cannot add runtime config dependency.');
-  }
+  const blockingNotes = getRuntimeConfigPreflightBlockingNotes(tree);
 
-  if (!tree.exists(ANGULAR_JSON_PATH)) {
-    throw new SchematicsException('Missing angular.json. Cannot register runtime config assets.');
-  }
-
-  if (!tree.exists(APP_CONFIG_PATH)) {
-    throw new SchematicsException(
-      'Missing src/app/app.config.ts. Cannot register runtime config provider.',
+  if (blockingNotes.length > 0) {
+    throw new EvolutionUserActionRequiredError(
+      `Runtime Config preflight failed:\n- ${blockingNotes.join('\n- ')}`,
     );
   }
+}
+
+export function getRuntimeConfigPreflightBlockingNotes(tree: Tree): string[] {
+  const blockingNotes: string[] = [];
+
+  if (!tree.exists(PACKAGE_JSON_PATH)) {
+    blockingNotes.push('Missing package.json. Cannot add runtime config dependency.');
+  }
+
+  inspectRuntimeConfigAngularJson(tree, blockingNotes);
+  inspectRuntimeConfigAppConfig(tree, blockingNotes);
 
   const existingFiles = RUNTIME_CONFIG_FILES.filter((path) => tree.exists(path));
 
   if (existingFiles.length > 0) {
-    throw new SchematicsException(
-      `Runtime config files already exist: ${existingFiles.join(', ')}.`,
-    );
+    blockingNotes.push(`Runtime config files already exist: ${existingFiles.join(', ')}.`);
   }
 
   const unsupportedReferences = collectUnsupportedEnvironmentConfigReferences(tree);
 
   if (unsupportedReferences.length > 0) {
-    throw new EvolutionUserActionRequiredError(
-      createUnsupportedReferencesMessage(unsupportedReferences),
-    );
+    blockingNotes.push(createUnsupportedReferencesMessage(unsupportedReferences));
+  }
+
+  if (tree.exists(TSCONFIG_SPEC_PATH)) {
+    try {
+      parseTsConfigSpec(tree.readText(TSCONFIG_SPEC_PATH));
+    } catch (error) {
+      blockingNotes.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  return blockingNotes;
+}
+
+function inspectRuntimeConfigAngularJson(tree: Tree, blockingNotes: string[]): void {
+  if (!tree.exists(ANGULAR_JSON_PATH)) {
+    blockingNotes.push('Missing angular.json. Cannot register runtime config assets.');
+    return;
+  }
+
+  try {
+    const angularJson = JSON.parse(tree.readText(ANGULAR_JSON_PATH)) as AngularJson;
+    const firstProject = Object.values(angularJson.projects ?? {})[0];
+    const buildOptions = firstProject?.architect?.build?.options;
+
+    if (!buildOptions) {
+      blockingNotes.push(
+        'Missing build options in angular.json. Cannot register runtime config assets.',
+      );
+      return;
+    }
+
+    if (buildOptions.assets !== undefined && !Array.isArray(buildOptions.assets)) {
+      blockingNotes.push('angular.json build assets must be an array.');
+    }
+
+    if (
+      buildOptions.allowedCommonJsDependencies !== undefined &&
+      (!Array.isArray(buildOptions.allowedCommonJsDependencies) ||
+        buildOptions.allowedCommonJsDependencies.some((entry) => typeof entry !== 'string'))
+    ) {
+      blockingNotes.push(
+        'angular.json allowedCommonJsDependencies must be an array of package names.',
+      );
+    }
+  } catch {
+    blockingNotes.push('angular.json contains invalid JSON.');
+  }
+}
+
+function inspectRuntimeConfigAppConfig(tree: Tree, blockingNotes: string[]): void {
+  if (!tree.exists(APP_CONFIG_PATH)) {
+    blockingNotes.push('Missing src/app/app.config.ts. Cannot register runtime config provider.');
+    return;
+  }
+
+  try {
+    createRuntimeConfigAppConfigContent(tree.readText(APP_CONFIG_PATH));
+  } catch (error) {
+    blockingNotes.push(error instanceof Error ? error.message : String(error));
   }
 }
 
@@ -229,21 +285,6 @@ Files to review:
 ${paths.map((path) => `- ${path.replace(/^\//, '')}`).join('\n')}
 
 Migrate these references to RuntimeConfigService before applying this evolution.`;
-}
-
-function addPackageDependency(tree: Tree, packageName: string, version: string): void {
-  const packageJson = JSON.parse(tree.readText(PACKAGE_JSON_PATH)) as PackageJson;
-
-  if (packageJson.dependencies?.[packageName] || packageJson.devDependencies?.[packageName]) {
-    return;
-  }
-
-  packageJson.dependencies = sortObject({
-    ...packageJson.dependencies,
-    [packageName]: version,
-  });
-
-  tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
 }
 
 function updateAngularJson(tree: Tree): void {
@@ -353,7 +394,14 @@ function addAllowedCommonJsDependency(
 }
 
 function updateAppConfig(tree: Tree): void {
-  let appConfigContent = tree.readText(APP_CONFIG_PATH);
+  tree.overwrite(
+    APP_CONFIG_PATH,
+    createRuntimeConfigAppConfigContent(tree.readText(APP_CONFIG_PATH)),
+  );
+}
+
+function createRuntimeConfigAppConfigContent(content: string): string {
+  let appConfigContent = content;
 
   appConfigContent = appConfigContent.replace(
     "import { provideAppConfig } from '@core/config/app-config.provider';\n",
@@ -374,7 +422,7 @@ function updateAppConfig(tree: Tree): void {
     appConfigContent = addRuntimeConfigProvider(appConfigContent);
   }
 
-  tree.overwrite(APP_CONFIG_PATH, appConfigContent);
+  return appConfigContent;
 }
 
 function addRuntimeConfigImport(appConfigContent: string): string {
@@ -772,10 +820,4 @@ function replaceRange(value: string, offset: number, length: number, replacement
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
-function sortObject(value: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(value).sort(([first], [second]) => first.localeCompare(second)),
-  );
 }

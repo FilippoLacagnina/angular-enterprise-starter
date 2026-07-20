@@ -1,22 +1,11 @@
 # Transloco CLI Installer
 
-## Index
+<!-- evolution-guide-standard -->
 
-- [Goal](#goal)
-- [Reference branch](#reference-branch)
-- [What the CLI adds](#what-the-cli-adds)
-- [Generated structure](#generated-structure)
-- [Commands](#commands)
-- [Safety behavior](#safety-behavior)
-- [After installation](#after-installation)
+## Purpose
 
-## Goal
-
-The Transloco installer adds a minimal runtime i18n baseline without changing existing layout or feature templates.
-
-Use it when the project needs internationalization support but should stay free from business-specific labels during starter setup.
-
-## Reference branch
+The `transloco` evolution adds a minimal runtime internationalization foundation without replacing
+existing layout or feature text.
 
 Reference branch:
 
@@ -24,25 +13,26 @@ Reference branch:
 evo/i18n/transloco
 ```
 
-Branch documentation:
+## When to use it
 
-```text
-docs/evolutions/i18n-transloco.md
-```
+Use Transloco when the product needs runtime language switching, translation assets and a shared
+i18n provider.
 
-## What the CLI adds
+The installer intentionally avoids business-specific translations, language persistence, lazy
+scopes and a language-switcher UI. Add those capabilities only when product requirements are known.
 
-The installer:
+## Prerequisites
 
-- adds `@jsverse/transloco` to `package.json`;
-- creates an application-level i18n provider;
-- creates a Transloco HTTP loader;
-- creates `en` and `it` translation assets;
-- registers `src/assets` in `angular.json`;
-- registers `provideI18n()` in `src/app/app.config.ts`;
-- keeps existing components and templates unchanged.
+Before applying:
 
-## Generated structure
+- start from a compatible Angular Enterprise Starter workspace;
+- keep valid Angular build options in `angular.json`;
+- keep a supported provider anchor in `src/app/app.config.ts`;
+- decide whether the default `en` and `it` assets fit the initial localization strategy.
+
+## Generated changes
+
+The evolution creates:
 
 ```text
 src/app/core/i18n/
@@ -54,19 +44,30 @@ src/assets/i18n/
   it.json
 ```
 
-Translation files include uppercase and nested key examples:
+It also:
 
-```json
-{
-  "EXAMPLE": "Example",
-  "EXAMPLE_GROUP": {
-    "DESCRIPTION": "Description",
-    "TITLE": "Title"
-  }
-}
-```
+- registers `src/assets` in `angular.json` when needed;
+- registers `provideI18n()` in `src/app/app.config.ts`;
+- records the evolution in starter metadata;
+- leaves application templates unchanged.
 
-## Commands
+The generated assets contain neutral uppercase and nested key examples.
+
+## Dependencies
+
+| Package              | Supported range | Target         |
+| -------------------- | --------------- | -------------- |
+| `@jsverse/transloco` | `^8.3.0`        | `dependencies` |
+
+Compatible existing declarations are preserved. Invalid ranges, incompatible ranges or a
+declaration in `devDependencies` block installation.
+
+## Options
+
+Transloco has no evolution-specific options. The initial language set and provider baseline are
+deterministic starter defaults that can be customized after installation.
+
+## Preview and apply
 
 Preview:
 
@@ -80,35 +81,109 @@ Apply:
 npm run starter:evolution -- --name transloco --apply
 ```
 
-Package mode:
+Versioned npm CLI:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name transloco --preview
+npx @filippolacagnina/angular-enterprise-starter@alpha evolution \
+  --name transloco \
+  --preview
 ```
 
-## Safety behavior
+## Configuration
 
-The installer stops before overwriting existing generated targets.
+The default provider configures:
 
-If one of the i18n provider, loader or translation files already exists, the CLI reports the conflict and points to the reference branch for manual inspection.
+```text
+available languages: en, it
+default language:    en
+fallback language:   en
+```
 
-The installer does not generate documentation files inside the consumer project.
-Canonical documentation remains in this repository.
+Translation files are loaded from:
 
-## After installation
+```text
+./assets/i18n/<lang>.json
+```
 
-Run:
+The relative path remains compatible with deployments that use a non-root base path.
+
+Standalone components opt in by importing `TranslocoPipe`:
+
+```ts
+import { TranslocoPipe } from '@jsverse/transloco';
+
+@Component({
+  imports: [TranslocoPipe],
+})
+export class ExampleComponent {}
+```
+
+```html
+{{ 'EXAMPLE_GROUP.TITLE' | transloco }}
+```
+
+## Safety and repeatability
+
+Transloco is non-repeatable.
+
+Before changing dependencies or Angular configuration, the installer validates:
+
+- `angular.json` and its build assets structure;
+- `src/app/app.config.ts` and its provider insertion point;
+- all generated target files;
+- the dependency declaration.
+
+Existing i18n files are never overwritten. A blocking preflight leaves dependencies, Angular
+configuration and application files unchanged.
+
+## Compatibility
+
+Runtime Config can be installed before or after Transloco. Both may register `src/assets`, and the
+installers preserve compatible asset entries.
+
+The evolution does not translate generated design-system wrappers, SignalStore examples or AI
+features automatically. Product teams retain ownership of translation keys and UI language
+selection.
+
+## Verification
+
+After apply:
 
 ```bash
 npm install
-```
-
-Then run the normal project checks:
-
-```bash
 npm run format:check
 npm run lint
+npm test -- --watch=false
 npm run build
 ```
 
-When the product is ready to translate UI text, import `TranslocoPipe` in the standalone component that needs it and use translation keys in the template.
+Then verify that the built browser assets contain `assets/i18n/en.json` and `assets/i18n/it.json`.
+
+## Removal and rollback
+
+The CLI does not provide automatic uninstall.
+
+To remove the foundation manually:
+
+1. remove `provideI18n()` and its import from `app.config.ts`;
+2. delete `src/app/core/i18n/`;
+3. delete `src/assets/i18n/` when no other code owns those assets;
+4. remove `@jsverse/transloco` when unused;
+5. remove the `src/assets` registration only if no other feature needs it;
+6. update starter metadata.
+
+Prefer version-control rollback when application templates already contain translation keys.
+
+## Troubleshooting
+
+| Symptom                           | Likely cause                                   | Action                                                      |
+| --------------------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| Translation request returns `404` | Assets were not built or the path changed.     | Verify Angular assets and the deployment base path.         |
+| Key is rendered literally         | Key or active language entry is missing.       | Add the key to the corresponding translation file.          |
+| Preview reports an app anchor     | `app.config.ts` was customized.                | Register the provider manually or restore a supported form. |
+| Preview reports existing files    | A manual or partial i18n setup already exists. | Reconcile that setup before applying the evolution.         |
+
+## Architecture reference
+
+See [Transloco Evolution](../evolutions/i18n-transloco.md) for runtime language switching,
+translation-key conventions and architectural guidelines.

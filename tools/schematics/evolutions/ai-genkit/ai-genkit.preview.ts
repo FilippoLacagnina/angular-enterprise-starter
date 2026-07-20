@@ -1,9 +1,11 @@
 import { type Tree } from '@angular-devkit/schematics';
 
 import { type EvolutionOptions } from '../../evolution/schema';
+import { createPackageDependenciesPreview } from '../../shared/package-dependency';
 import { type EvolutionPreview } from '../evolution-definition';
+import { getAiGenkitDependencyRequirements } from './ai-genkit.dependencies';
+import { getAiGenkitSummaryWiringBlockingNotes } from './ai-genkit.installer';
 import {
-  AI_GENKIT_CORE_DEPENDENCIES,
   AI_GENKIT_CORE_FILES,
   AI_GENKIT_PROVIDER_CATALOG_PATH,
   AI_GENKIT_PROVIDER_INSTALLERS,
@@ -14,6 +16,10 @@ import { createAiGenkitInstallPlan } from './ai-genkit.plan';
 export function getAiGenkitPreview(options: EvolutionOptions, tree: Tree): EvolutionPreview {
   const plan = createAiGenkitInstallPlan(options);
   const providerInstaller = AI_GENKIT_PROVIDER_INSTALLERS[plan.provider];
+  const dependencyPreview = createPackageDependenciesPreview(
+    tree,
+    getAiGenkitDependencyRequirements(providerInstaller),
+  );
   const existing = plan.files.filter((path) => tree.exists(path));
   const blockingNotes = [
     ...getPartialStateNote(tree, AI_GENKIT_CORE_FILES, 'AI Genkit core'),
@@ -25,20 +31,15 @@ export function getAiGenkitPreview(options: EvolutionOptions, tree: Tree): Evolu
     ...(plan.example === 'summary'
       ? getPartialStateNote(tree, AI_GENKIT_SUMMARY_EXAMPLE_FILES, 'AI summary example')
       : []),
+    ...(plan.example === 'summary' ? getAiGenkitSummaryWiringBlockingNotes(tree) : []),
   ];
 
   if (!tree.exists('/src/server.ts')) {
     blockingNotes.push('The starter Node SSR backend at src/server.ts is required.');
   }
 
-  if (plan.example === 'summary' && !tree.exists('/src/app/app.routes.ts')) {
-    blockingNotes.push('The summary example requires src/app/app.routes.ts.');
-  }
-
   return {
-    dependencies: [...AI_GENKIT_CORE_DEPENDENCIES, ...providerInstaller.dependencies].map(
-      (dependency) => dependency.name,
-    ),
+    dependencies: dependencyPreview.dependencies,
     creates: plan.files.filter((path) => !existing.includes(path)).map(toDisplayPath),
     updates: [
       'package.json',
@@ -51,10 +52,11 @@ export function getAiGenkitPreview(options: EvolutionOptions, tree: Tree): Evolu
       '.angular-enterprise-starter.json',
     ],
     existing: existing.map(toDisplayPath),
-    blockingNotes,
+    blockingNotes: [...blockingNotes, ...dependencyPreview.blockingNotes],
     notes: [
       `Configures the ${plan.provider} provider with model ${plan.model}.`,
       'Credentials remain server-side and are never written by the installer.',
+      ...dependencyPreview.notes,
       plan.example === 'summary'
         ? 'Adds a removable standard and streaming summary example at /ai-summary.'
         : 'Installs only the server-side foundation without application examples.',

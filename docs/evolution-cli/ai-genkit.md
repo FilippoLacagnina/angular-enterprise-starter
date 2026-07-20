@@ -1,12 +1,18 @@
 # AI Genkit CLI Installer
 
+<!-- evolution-guide-standard -->
+
 ## Purpose
 
-The `ai-genkit` installer adds an optional, server-side Genkit foundation to Angular Enterprise Starter.
+The `ai-genkit` evolution adds an optional server-side Genkit foundation to Angular Enterprise
+Starter.
 
-The installer currently provides a Google AI adapter for Gemini and keeps the provider boundary open for additional adapters. Provider credentials are never accepted as CLI arguments and are never written to Angular configuration.
+It currently installs a Google AI adapter for Gemini while keeping the provider-neutral core ready
+for additional adapters. Angular never receives provider credentials and never calls a provider
+directly.
 
-Foundation-only installation is the default. Application examples must be selected explicitly.
+Foundation-only installation is the default. The summary API and Angular test feature are generated
+only when explicitly selected.
 
 Reference branch:
 
@@ -14,41 +20,36 @@ Reference branch:
 evo/ai/genkit
 ```
 
-## Preview
+## When to use it
 
-Preview the complete foundation and summary example:
+Use this evolution when the application needs:
 
-```bash
-npm run starter:evolution -- \
-  --name ai-genkit \
-  --preview \
-  --ai-provider google-ai \
-  --ai-example summary \
-  --ai-model gemini-3.5-flash
-```
+- server-side generative AI orchestration;
+- typed and validated Genkit flows;
+- provider credentials isolated from browser configuration;
+- a provider registry that can support different server flows through different adapters;
+- standard and streaming API examples that can be removed after evaluation.
 
-Install only the server foundation:
+Do not select it only to expose a provider SDK from Angular. The generated architecture requires
+the Node SSR backend and intentionally keeps all provider execution on the server.
 
-```bash
-npm run starter:evolution -- \
-  --name ai-genkit \
-  --preview \
-  --ai-example none
-```
+The initial release does not include RAG, MCP, tool calling, agents, image generation, conversation
+persistence or a concrete second provider.
 
-Replace `--preview` with `--apply` only after reviewing the generated targets.
+## Prerequisites
 
-## Options
+Before applying:
 
-| Option          | Default            | Description                                                                             |
-| --------------- | ------------------ | --------------------------------------------------------------------------------------- |
-| `--ai-provider` | `google-ai`        | Provider adapter to install. The catalog is designed for future providers.              |
-| `--ai-example`  | `none`             | Installs the foundation only, or explicitly generates `summary`.                        |
-| `--ai-model`    | `gemini-3.5-flash` | Model identifier written to `.env.example`. Verify availability for the target account. |
+- start from a compatible Angular Enterprise Starter workspace;
+- keep the Express and Angular SSR backend in `src/server.ts`;
+- use a supported Node version for the starter;
+- verify that the selected Gemini model is available to the target Google AI account;
+- decide whether the removable summary example is required;
+- plan an application authentication and authorization guard before exposing AI routes.
 
-API keys are intentionally not supported as command options because shell arguments can be retained in shell history and process metadata.
+The installer never requests or writes a real API key.
 
-## Foundation output
+## Generated changes
 
 Foundation-only installation generates:
 
@@ -62,15 +63,13 @@ src/server/ai/
 
 It also:
 
-- adds `genkit` and `@genkit-ai/google-genai` `^1.40.0` runtime dependencies;
-- registers the adapter inside the managed provider catalog;
-- merges server-only environment placeholders into `.env.example`;
+- registers the Google AI adapter in the managed provider catalog;
+- merges server-only placeholders into `.env.example`;
 - adds `.env` ignore rules;
-- leaves `src/server.ts` and Angular routes unchanged.
+- records the evolution in starter metadata;
+- leaves `src/server.ts`, Angular routes and application UI unchanged.
 
-## Summary example
-
-The `summary` option additionally generates:
+With `--ai-example summary`, the installer additionally generates:
 
 ```text
 src/server/ai/examples/summary/
@@ -79,7 +78,7 @@ src/contracts/ai/
 src/app/features/ai-summary/
 ```
 
-It registers:
+and registers:
 
 ```text
 POST /api/ai/summarize
@@ -87,14 +86,71 @@ POST /api/ai/summarize/stream
 GET  /ai-summary
 ```
 
-The API includes typed validation, structured errors, request correlation, timeout handling, cancellation and an NDJSON streaming protocol. The Angular feature lets users test standard and progressive responses from the same page.
+The example contains typed validation, normalized errors, request correlation, timeouts,
+cancellation, NDJSON streaming and a minimal Angular page for testing both APIs.
 
-See [How a request flows through Genkit](../evolutions/ai-genkit.md#how-a-request-flows-through-genkit)
-for the complete server-side execution path from the HTTP endpoint to the configured Gemini model.
+## Dependencies
+
+The current Google AI installation requires runtime dependencies:
+
+| Package                   | Supported range |
+| ------------------------- | --------------- |
+| `genkit`                  | `^1.40.0`       |
+| `@genkit-ai/google-genai` | `^1.40.0`       |
+
+The installer preserves compatible existing declarations and blocks invalid ranges, incompatible
+ranges or packages declared in `devDependencies`.
+
+## Options
+
+| Option          | Default            | Description                                                                |
+| --------------- | ------------------ | -------------------------------------------------------------------------- |
+| `--ai-provider` | `google-ai`        | Provider adapter to install.                                               |
+| `--ai-example`  | `none`             | Generates only the foundation or also the removable `summary` example.     |
+| `--ai-model`    | `gemini-3.5-flash` | Model identifier written to `.env.example`; availability must be verified. |
+
+API keys are not CLI options because command arguments can be retained in shell history and process
+metadata.
+
+## Preview and apply
+
+Preview the foundation:
+
+```bash
+npm run starter:evolution -- \
+  --name ai-genkit \
+  --preview \
+  --ai-example none
+```
+
+Preview the complete example:
+
+```bash
+npm run starter:evolution -- \
+  --name ai-genkit \
+  --preview \
+  --ai-provider google-ai \
+  --ai-example summary \
+  --ai-model gemini-3.5-flash
+```
+
+Apply only after reviewing dependencies, generated targets and blocking notes:
+
+```bash
+npm run starter:evolution -- \
+  --name ai-genkit \
+  --apply \
+  --ai-provider google-ai \
+  --ai-example summary \
+  --ai-model gemini-3.5-flash
+```
+
+The same options work with the versioned npm CLI described in
+[Evolution CLI usage channels](../schematics.md#usage-channels).
 
 ## Configuration
 
-Copy `.env.example` to a local ignored `.env` file and provide server-side values:
+`.env.example` contains placeholders only. For local testing, create an ignored `.env` file:
 
 ```dotenv
 AI_GENKIT_ENABLED=true
@@ -105,41 +161,79 @@ AI_GENKIT_GOOGLE_AI_ENABLED=true
 AI_GENKIT_GOOGLE_AI_MODEL=replace-with-a-supported-model
 GEMINI_API_KEY=replace-with-server-side-api-key
 
-# Present only when the removable summary example is installed.
+# Generated only with the removable summary example.
 AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE=false
 ```
 
-Start the built SSR server with Node environment-file loading:
+Production deployments should provide the same values through platform-managed environment
+variables or a secret manager. A physical `.env` file is only one local loading mechanism and is
+not required in production.
+
+Build and start the Node SSR process:
 
 ```bash
+npm run build
 node --env-file=.env dist/angular-enterprise-starter/server/server.mjs
 ```
 
-Never move `GEMINI_API_KEY` into Angular environment files, public runtime config, source code or browser storage.
+`npm run build` creates the server bundle but does not start the backend. The `/api/ai` endpoints
+exist only while the generated Node process is running.
 
-### Runtime Config compatibility
+Never place `GEMINI_API_KEY` in Angular environment files, `values.yml`, source code, browser
+storage or any public Runtime Config value.
 
-`ai-genkit` and `runtime-config` have separate configuration boundaries and can be installed in
-either order:
+## Request flow
 
-- `src/assets/config/values.yml` is public, browser-readable deployment configuration;
-- `.env` or platform-provided process environment variables are private Node server configuration;
-- `.env.example` documents server-side placeholders only and never contains real credentials.
+The summary example uses real Genkit flows:
 
-Installing `ai-genkit` does not modify `values.yml`. Installing `runtime-config` does not modify the
-AI environment placeholders, provider catalog or backend registration. Never copy provider keys or
-other secrets into `values.yml`, including when that file is supplied through Docker, Kubernetes or
-a CI/CD deployment pipeline.
+```text
+Angular client
+  -> /api/ai
+    -> Express request guard and validation
+      -> summary flow
+        -> provider registry
+          -> Google Gemini adapter
+            -> Genkit Google AI plugin
+              -> Gemini model
+```
 
-## Authorization and cost control
+The standard endpoint returns one validated response. The streaming endpoint uses Genkit streaming
+and forwards validated NDJSON frames while generation is active.
 
-The generated example is denied by default, even after enabling the AI foundation. For an explicit local manual test, set:
+For the complete internal execution path, see
+[How a request flows through Genkit](../evolutions/ai-genkit.md#how-a-request-flows-through-genkit).
+
+## Safety and repeatability
+
+The evolution validates the complete installation plan before changing dependencies or creating
+files.
+
+It blocks:
+
+- a missing or unsupported Node SSR backend;
+- partial AI core, provider or example files;
+- incompatible dependency declarations;
+- missing packaged installer assets;
+- partial `.env.example` configuration;
+- an existing `/api/ai` implementation;
+- partial or unsupported backend and Angular route wiring;
+- an inconsistent managed provider catalog.
+
+The evolution is repeatable for supported additive flows:
+
+- install foundation only;
+- install foundation and summary together;
+- add the summary example after installing the foundation;
+- rerun a complete installation without overwriting generated files;
+- add future provider adapters without replacing the provider-neutral core.
+
+The generated example denies requests by default. For an explicit local test only:
 
 ```dotenv
 AI_GENKIT_ALLOW_UNAUTHENTICATED_EXAMPLE=true
 ```
 
-Never enable that flag in a shared or production environment. Real products must register their authentication, authorization, quota or rate-limit middleware through `requestGuard`:
+Shared and production environments must supply an application request guard:
 
 ```ts
 app.use(
@@ -150,48 +244,42 @@ app.use(
 );
 ```
 
-The guard runs before configuration loading and provider execution.
-An application guard takes precedence over the local unauthenticated-example flag. Errors passed
-by the guard through `next(error)` are forwarded to the application error pipeline rather than
-being normalized as provider errors.
+Authentication, authorization, quota and cost-control policy remain application responsibilities.
 
-## Repeatable use
+## Compatibility
 
-`ai-genkit` is repeatable by design.
+### Runtime Config
 
-The initial release supports these safe flows:
+AI Genkit and Runtime Config can be installed in either order because they own different
+configuration boundaries:
 
-- install foundation only;
-- install foundation and summary together;
-- add the summary example after foundation-only installation;
-- rerun against a complete installation without overwriting generated files.
+| Configuration source           | Visibility      | Intended values                         |
+| ------------------------------ | --------------- | --------------------------------------- |
+| `src/assets/config/values.yml` | Public/browser  | Deployable application configuration.   |
+| Node process environment       | Private/server  | Provider keys, model and AI enablement. |
+| `.env.example`                 | Repository-safe | Server-side placeholders only.          |
 
-Future releases can add provider adapters through the same evolution without replacing the foundation.
-Each invocation installs one adapter. The CLI keeps the provider files, dependencies, environment
-block and managed catalog registration separate from the provider-neutral core.
+Neither installer copies AI configuration into `values.yml`.
 
-The current release is multi-provider-ready but includes only the Google Gemini adapter. Once
-additional adapters are available, application flows can resolve either the configured default
-provider or an enabled provider by ID. Provider routing remains a private server-side application
-policy and is never selected by the Angular client. See
-[Selecting a provider for an application flow](../evolutions/ai-genkit.md#selecting-a-provider-for-an-application-flow).
+### Docker SSR
 
-## Safety guards
+The Docker image starts the Node SSR bundle, but secrets still need to be supplied at container
+runtime:
 
-The installer stops when it detects:
+```bash
+docker run --rm \
+  -p 4000:4000 \
+  --env-file .env \
+  angular-enterprise-starter:ssr
+```
 
-- a missing Node SSR backend;
-- missing Express or Angular SSR dependencies;
-- a partial AI core, provider adapter or summary example;
-- an existing incompatible Genkit major version;
-- Genkit incorrectly installed as a development dependency;
-- a partial `.env.example` AI configuration;
-- an existing `/api/ai` implementation;
-- partial backend or Angular route registration;
-- unsupported modifications to required route insertion points.
+Do not copy a real `.env` file into the image.
 
-Existing core, provider and example files are never overwritten. The installer updates only the
-explicitly marked sections of `installed-ai-providers.ts` when registering another adapter.
+### Multiple providers
+
+The current release installs only Google AI. The generated registry can later resolve either the
+configured default provider or an enabled provider by ID. Provider selection must remain a
+server-owned policy and must not be accepted directly from an untrusted client.
 
 ## Verification
 
@@ -205,4 +293,43 @@ npm test -- --watch=false
 npm run build
 ```
 
-Provider tests use mocks and do not make real Gemini calls.
+For a manual provider test, start the SSR server with valid server environment variables and call
+the standard and streaming endpoints. Automated tests mock Genkit and never make real provider
+calls.
+
+## Removal and rollback
+
+The CLI does not provide an automatic uninstall command.
+
+The summary example is intentionally removable without deleting the foundation. Follow
+[Removing the example](../evolutions/ai-genkit.md#removing-the-example) to remove its Angular
+feature, routes, contracts and server flows.
+
+Removing the foundation also requires removing provider registration, environment placeholders,
+runtime dependencies and starter metadata. Perform that change manually in a dedicated branch and
+verify that no product flow imports the provider registry first.
+
+## Troubleshooting
+
+| Symptom                       | Likely cause                                       | Action                                                           |
+| ----------------------------- | -------------------------------------------------- | ---------------------------------------------------------------- |
+| `AI_DISABLED`                 | `AI_GENKIT_ENABLED` is not `true`.                 | Enable AI in the Node process environment.                       |
+| `AI_CONFIGURATION_ERROR`      | Example access is denied or configuration invalid. | Add a request guard or explicitly enable the local example.      |
+| Provider `404`                | The selected model is unavailable to the account.  | Update `AI_GENKIT_GOOGLE_AI_MODEL` to an available model.        |
+| Provider `429` or `503`       | Quota or temporary provider demand.                | Retry according to the typed retryable response and your policy. |
+| API route not reachable       | Only the Angular build was executed.               | Start the generated Node SSR server.                             |
+| Preview reports partial state | Some generated files or wiring already exist.      | Reconcile or remove the partial state before apply.              |
+
+Provider error bodies, prompts, user content, credentials and model responses are intentionally
+excluded from application logs.
+
+## Architecture reference
+
+See [AI Genkit Evolution](../evolutions/ai-genkit.md) for:
+
+- provider-neutral runtime design;
+- flow and streaming internals;
+- multi-provider selection;
+- logging and security boundaries;
+- model lifecycle;
+- manual example removal.

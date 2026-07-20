@@ -25,8 +25,7 @@ const consumerModePackageScripts = [
   'evolution-cli:pack',
 ];
 
-const NPM_EVOLUTION_COMMAND =
-  'npx @filippolacagnina/angular-enterprise-starter@alpha evolution';
+const NPM_EVOLUTION_COMMAND = 'npx @filippolacagnina/angular-enterprise-starter@alpha evolution';
 const PACKAGE_JSON_PATH = 'package.json';
 
 const args = new Set(process.argv.slice(2));

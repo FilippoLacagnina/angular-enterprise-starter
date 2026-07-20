@@ -2,7 +2,7 @@
 
 ## Date
 
-July 18, 2026
+July 20, 2026
 
 ## Completed
 
@@ -65,6 +65,16 @@ July 18, 2026
 - Added the AI Genkit installer with a server-only, multi-provider-ready foundation and Google AI integration.
 - Added an explicit opt-in summary example with typed non-streaming and streaming APIs.
 
+10. Evolution CLI hardening
+
+- Added a manifest-backed catalog shared by CLI parsing, help, registry metadata and packaging.
+- Added strict option parsing and evolution-specific validation.
+- Added centralized semver dependency guards across all installers.
+- Added atomic preflight checks for partial and ambiguous project states.
+- Standardized all operational installer guides and added automated documentation checks.
+- Added formatting regressions for generated configuration and design-system files.
+- Refocused the README on the starter while promoting the Interactive Builder as a first-class composition path.
+
 ## Current Design Choice
 
 The starter remains design-neutral so adopters can bring their own:
@@ -78,5 +88,10 @@ The starter remains design-neutral so adopters can bring their own:
 
 - `npm run lint` passes
 - `npm run format:check` passes
+- `npm run docs:check` passes
+- `npm run test -- --watch=false` passes
 - `npm run schematics:build` passes
 - `npm run schematics:test` passes
+- `npx tsc -p tsconfig.app.json --noEmit` passes
+- `npm run build` passes
+- `npm run evolution-cli:pack` passes

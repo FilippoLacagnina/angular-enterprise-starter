@@ -1,22 +1,22 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { type SchematicContext, type Tree } from '@angular-devkit/schematics';
+import { SchematicsException, type SchematicContext, type Tree } from '@angular-devkit/schematics';
 
 import { type EvolutionOptions } from '../../evolution/schema';
+import { ensurePackageDependencies } from '../../shared/package-dependency';
 import {
   type EvolutionDefinition,
   EvolutionUserActionRequiredError,
 } from '../evolution-definition';
+import { getAiGenkitDependencyRequirements } from './ai-genkit.dependencies';
 import {
-  AI_GENKIT_CORE_DEPENDENCIES,
   AI_GENKIT_CORE_ENVIRONMENT_VARIABLES,
   AI_GENKIT_CORE_FILES,
   AI_GENKIT_PROVIDER_CATALOG_PATH,
   AI_GENKIT_PROVIDER_INSTALLERS,
   AI_GENKIT_SUMMARY_ENVIRONMENT_VARIABLES,
   AI_GENKIT_SUMMARY_EXAMPLE_FILES,
-  type AiGenkitDependency,
   type AiGenkitInstallPlan,
   type AiGenkitProviderInstallerDefinition,
 } from './ai-genkit.model';
@@ -63,6 +63,7 @@ export function installAiGenkitEvolution(
 ): void {
   const plan = createAiGenkitInstallPlan(options);
   const providerInstaller = AI_GENKIT_PROVIDER_INSTALLERS[plan.provider];
+  const dependencyRequirements = getAiGenkitDependencyRequirements(providerInstaller);
 
   assertNodeBackend(tree);
   assertFileSetState(tree, AI_GENKIT_CORE_FILES, 'AI Genkit core');
@@ -75,10 +76,13 @@ export function installAiGenkitEvolution(
   }
 
   assertEnvironmentState(tree, plan, providerInstaller);
+  assertPackagedAssetsAvailable(tree, [
+    ...AI_GENKIT_CORE_FILES,
+    ...providerInstaller.files,
+    ...(plan.example === 'summary' ? AI_GENKIT_SUMMARY_EXAMPLE_FILES : []),
+  ]);
 
-  for (const dependency of [...AI_GENKIT_CORE_DEPENDENCIES, ...providerInstaller.dependencies]) {
-    addCompatibleDependency(tree, dependency);
-  }
+  ensurePackageDependencies(tree, dependencyRequirements);
 
   createMissingFiles(tree, AI_GENKIT_CORE_FILES);
   createMissingFiles(tree, providerInstaller.files);
@@ -174,26 +178,40 @@ function assertProviderCatalogState(
 }
 
 function assertSummaryWiringState(tree: Tree): void {
+  const blockingNotes = getAiGenkitSummaryWiringBlockingNotes(tree);
+
+  if (blockingNotes.length > 0) {
+    throw new EvolutionUserActionRequiredError(blockingNotes.join('\n'));
+  }
+}
+
+export function getAiGenkitSummaryWiringBlockingNotes(tree: Tree): string[] {
+  const blockingNotes: string[] = [];
+
+  if (tree.exists(SERVER_PATH)) {
+    const serverContent = tree.readText(SERVER_PATH);
+    const hasServerImport = serverContent.includes(SUMMARY_ROUTER_IMPORT);
+    const hasServerRegistration = serverContent.includes(SUMMARY_ROUTER_REGISTRATION);
+
+    if (hasServerImport !== hasServerRegistration) {
+      blockingNotes.push(
+        'The AI summary backend route is only partially registered in src/server.ts.',
+      );
+    } else if (!hasServerImport && serverContent.includes("app.use('/api/ai'")) {
+      blockingNotes.push('The /api/ai backend route is already used by another implementation.');
+    } else if (
+      !hasServerImport &&
+      (!serverContent.includes(EXPRESS_IMPORT) || !serverContent.includes(ANGULAR_ENGINE_MARKER))
+    ) {
+      blockingNotes.push(
+        'src/server.ts no longer matches the supported starter backend structure.',
+      );
+    }
+  }
+
   if (!tree.exists(APP_ROUTES_PATH)) {
-    throw new EvolutionUserActionRequiredError(
-      'The summary example requires the baseline src/app/app.routes.ts file.',
-    );
-  }
-
-  const serverContent = tree.readText(SERVER_PATH);
-  const hasServerImport = serverContent.includes(SUMMARY_ROUTER_IMPORT);
-  const hasServerRegistration = serverContent.includes(SUMMARY_ROUTER_REGISTRATION);
-
-  if (hasServerImport !== hasServerRegistration) {
-    throw new EvolutionUserActionRequiredError(
-      'The AI summary backend route is only partially registered in src/server.ts.',
-    );
-  }
-
-  if (!hasServerImport && serverContent.includes("app.use('/api/ai'")) {
-    throw new EvolutionUserActionRequiredError(
-      'The /api/ai backend route is already used by another implementation.',
-    );
+    blockingNotes.push('The summary example requires the baseline src/app/app.routes.ts file.');
+    return blockingNotes;
   }
 
   const appRoutesContent = tree.readText(APP_ROUTES_PATH);
@@ -201,10 +219,20 @@ function assertSummaryWiringState(tree: Tree): void {
   const hasRouteImport = appRoutesContent.includes(SUMMARY_ROUTE_IMPORT);
 
   if (hasRouteMarker !== hasRouteImport) {
-    throw new EvolutionUserActionRequiredError(
+    blockingNotes.push(
       'The Angular AI summary route is only partially registered in src/app/app.routes.ts.',
     );
+  } else if (
+    !hasRouteMarker &&
+    (!appRoutesContent.includes('export const routes: Routes = [') ||
+      appRoutesContent.lastIndexOf('];') < 0)
+  ) {
+    blockingNotes.push(
+      'src/app/app.routes.ts no longer matches the supported starter route structure.',
+    );
   }
+
+  return blockingNotes;
 }
 
 function assertEnvironmentState(
@@ -249,43 +277,18 @@ function assertEnvironmentVariableSet(
   }
 }
 
-function addCompatibleDependency(tree: Tree, dependency: AiGenkitDependency): void {
-  const packageJson = readPackageJson(tree);
-  const { minimumMinor, name, supportedMajor, version } = dependency;
-  const existingVersion = packageJson.dependencies?.[name];
-  const devVersion = packageJson.devDependencies?.[name];
-
-  if (devVersion) {
-    throw new EvolutionUserActionRequiredError(
-      `${name} is currently a devDependency. Move it to runtime dependencies before applying ai-genkit.`,
-    );
-  }
-
-  if (existingVersion) {
-    const versionMatch = existingVersion.match(/^[~^]?(\d+)\.(\d+)/);
-    const major = Number(versionMatch?.[1]);
-    const minor = Number(versionMatch?.[2]);
-
-    if (major !== supportedMajor || minor < minimumMinor) {
-      throw new EvolutionUserActionRequiredError(
-        `${name} ${existingVersion} is not compatible with the required ${version} range.`,
-      );
-    }
-
-    return;
-  }
-
-  packageJson.dependencies = sortObject({
-    ...packageJson.dependencies,
-    [name]: version,
-  });
-  writePackageJson(tree, packageJson);
-}
-
 function createMissingFiles(tree: Tree, paths: readonly string[]): void {
   for (const path of paths) {
     if (!tree.exists(path)) {
       tree.create(path, readAsset(path));
+    }
+  }
+}
+
+function assertPackagedAssetsAvailable(tree: Tree, paths: readonly string[]): void {
+  for (const path of paths) {
+    if (!tree.exists(path)) {
+      readAsset(path);
     }
   }
 }
@@ -324,7 +327,7 @@ function readAsset(path: string): Buffer {
   const assetPath = resolve(__dirname, 'files', path.slice(1));
 
   if (!existsSync(assetPath)) {
-    throw new EvolutionUserActionRequiredError(`Missing packaged AI Genkit asset: ${path}.`);
+    throw new SchematicsException(`Missing packaged AI Genkit asset: ${path}.`);
   }
 
   return readFileSync(assetPath);
@@ -454,14 +457,4 @@ function readPackageJson(tree: Tree): PackageJson {
   } catch {
     throw new EvolutionUserActionRequiredError('Invalid package.json.');
   }
-}
-
-function writePackageJson(tree: Tree, packageJson: PackageJson): void {
-  tree.overwrite(PACKAGE_JSON_PATH, `${JSON.stringify(packageJson, null, 2)}\n`);
-}
-
-function sortObject(value: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(value).sort(([first], [second]) => first.localeCompare(second)),
-  );
 }

@@ -59,7 +59,11 @@ export class TailwindInput {
       path: '/src/app/shared/components/tailwind/input/input.html',
       content: `<div class="space-y-1.5">
   @if (label()) {
-    <label class="block text-sm font-medium text-slate-700" [for]="id()">{{ label() }}</label>
+    <label
+      class="block text-sm font-medium text-slate-700"
+      [for]="id()"
+      >{{ label() }}</label
+    >
   }
 
   <input

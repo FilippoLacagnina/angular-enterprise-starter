@@ -23,6 +23,10 @@ This evolution adds an optional NgRx SignalStore baseline for applications that 
 The goal is not to replace Angular Signals everywhere.
 The goal is to provide a consistent pattern for feature state when plain component signals or service signals are no longer enough.
 
+This document owns state architecture and SignalStore conventions. For generated options, preview,
+apply, repeatability and troubleshooting, see the
+[SignalStore CLI Installer](../evolution-cli/signal-store.md).
+
 ## When to use it
 
 Use SignalStore when a feature owns structured state such as:

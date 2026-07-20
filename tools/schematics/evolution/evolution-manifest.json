@@ -1,0 +1,329 @@
+{
+  "schemaVersion": 1,
+  "optionCatalogs": {
+    "starterUiComponents": [
+      {
+        "value": "alert",
+        "label": "Alert",
+        "description": "Contextual feedback message."
+      },
+      {
+        "value": "badge",
+        "label": "Badge",
+        "description": "Small count or status label."
+      },
+      {
+        "value": "button",
+        "label": "Button",
+        "description": "Action button wrapper."
+      },
+      {
+        "value": "card",
+        "label": "Card",
+        "description": "Content container."
+      },
+      {
+        "value": "input",
+        "label": "Input",
+        "description": "Basic form-control input."
+      }
+    ]
+  },
+  "evolutions": [
+    {
+      "name": "transloco",
+      "label": "Transloco i18n",
+      "description": "Runtime i18n baseline with EN/IT translation assets.",
+      "category": "i18n",
+      "repeatable": false,
+      "referenceBranch": "evo/i18n/transloco",
+      "dependencies": [
+        {
+          "name": "@jsverse/transloco",
+          "versionRange": "^8.3.0",
+          "target": "dependencies"
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "runtime-config",
+      "label": "Runtime config",
+      "description": "Deployable values.yml configuration baseline.",
+      "category": "config",
+      "repeatable": false,
+      "referenceBranch": "evo/config/runtime-config",
+      "dependencies": [
+        {
+          "name": "yaml",
+          "versionRange": "^2.9.0",
+          "target": "dependencies"
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "signal-store",
+      "label": "SignalStore",
+      "description": "Feature-scoped or root NgRx SignalStore baseline.",
+      "category": "state",
+      "repeatable": true,
+      "referenceBranch": "evo/state/signal-store",
+      "dependencies": [
+        {
+          "name": "@ngrx/signals",
+          "versionRange": "^21.1.0",
+          "target": "dependencies"
+        }
+      ],
+      "options": [
+        {
+          "name": "storeScope",
+          "cliFlag": "--store-scope",
+          "type": "string",
+          "description": "SignalStore scope.",
+          "default": "feature",
+          "choices": [
+            {
+              "value": "feature",
+              "label": "Feature",
+              "description": "Generate state under src/app/features/<feature>/state."
+            },
+            {
+              "value": "root",
+              "label": "Root",
+              "description": "Generate a root-provided store under src/app/core/state."
+            }
+          ]
+        },
+        {
+          "name": "featureName",
+          "cliFlag": "--feature-name",
+          "type": "string",
+          "description": "Feature name used by feature-scoped SignalStore installers.",
+          "default": "dashboard",
+          "when": {
+            "option": "storeScope",
+            "equals": "feature"
+          }
+        },
+        {
+          "name": "featureComponent",
+          "cliFlag": "--feature-component",
+          "type": "string",
+          "description": "Whether the feature component already exists or should be generated.",
+          "default": "existing",
+          "choices": [
+            {
+              "value": "existing",
+              "label": "Already exists",
+              "description": "Create state/store only."
+            },
+            {
+              "value": "create",
+              "label": "Create it",
+              "description": "Create a minimal route and standalone component."
+            }
+          ],
+          "when": {
+            "option": "storeScope",
+            "equals": "feature"
+          }
+        },
+        {
+          "name": "storeName",
+          "cliFlag": "--store-name",
+          "type": "string",
+          "description": "Root SignalStore name. Used only with --store-scope root.",
+          "default": "app",
+          "when": {
+            "option": "storeScope",
+            "equals": "root"
+          }
+        }
+      ]
+    },
+    {
+      "name": "docker-ssr",
+      "label": "Docker SSR",
+      "description": "SSR-oriented Docker deployment baseline.",
+      "category": "deployment",
+      "repeatable": false,
+      "referenceBranch": "evo/deployment/docker-ssr",
+      "dependencies": [],
+      "options": []
+    },
+    {
+      "name": "bootstrap",
+      "label": "Bootstrap",
+      "description": "Bootstrap design-system baseline.",
+      "category": "design-system",
+      "repeatable": true,
+      "referenceBranch": "evo/design-system/bootstrap",
+      "dependencies": [
+        {
+          "name": "bootstrap",
+          "versionRange": "^5.3.8",
+          "target": "dependencies"
+        }
+      ],
+      "options": [
+        {
+          "name": "bootstrapMode",
+          "cliFlag": "--bootstrap-mode",
+          "type": "string",
+          "description": "Bootstrap component generation mode.",
+          "default": "all",
+          "choices": [
+            {
+              "value": "all",
+              "label": "Install all starter UI components",
+              "description": "Generate every Bootstrap wrapper component."
+            },
+            {
+              "value": "select",
+              "label": "Select UI components",
+              "description": "Choose only the Bootstrap wrappers you need."
+            }
+          ]
+        },
+        {
+          "name": "bootstrapComponents",
+          "cliFlag": "--bootstrap-components",
+          "type": "string",
+          "description": "Comma-separated Bootstrap components to generate when --bootstrap-mode select is used.",
+          "choiceCatalog": "starterUiComponents",
+          "multiple": true,
+          "separator": ",",
+          "suggestedValue": "button,input,card",
+          "when": {
+            "option": "bootstrapMode",
+            "equals": "select"
+          }
+        }
+      ]
+    },
+    {
+      "name": "tailwind",
+      "label": "Tailwind",
+      "description": "Tailwind design-system baseline.",
+      "category": "design-system",
+      "repeatable": true,
+      "referenceBranch": "evo/design-system/tailwind",
+      "dependencies": [
+        {
+          "name": "tailwindcss",
+          "versionRange": "^4.3.0",
+          "target": "devDependencies"
+        },
+        {
+          "name": "@tailwindcss/postcss",
+          "versionRange": "^4.3.0",
+          "target": "devDependencies"
+        },
+        {
+          "name": "postcss",
+          "versionRange": "^8.5.14",
+          "target": "devDependencies"
+        }
+      ],
+      "options": [
+        {
+          "name": "tailwindMode",
+          "cliFlag": "--tailwind-mode",
+          "type": "string",
+          "description": "Tailwind component generation mode.",
+          "default": "all",
+          "choices": [
+            {
+              "value": "all",
+              "label": "Install all starter UI components",
+              "description": "Generate every Tailwind wrapper component."
+            },
+            {
+              "value": "select",
+              "label": "Select UI components",
+              "description": "Choose only the Tailwind wrappers you need."
+            }
+          ]
+        },
+        {
+          "name": "tailwindComponents",
+          "cliFlag": "--tailwind-components",
+          "type": "string",
+          "description": "Comma-separated Tailwind components to generate when --tailwind-mode select is used.",
+          "choiceCatalog": "starterUiComponents",
+          "multiple": true,
+          "separator": ",",
+          "suggestedValue": "button,input,card",
+          "when": {
+            "option": "tailwindMode",
+            "equals": "select"
+          }
+        }
+      ]
+    },
+    {
+      "name": "ai-genkit",
+      "label": "AI Genkit",
+      "description": "Server-side Genkit foundation with a Google AI provider adapter.",
+      "category": "ai",
+      "repeatable": true,
+      "referenceBranch": "evo/ai/genkit",
+      "dependencies": [
+        {
+          "name": "genkit",
+          "versionRange": "^1.40.0",
+          "target": "dependencies"
+        },
+        {
+          "name": "@genkit-ai/google-genai",
+          "versionRange": "^1.40.0",
+          "target": "dependencies"
+        }
+      ],
+      "options": [
+        {
+          "name": "aiProvider",
+          "cliFlag": "--ai-provider",
+          "type": "string",
+          "description": "AI provider adapter to install.",
+          "default": "google-ai",
+          "choices": [
+            {
+              "value": "google-ai",
+              "label": "Google AI",
+              "description": "Install the server-side Google AI provider adapter."
+            }
+          ]
+        },
+        {
+          "name": "aiExample",
+          "cliFlag": "--ai-example",
+          "type": "string",
+          "description": "Optional AI application example to generate.",
+          "default": "none",
+          "choices": [
+            {
+              "value": "none",
+              "label": "Foundation only",
+              "description": "Install the server-side provider foundation without UI or API examples."
+            },
+            {
+              "value": "summary",
+              "label": "Foundation and summary example",
+              "description": "Generate standard and streaming endpoints with a typed Angular client."
+            }
+          ]
+        },
+        {
+          "name": "aiModel",
+          "cliFlag": "--ai-model",
+          "type": "string",
+          "description": "Server-side model identifier written to .env.example.",
+          "default": "gemini-3.5-flash"
+        }
+      ]
+    }
+  ]
+}

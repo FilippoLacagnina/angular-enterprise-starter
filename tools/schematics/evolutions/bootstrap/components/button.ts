@@ -51,7 +51,11 @@ export class BootstrapButton {
     },
     {
       path: '/src/app/shared/components/bootstrap/button/button.html',
-      content: `<button [class]="buttonClasses()" [disabled]="disabled()" [type]="type()">
+      content: `<button
+  [class]="buttonClasses()"
+  [disabled]="disabled()"
+  [type]="type()"
+>
   <ng-content />
 </button>
 `,

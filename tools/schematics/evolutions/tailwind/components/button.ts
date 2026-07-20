@@ -57,7 +57,11 @@ export class TailwindButton {
     },
     {
       path: '/src/app/shared/components/tailwind/button/button.html',
-      content: `<button [class]="buttonClasses()" [disabled]="disabled()" [type]="type()">
+      content: `<button
+  [class]="buttonClasses()"
+  [disabled]="disabled()"
+  [type]="type()"
+>
   <ng-content />
 </button>
 `,

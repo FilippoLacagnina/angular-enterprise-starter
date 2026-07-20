@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 'evo/**'
   pull_request:
 
 jobs:
@@ -27,14 +28,23 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      - name: Check documentation
+        run: npm run docs:check
+
       - name: Run lint
         run: npm run lint
 
       - name: Run tests
         run: npm run test -- --watch=false
 
+      - name: Run schematics tests
+        run: npm run schematics:test
+
       - name: Run typecheck
         run: npx tsc -p tsconfig.app.json --noEmit
 
       - name: Build application
         run: npm run build
+
+      - name: Build Evolution CLI package
+        run: npm run evolution-cli:package

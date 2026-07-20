@@ -4,6 +4,7 @@
 
 - [Goal](#goal)
 - [Configuration choice](#configuration-choice)
+- [Operational guide](#operational-guide)
 - [Dedicated documentation](#dedicated-documentation)
 - [What this evolution adds](#what-this-evolution-adds)
 - [Official resources](#official-resources)
@@ -34,6 +35,12 @@ Recommended options:
 
 Avoid keeping both strategies active in the same application unless there is a very explicit reason.
 Using both Angular environment files and runtime config for the same values creates unclear ownership and deployment risk.
+
+## Operational guide
+
+This document owns architecture and reference-branch strategy. For preview, apply, configuration,
+compatibility, rollback and troubleshooting, see the
+[Runtime Config CLI Installer](../evolution-cli/runtime-config.md).
 
 ## Dedicated documentation
 

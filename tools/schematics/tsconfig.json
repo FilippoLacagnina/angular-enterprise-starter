@@ -5,6 +5,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "../../dist/schematics",
+    "resolveJsonModule": true,
     "rootDir": ".",
     "types": ["node"]
   },

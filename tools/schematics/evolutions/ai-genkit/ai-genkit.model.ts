@@ -1,17 +1,10 @@
 export type AiGenkitProviderName = 'google-ai';
 export type AiGenkitExampleName = 'none' | 'summary';
 
-export interface AiGenkitDependency {
-  readonly minimumMinor: number;
-  readonly name: string;
-  readonly supportedMajor: number;
-  readonly version: string;
-}
-
 export interface AiGenkitProviderInstallerDefinition {
   readonly catalogEntry: string;
   readonly catalogImport: string;
-  readonly dependencies: readonly AiGenkitDependency[];
+  readonly dependencyNames: readonly string[];
   readonly environmentVariables: readonly string[];
   readonly files: readonly string[];
   readonly id: AiGenkitProviderName;
@@ -27,15 +20,7 @@ export interface AiGenkitInstallPlan {
 
 export const DEFAULT_AI_GENKIT_MODEL = 'gemini-3.5-flash';
 export const AI_GENKIT_PROVIDER_CATALOG_PATH = '/src/server/ai/providers/installed-ai-providers.ts';
-
-export const AI_GENKIT_CORE_DEPENDENCIES: readonly AiGenkitDependency[] = [
-  {
-    minimumMinor: 40,
-    name: 'genkit',
-    supportedMajor: 1,
-    version: '^1.40.0',
-  },
-];
+export const AI_GENKIT_CORE_DEPENDENCY_NAMES = ['genkit'] as const;
 
 export const AI_GENKIT_CORE_ENVIRONMENT_VARIABLES = [
   'AI_GENKIT_ENABLED',
@@ -70,14 +55,7 @@ export const AI_GENKIT_PROVIDER_INSTALLERS: Readonly<
     catalogImport:
       "import { googleGeminiProviderDefinition } from './google-gemini.provider.definition';",
     catalogEntry: 'googleGeminiProviderDefinition,',
-    dependencies: [
-      {
-        minimumMinor: 40,
-        name: '@genkit-ai/google-genai',
-        supportedMajor: 1,
-        version: '^1.40.0',
-      },
-    ],
+    dependencyNames: ['@genkit-ai/google-genai'],
     environmentVariables: [
       'AI_GENKIT_GOOGLE_AI_ENABLED',
       'AI_GENKIT_GOOGLE_AI_MODEL',

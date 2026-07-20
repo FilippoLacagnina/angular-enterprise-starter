@@ -1,8 +1,12 @@
 import { type Tree } from '@angular-devkit/schematics';
 
+import { getEvolutionDependencyRequirements } from '../../evolution/evolution-manifest';
 import { type EvolutionOptions } from '../../evolution/schema';
+import { createPackageDependenciesPreview } from '../../shared/package-dependency';
 import { type EvolutionPreview } from '../evolution-definition';
-import { collectUnsupportedEnvironmentConfigReferences } from './runtime-config.installer';
+import { getRuntimeConfigPreflightBlockingNotes } from './runtime-config.installer';
+
+const RUNTIME_CONFIG_DEPENDENCIES = getEvolutionDependencyRequirements('runtime-config');
 
 const RUNTIME_CONFIG_FILES = [
   'src/app/core/runtime-config/runtime-config.model.ts',
@@ -15,10 +19,10 @@ const RUNTIME_CONFIG_FILES = [
 
 export function getRuntimeConfigPreview(_options: EvolutionOptions, tree: Tree): EvolutionPreview {
   const existing = RUNTIME_CONFIG_FILES.filter((path) => tree.exists(`/${path}`));
-  const unsupportedReferences = collectUnsupportedEnvironmentConfigReferences(tree);
+  const dependencyPreview = createPackageDependenciesPreview(tree, RUNTIME_CONFIG_DEPENDENCIES);
 
   return {
-    dependencies: ['yaml'],
+    dependencies: dependencyPreview.dependencies,
     creates: RUNTIME_CONFIG_FILES.filter((path) => !existing.includes(path)),
     updates: [
       'package.json',
@@ -30,14 +34,13 @@ export function getRuntimeConfigPreview(_options: EvolutionOptions, tree: Tree):
     ],
     existing,
     blockingNotes: [
-      ...existing.map((path) => `${path} already exists and will not be overwritten.`),
-      ...unsupportedReferences.map((path) => {
-        return `${path.replace(/^\//, '')} still references the environment-based configuration.`;
-      }),
+      ...getRuntimeConfigPreflightBlockingNotes(tree),
+      ...dependencyPreview.blockingNotes,
     ],
     notes: [
       'Replaces Angular environment-file configuration with runtime values.yml loading.',
       'Removes baseline core/config and src/environments files when present.',
+      ...dependencyPreview.notes,
       'Registers src/assets and allows the yaml CommonJS dependency for Angular builds.',
       'Updates the baseline DashboardService only when it still uses the default APP_CONFIG pattern.',
       'Does not modify layout templates.',

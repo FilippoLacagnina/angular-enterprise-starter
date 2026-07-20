@@ -1,24 +1,22 @@
-import { SchematicsException, type SchematicContext, type Tree } from '@angular-devkit/schematics';
+import { type SchematicContext, type Tree } from '@angular-devkit/schematics';
 
+import { getEvolutionDependencyRequirements } from '../../evolution/evolution-manifest';
 import { type EvolutionOptions } from '../../evolution/schema';
-import { type EvolutionDefinition } from '../evolution-definition';
+import { ensurePackageDependencies } from '../../shared/package-dependency';
 import {
+  type EvolutionDefinition,
+  EvolutionUserActionRequiredError,
+} from '../evolution-definition';
+import {
+  assertDesignSystemComponentsInstallable,
   installDesignSystemComponents,
   updateDesignSystemIndex,
 } from '../design-system/design-system.installer';
 import { TAILWIND_INDEX_PATH, createTailwindInstallPlan } from './tailwind.plan';
 
-const TAILWIND_VERSION = '^4.3.0';
-const TAILWIND_POSTCSS_VERSION = '^4.3.0';
-const POSTCSS_VERSION = '^8.5.14';
+const TAILWIND_DEPENDENCIES = getEvolutionDependencyRequirements('tailwind');
 const TAILWIND_STYLE_IMPORT = "@use 'tailwindcss';";
 const POSTCSS_CONFIG_PATH = '/.postcssrc.json';
-
-interface PackageJson {
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  [key: string]: unknown;
-}
 
 export function installTailwindEvolution(
   tree: Tree,
@@ -28,9 +26,9 @@ export function installTailwindEvolution(
 ): void {
   const plan = createTailwindInstallPlan(options);
 
-  addDevPackageDependency(tree, 'tailwindcss', TAILWIND_VERSION);
-  addDevPackageDependency(tree, '@tailwindcss/postcss', TAILWIND_POSTCSS_VERSION);
-  addDevPackageDependency(tree, 'postcss', POSTCSS_VERSION);
+  assertDesignSystemComponentsInstallable({ tree, plan, displayName: 'Tailwind' });
+  assertPostcssConfigCompatible(tree);
+  ensurePackageDependencies(tree, TAILWIND_DEPENDENCIES);
   createPostcssConfig(tree);
   addTailwindStyleImport(tree);
   installDesignSystemComponents({ tree, plan, displayName: 'Tailwind' });
@@ -38,27 +36,6 @@ export function installTailwindEvolution(
 
   context.logger.info(`${definition.label} files created.`);
   context.logger.info('Run npm install to update the package lock before running quality checks.');
-}
-
-function addDevPackageDependency(tree: Tree, packageName: string, version: string): void {
-  const packageJsonPath = '/package.json';
-
-  if (!tree.exists(packageJsonPath)) {
-    throw new SchematicsException('Missing package.json. Cannot add Tailwind dependency.');
-  }
-
-  const packageJson = JSON.parse(tree.readText(packageJsonPath)) as PackageJson;
-
-  if (packageJson.dependencies?.[packageName] || packageJson.devDependencies?.[packageName]) {
-    return;
-  }
-
-  packageJson.devDependencies = sortObject({
-    ...packageJson.devDependencies,
-    [packageName]: version,
-  });
-
-  tree.overwrite(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 }
 
 function createPostcssConfig(tree: Tree): void {
@@ -101,6 +78,36 @@ function createPostcssConfig(tree: Tree): void {
   );
 }
 
+export function getPostcssConfigBlockingNotes(tree: Tree): string[] {
+  if (!tree.exists(POSTCSS_CONFIG_PATH)) {
+    return [];
+  }
+
+  try {
+    const postcssConfig = JSON.parse(tree.readText(POSTCSS_CONFIG_PATH)) as unknown;
+
+    if (!isRecord(postcssConfig)) {
+      return ['.postcssrc.json must contain a JSON object.'];
+    }
+
+    if (postcssConfig['plugins'] !== undefined && !isRecord(postcssConfig['plugins'])) {
+      return ['.postcssrc.json plugins must be a JSON object.'];
+    }
+
+    return [];
+  } catch {
+    return ['.postcssrc.json contains invalid JSON.'];
+  }
+}
+
+function assertPostcssConfigCompatible(tree: Tree): void {
+  const blockingNotes = getPostcssConfigBlockingNotes(tree);
+
+  if (blockingNotes.length) {
+    throw new EvolutionUserActionRequiredError(blockingNotes.join('\n'));
+  }
+}
+
 function addTailwindStyleImport(tree: Tree): void {
   const stylesPath = '/src/styles.scss';
 
@@ -126,8 +133,6 @@ function hasTailwindImport(stylesContent: string): boolean {
   return /(@use|@import)\s+['"]tailwindcss['"]/.test(stylesContent);
 }
 
-function sortObject(value: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(value).sort(([first], [second]) => first.localeCompare(second)),
-  );
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

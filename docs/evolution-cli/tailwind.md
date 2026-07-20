@@ -1,179 +1,209 @@
 # Tailwind CLI Installer
 
-## Index
-
-- [Purpose](#purpose)
-- [Generated output](#generated-output)
-- [SCSS usage](#scss-usage)
-- [Setup modes](#setup-modes)
-- [Available components](#available-components)
-- [Wrapper API](#wrapper-api)
-- [Usage examples](#usage-examples)
-- [Repeatable usage](#repeatable-usage)
-- [Safety rules](#safety-rules)
+<!-- evolution-guide-standard -->
 
 ## Purpose
 
-The Tailwind installer adds Tailwind CSS v4 and optional starter-owned Angular wrapper components through the Evolution CLI.
+The `tailwind` evolution installs Tailwind CSS v4 with PostCSS and generates optional starter-owned
+Angular wrapper components.
 
-When available, the CLI is more powerful than using the `evo/design-system/tailwind` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
-Tailwind uses the same shared design-system installer utilities as Bootstrap, so both installers follow the same preview/apply safety model.
-
-The related reference branch is:
+Reference branch:
 
 ```text
 evo/design-system/tailwind
 ```
 
-## Generated output
+## When to use it
 
-The installer always:
+Use Tailwind when the product wants utility-first styling while preserving Angular Enterprise
+Starter's SCSS setup and a small reusable wrapper layer.
 
-- adds `tailwindcss`, `@tailwindcss/postcss` and `postcss` when missing;
-- creates or updates `.postcssrc.json` with the Tailwind PostCSS plugin;
-- adds the global Tailwind CSS import when missing;
-- keeps existing layout and feature templates untouched.
+Select one primary design system for production. Combining Tailwind with another global CSS
+framework requires explicit ownership of resets, tokens, specificity and bundle impact.
 
-Tailwind should be selected intentionally as the project design-system baseline.
-Avoid combining multiple design-system CSS frameworks in a real product unless the project explicitly owns that integration.
+## Prerequisites
 
-Generated wrappers live under:
+Before applying:
 
-```text
-src/app/shared/components/tailwind/
-```
+- decide whether all wrappers or a selected subset is required;
+- verify that `.postcssrc.json` contains valid JSON with an object-shaped `plugins` field;
+- review `src/styles.scss`, where the Tailwind `@use` directive must precede other Sass or CSS rules;
+- verify that selected component targets are not partially installed.
 
-The installer also maintains:
+## Generated changes
 
-```text
-src/app/shared/components/tailwind/index.ts
-```
+The evolution:
 
-Feature code should import only the components it needs:
+- creates or updates `.postcssrc.json` with `@tailwindcss/postcss`;
+- adds `@use 'tailwindcss';` to `src/styles.scss` when missing;
+- generates selected wrappers under `src/app/shared/components/tailwind/`;
+- creates or updates the shared `index.ts`;
+- leaves existing layout and feature templates unchanged.
+
+Available wrappers:
+
+| Component | Selector              |
+| --------- | --------------------- |
+| `alert`   | `app-tailwind-alert`  |
+| `badge`   | `app-tailwind-badge`  |
+| `button`  | `app-tailwind-button` |
+| `card`    | `app-tailwind-card`   |
+| `input`   | `app-tailwind-input`  |
+
+Feature code imports only the primitives it uses:
 
 ```ts
 import { TailwindButton, TailwindCard } from '@shared/components/tailwind';
 ```
 
-## SCSS usage
+## Dependencies
 
-Angular Enterprise Starter keeps SCSS as the default style format.
-Tailwind can still be used from `src/styles.scss` and from component `*.scss` files.
+| Package                | Supported range | Target            |
+| ---------------------- | --------------- | ----------------- |
+| `tailwindcss`          | `^4.3.0`        | `devDependencies` |
+| `@tailwindcss/postcss` | `^4.3.0`        | `devDependencies` |
+| `postcss`              | `^8.5.14`       | `devDependencies` |
 
-The global Tailwind import is:
+The installer preserves compatible declarations and validates all three dependencies before
+writing any of them.
+
+## Options
+
+| Option                  | Default | Description                                            |
+| ----------------------- | ------- | ------------------------------------------------------ |
+| `--tailwind-mode`       | `all`   | Generates `all` wrappers or a selected subset.         |
+| `--tailwind-components` | —       | Comma-separated component names used in `select` mode. |
+
+Supported values are `alert`, `badge`, `button`, `card` and `input`.
+
+The interactive CLI accepts displayed numbers or names. Explicit non-interactive commands should
+use names.
+
+## Preview and apply
+
+Preview all wrappers:
+
+```bash
+npm run starter:evolution -- \
+  --name tailwind \
+  --preview \
+  --tailwind-mode all
+```
+
+Preview a subset:
+
+```bash
+npm run starter:evolution -- \
+  --name tailwind \
+  --preview \
+  --tailwind-mode select \
+  --tailwind-components button,input,card
+```
+
+Apply:
+
+```bash
+npm run starter:evolution -- \
+  --name tailwind \
+  --apply \
+  --tailwind-mode select \
+  --tailwind-components button,input,card
+```
+
+## Configuration
+
+The generated global import is:
 
 ```scss
 @use 'tailwindcss';
 ```
 
-Because this is a Sass `@use` rule, it must stay before any other CSS/Sass rule in `src/styles.scss`.
+Keep it before other Sass or CSS rules.
 
-Component templates may use utility classes directly for small local layouts.
-For reusable wrapper components, prefer semantic classes in the template and move Tailwind utilities into the component SCSS with `@apply` when it improves readability.
+Templates can use utility classes for small local layouts. Reusable product primitives should
+prefer a stable semantic wrapper API, with `@apply` in component SCSS where it improves
+readability.
 
-## Setup modes
-
-| Mode     | Description                                                     |
-| -------- | --------------------------------------------------------------- |
-| `all`    | Generates every Tailwind wrapper component provided by the CLI. |
-| `select` | Generates only the requested Tailwind wrapper components.       |
-
-Examples:
-
-```bash
-npm run starter:evolution -- --name tailwind --preview --tailwind-mode all
-npm run starter:evolution -- --name tailwind --preview --tailwind-mode select --tailwind-components button,input
-```
-
-When using interactive mode with `select`, the CLI accepts:
-
-| Input style | Example        |
-| ----------- | -------------- |
-| Numbers     | `3,5`          |
-| Names       | `button,input` |
-| Mixed       | `3,input`      |
-
-The recommended starter selection is:
-
-```text
-button,input,card
-```
-
-## Available components
-
-| Component | Selector              | Generated path                                |
-| --------- | --------------------- | --------------------------------------------- |
-| `alert`   | `app-tailwind-alert`  | `shared/components/tailwind/alert/alert.ts`   |
-| `badge`   | `app-tailwind-badge`  | `shared/components/tailwind/badge/badge.ts`   |
-| `button`  | `app-tailwind-button` | `shared/components/tailwind/button/button.ts` |
-| `card`    | `app-tailwind-card`   | `shared/components/tailwind/card/card.ts`     |
-| `input`   | `app-tailwind-input`  | `shared/components/tailwind/input/input.ts`   |
-
-## Wrapper API
-
-Generated wrappers expose only a small starter-owned API surface.
-
-| Component | Supported options                                                                   |
-| --------- | ----------------------------------------------------------------------------------- |
-| `alert`   | `variant`, `dismissible`.                                                           |
-| `badge`   | `variant`, `pill`.                                                                  |
-| `button`  | `variant`, `size`, `type`, `disabled`.                                              |
-| `card`    | `title`, `subtitle`, `imageSrc`, `imageAlt`, `imagePosition` (`top` or `bottom`).   |
-| `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attrs. |
-
-## Usage examples
-
-Button:
-
-```html
-<app-tailwind-button variant="primary">Save</app-tailwind-button>
-```
-
-Input:
-
-```html
-<app-tailwind-input
-  id="email"
-  label="Email"
-  type="email"
-  placeholder="Insert email"
-/>
-```
-
-Card:
+Example:
 
 ```html
 <app-tailwind-card
   title="Dashboard"
   subtitle="Overview"
-  imageSrc="assets/images/dashboard.png"
-  imageAlt="Dashboard preview"
 >
   Dashboard content
 </app-tailwind-card>
 ```
 
-Alert:
+Wrapper inputs and usage guidance are documented in
+[Tailwind Evolution](../evolutions/tailwind.md#evolution-cli-installer).
 
-```html
-<app-tailwind-alert variant="warning">Review pending configuration.</app-tailwind-alert>
-```
-
-Badge:
-
-```html
-<app-tailwind-badge variant="success">Active</app-tailwind-badge>
-```
-
-## Repeatable usage
+## Safety and repeatability
 
 Tailwind is repeatable.
 
-After Tailwind is enabled, teams can run it again to add missing wrapper components without duplicating starter metadata.
-Complete wrapper components are skipped safely.
+Before dependencies, styles or components change, the preflight validates:
 
-## Safety rules
+- all dependency declarations;
+- existing PostCSS JSON and plugin structure;
+- complete or partial state for every selected wrapper.
 
-The installer stops when a selected Tailwind component is partially installed.
+Complete wrappers are skipped. Partial wrappers, invalid PostCSS configuration or dependency
+conflicts block the complete invocation without leaving package or style changes.
 
-This prevents the CLI from silently completing or overwriting ambiguous component state.
+## Compatibility
+
+Tailwind can be combined with non-design-system evolutions because it owns styling and shared UI
+primitives only.
+
+Avoid combining it with Bootstrap in production unless the team explicitly owns CSS interaction,
+token strategy, component conventions and bundle cost.
+
+Runtime Config assets, Transloco assets and AI routes do not require Tailwind-specific
+configuration.
+
+## Verification
+
+After apply:
+
+```bash
+npm install
+npm run format:check
+npm run lint
+npm test -- --watch=false
+npm run build
+```
+
+Verify that Tailwind utilities are emitted and each selected wrapper renders with its intended
+variants.
+
+## Removal and rollback
+
+The CLI does not provide automatic uninstall.
+
+To remove Tailwind:
+
+1. remove product usage of generated wrappers and utility classes;
+2. delete `src/app/shared/components/tailwind/`;
+3. remove `@use 'tailwindcss';`;
+4. remove the Tailwind PostCSS plugin, preserving other plugins;
+5. remove the three development dependencies when unused;
+6. update starter metadata.
+
+Removing only one wrapper requires deleting its files and index export while preserving the rest of
+the foundation.
+
+## Troubleshooting
+
+| Symptom                             | Likely cause                                    | Action                                                   |
+| ----------------------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| Preview reports invalid PostCSS     | `.postcssrc.json` is malformed or incompatible. | Correct it before applying.                              |
+| Preview reports a partial component | Only some wrapper files exist.                  | Reconcile or remove that wrapper before applying.        |
+| Tailwind utilities are missing      | PostCSS plugin or global import is absent.      | Verify `.postcssrc.json` and `src/styles.scss`.          |
+| Sass reports `@use` ordering errors | Tailwind import follows another rule.           | Move `@use 'tailwindcss';` to the beginning of the file. |
+| Styles conflict with Bootstrap      | Two global design systems are active.           | Define explicit ownership or remove one framework.       |
+
+## Architecture reference
+
+See [Tailwind Evolution](../evolutions/tailwind.md) for SCSS conventions, wrapper API details,
+guidelines and reference-branch merge notes.

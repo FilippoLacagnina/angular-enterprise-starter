@@ -6,7 +6,7 @@
 
 # Angular Enterprise Starter
 
-![Angular Enterprise Starter Architecture](./docs/assets/angular-enterprise-starter-banner.svg)
+![Angular Enterprise Starter](./docs/assets/angular-enterprise-starter-banner.svg)
 
 [![CI](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/FilippoLacagnina/angular-enterprise-starter/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/FilippoLacagnina/angular-enterprise-starter?include_prereleases)](https://github.com/FilippoLacagnina/angular-enterprise-starter/releases)
@@ -14,7 +14,7 @@
 [![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular)](https://angular.dev/)
 ![Evolution CLI](https://img.shields.io/badge/Evolution%20CLI-preview%20%7C%20apply-0f766e?logo=gnubash&logoColor=white)
 [![Interactive Builder](https://img.shields.io/badge/Interactive%20Builder-live-0891b2?logo=angular&logoColor=white)](https://angular-enterprise-starter-builder.onrender.com/)
-[![Evolution CLI npm alpha](https://img.shields.io/npm/v/%40filippolacagnina%2Fangular-enterprise-starter/alpha?label=Evolution%20CLI%20npm%20alpha&logo=npm&color=cb3837)](https://www.npmjs.com/package/@filippolacagnina/angular-enterprise-starter)
+[![Evolution CLI npm latest](https://img.shields.io/npm/v/%40filippolacagnina%2Fangular-enterprise-starter?label=Evolution%20CLI%20npm%20latest&logo=npm&color=cb3837)](https://www.npmjs.com/package/@filippolacagnina/angular-enterprise-starter)
 
 **Available Evolutions**
 
@@ -26,6 +26,7 @@
 ![Design System Bootstrap](https://img.shields.io/badge/evo%2Fdesign--system-bootstrap-7c3aed)
 ![Deployment Docker SSR](https://img.shields.io/badge/evo%2Fdeployment-docker--ssr-2563eb)
 ![State Signal Store](https://img.shields.io/badge/evo%2Fstate-signal--store-65a30d)
+![AI Genkit](https://img.shields.io/badge/evo%2Fai-genkit-9333ea)
 ![Tooling Dependency Monitoring](https://img.shields.io/badge/evo%2Ftooling-dependency--monitoring-475569)
 
 **WIP Evolutions**
@@ -41,133 +42,77 @@
 
 Angular Enterprise Starter is an enterprise-ready Angular 21 baseline for building scalable applications from a minimal, documented and composable foundation.
 
-It combines a clean `main` branch with optional evolution paths, an **Interactive Builder** and a guided **Evolution CLI** for adding validated capabilities without turning the starter into a fixed all-in-one template.
+The `main` branch stays intentionally clean. Teams can adopt it as-is, then add only the capabilities they need through optional evolution paths—without inheriting a fixed all-in-one stack.
 
 > [!IMPORTANT]
-> Start from `main` for the cleanest baseline. You can add evolutions in two ways: through the guided Evolution CLI, or by starting from / merging compatible `evo/*` branches.
-
-> [!IMPORTANT]
-> Choose the configuration strategy early: use Angular environment files from `main`, or use `evo/config/runtime-config` for deployable runtime configuration through `assets/config/values.yml`.
-
-See [Evolutions](./docs/evolutions.md) for the full branch catalog, implemented variants, planned variants and maintenance rules.
-
-## Interactive Builder
-
-The Interactive Builder is the visual entry point for composing an Angular Enterprise Starter baseline.
-It lets users select available evolutions, configure supported options and export a generated project from the browser.
-
-[Open the Interactive Builder](https://angular-enterprise-starter-builder.onrender.com/)
-
-The Builder complements the Evolution CLI: the UI helps explore and compose a starter visually, while the CLI remains the versioned automation path for local and scripted workflows.
-
-## Evolution CLI
-
-The Evolution CLI is the recommended path when an installer exists.
-Compared with using an `evo/*` branch directly, it provides a richer guided flow with preview, parametrized choices, repeatable generators and safety checks.
-
-It lets teams select optional capabilities, preview the impact and apply validated evolutions through a safer parametrized workflow.
-
-`evo/*` branches remain useful as reference implementations, manual merge targets and fallbacks for capabilities that are not CLI-installable yet.
-
-| Usage mode          | Command                                                            |
-| ------------------- | ------------------------------------------------------------------ |
-| Local starter clone | `npm run starter:evolution`                                        |
-| Versioned npm CLI   | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` |
-
-> [!TIP]
-> During alpha, use the `@alpha` npm tag for the versioned CLI package.
-> This is the recommended flow after removing local installer tooling from a product repository.
-
-```bash
-npm run starter:evolution
-```
-
-![Angular Enterprise Starter CLI](./docs/assets/starter-evolution-cli.svg)
-
-The CLI focuses on three principles:
-
-| Principle            | What it means                                                     |
-| -------------------- | ----------------------------------------------------------------- |
-| Preview first        | Show files to create/update before touching the workspace.        |
-| Apply safely         | Stop before overwriting existing files or ambiguous project code. |
-| Parametrized choices | Ask for explicit options when an evolution needs project context. |
-
-First CLI installers:
-
-| Installer      | Purpose                                                                                  |
-| -------------- | ---------------------------------------------------------------------------------------- |
-| Transloco      | Add runtime i18n provider, loader and EN/IT translation assets.                          |
-| Runtime Config | Add deployable `assets/config/values.yml` runtime configuration with safety checks.      |
-| SignalStore    | Generate feature/root stores with route provider registration and safe target detection. |
-| Docker SSR     | Add an SSR-oriented Docker deployment baseline.                                          |
-| Bootstrap      | Add Bootstrap and generate selected starter-owned UI wrapper components.                 |
-| Tailwind       | Add Tailwind CSS and generate selected starter-owned UI wrapper components.              |
-| AI Genkit      | Add a server-side Genkit foundation with Gemini; the summary example is explicit opt-in. |
-
-Additional installers are in active development and will be added progressively as evolutions are validated.
-
-Detailed command usage is intentionally kept out of the README and documented in the dedicated [Evolution CLI guide](./docs/schematics.md), with installer-specific guides under `docs/evolution-cli/`.
-
-## Current Release
-
-```text
-v0.7.0-alpha.0 - AI Genkit Evolution CLI installer
-```
-
-Current evolution branches:
-
-| Branch                               | Description                         |
-| ------------------------------------ | ----------------------------------- |
-| `evo/i18n/transloco`                 | Transloco runtime i18n baseline     |
-| `evo/config/runtime-config`          | Runtime YAML configuration baseline |
-| `evo/design-system/tailwind`         | Tailwind CSS styling baseline       |
-| `evo/design-system/primeng`          | PrimeNG component baseline          |
-| `evo/design-system/angular-material` | Angular Material component baseline |
-| `evo/design-system/bootstrap`        | Bootstrap styling baseline          |
-| `evo/deployment/docker-ssr`          | Docker SSR deployment baseline      |
-| `evo/state/signal-store`             | NgRx SignalStore state baseline     |
-| `evo/tooling/dependency-monitoring`  | Dependency monitoring report        |
-| `evo/ai/genkit`                      | Server-side Genkit AI foundation    |
+> Use the Interactive Builder to compose a tailored starter through a guided visual workflow. Clone `main` directly when you want the cleanest baseline and full manual control.
 
 ## Why This Starter
 
-- Enterprise-oriented architecture without UI library lock-in.
-- Angular 21 baseline with standalone APIs and modern application setup.
-- SSR, prerender and hydration strategy documented from the beginning.
-- Environment configuration for `local`, `dev`, `test` and `prod`.
-- Runtime configuration through deployable `assets/config/values.yml`.
-- API route conventions designed for multiple microservices and versioned endpoints.
-- Optional `evo/*` branches and Evolution CLI installers for composable add-ons without forcing every project into the same stack.
-- Optional maintenance tooling for monitoring dependencies across `main` and evolution branches.
-- Simple, detailed documentation focused on Angular and enterprise best practices.
-- Post-clone cleanup workflow for adapting the starter to a real product repository.
+- Enterprise-oriented structure without a UI library or state-management lock-in.
+- Angular 21 standalone architecture with SSR, prerendering and hydration.
+- Clear boundaries for application infrastructure, reusable code, layout and business features.
+- Build-time environments for `local`, `dev`, `test` and `prod`.
+- HTTP conventions with correlation IDs and centralized error handling.
+- Strict linting, formatting, tests, documentation checks and CI quality gates.
+- Optional, independently installable evolutions for common enterprise capabilities.
+- Post-clone cleanup tooling for converting the starter into a focused product repository.
 
-## Configuration Strategy
+## Baseline at a Glance
 
-Choose the configuration model before starting a real project.
+- Intentionally minimal and unstyled application shell.
+- Standalone `Header`, `Sidebar`, `Main` and `Footer` layout components.
+- Enterprise folders scaffolded under `core`, `shared`, `layout` and `features`.
+- Root route redirected to a lazy-loaded `/dashboard` feature.
+- Angular environments configured for local development and delivery targets.
+- Browser and Node server bundles generated by the Angular SSR build.
+- Example API route and service patterns that can be removed or replaced.
 
-| Strategy                           | Recommended starting point  | Best for                                                                 |
-| ---------------------------------- | --------------------------- | ------------------------------------------------------------------------ |
-| Angular environment files          | `main`                      | build-time configuration, simpler apps, projects that rebuild per target |
-| Runtime `assets/config/values.yml` | `evo/config/runtime-config` | deploy-time configuration, Docker, CI/CD, build-once deploy-many flows   |
+## Choose How to Start
 
-Both approaches are documented and visible on purpose.
-Avoid keeping both strategies active for the same values unless there is a clear architectural reason.
+The Builder and the repository are two first-class entry points to the same Angular Enterprise Starter foundation.
 
-## Current Baseline
+### Compose Visually with the Interactive Builder
 
-- public alpha release: `v0.7.0-alpha.0`
-- based on Angular 21
-- intentionally minimal and unstyled
-- layout placeholders only (`Header`, `Sidebar`, `Main`, `Footer`)
-- no layout CSS classes in templates
-- empty layout SCSS files for future customization
-- enterprise folders already scaffolded (`core`, `shared`, `layout`, `features`)
-- root route redirects to `/dashboard`
-- dashboard feature is lazy-loaded
-- application config supports `local`, `dev`, `test` and `prod`
+> [!TIP]
+> **Recommended for discovering and composing the starter.**
+>
+> [Open the Interactive Builder](https://angular-enterprise-starter-builder.onrender.com/)
 
-## Architecture Preview
+The Builder turns the starter catalog into a guided project-generation experience:
+
+- select the clean enterprise baseline;
+- choose compatible available evolutions;
+- configure the options supported by each installer;
+- preview the evolution plan and generated project structure;
+- inspect generated text files;
+- generate and download a cleaned, neutral project archive.
+
+```text
+select baseline -> choose evolutions -> configure -> preview -> generate -> download
+```
+
+Supported installations are delegated to a pinned version of the Evolution CLI, keeping visual generation aligned with the same validated installer contracts. The CLI remains independently usable for local and automated workflows.
+
+### Start from the Clean `main` Baseline
+
+```bash
+git clone git@github.com:FilippoLacagnina/angular-enterprise-starter.git
+cd angular-enterprise-starter
+npm install
+npm run start
+```
+
+`npm run start` uses the `local` environment by default.
+
+To verify the production SSR bundle:
+
+```bash
+npm run build
+npm run serve:ssr
+```
+
+## Architecture
 
 ![Angular Enterprise Starter Architecture](./docs/assets/angular-enterprise-architecture.svg)
 
@@ -175,11 +120,11 @@ Avoid keeping both strategies active for the same values unless there is a clear
 src/app/
   core/       # singleton infrastructure and cross-cutting concerns
   shared/     # reusable building blocks
-  layout/     # global shell components
+  layout/     # global application shell
   features/   # lazy business areas
 ```
 
-Feature example:
+A feature keeps its routes and implementation together:
 
 ```text
 features/orders/
@@ -190,122 +135,126 @@ features/orders/
   models/
 ```
 
-See [Architecture Guidelines](./docs/architecture.md) for the full recommended structure.
+See [Architecture Guidelines](./docs/architecture.md) for boundaries, naming and dependency rules.
 
-## Getting Started
+## Configuration Strategy
 
-```bash
-git clone git@github.com:FilippoLacagnina/angular-enterprise-starter.git
-cd angular-enterprise-starter
-npm install
-npm run start
-```
+Choose the configuration model before adapting the starter to a real product.
 
-By default, `npm run start` uses the `local` environment.
+| Strategy                           | Starting point              | Best for                                                                |
+| ---------------------------------- | --------------------------- | ----------------------------------------------------------------------- |
+| Angular environment files          | `main`                      | Build-time configuration and projects that rebuild for each target.     |
+| Runtime `assets/config/values.yml` | `evo/config/runtime-config` | Deploy-time configuration, containers and build-once deploy-many flows. |
 
-If you start from `evo/config/runtime-config`, the app loads `/assets/config/values.yml` instead of Angular environment files.
+The runtime configuration model is an optional evolution; it does not change projects that do not select it. Avoid managing the same value through both strategies unless the architecture explicitly requires it.
 
-After cloning it for a real product, preview starter-only files that can be removed:
+See [Configuration](./docs/configuration.md) and the [Runtime Config evolution](./docs/evolutions/runtime-config.md).
+
+## Optional Evolutions
+
+Evolutions extend the starter without changing the minimal contract of `main`. The three delivery paths serve different stages of adoption:
+
+| Path                | Role                                                                          |
+| ------------------- | ----------------------------------------------------------------------------- |
+| Interactive Builder | Visually compose and export a new project from the starter foundation.        |
+| Evolution CLI       | Preview and apply versioned evolutions to a local workspace.                  |
+| `evo/*` branch      | Inspect or manually merge the complete reference implementation of an option. |
+
+The complete source of truth for implemented branches, planned work and compatibility is the [Evolutions Catalog](./docs/evolutions.md).
+
+### Evolution CLI
+
+The Evolution CLI previews the impact before applying an installer, validates the workspace and stops on ambiguous or unsafe states.
+
+| Usage mode           | Command                                                            |
+| -------------------- | ------------------------------------------------------------------ |
+| Local starter clone  | `npm run starter:evolution`                                        |
+| npm `latest`         | `npx @filippolacagnina/angular-enterprise-starter evolution`       |
+| Explicit alpha track | `npx @filippolacagnina/angular-enterprise-starter@alpha evolution` |
+
+![Angular Enterprise Starter Evolution CLI](./docs/assets/starter-evolution-cli.svg)
+
+| Principle           | Contract                                                               |
+| ------------------- | ---------------------------------------------------------------------- |
+| Preview first       | Show files and dependency changes before touching the workspace.       |
+| Apply safely        | Refuse destructive overwrites and ambiguous project states.            |
+| Parametrize choices | Request explicit project context instead of assuming it.               |
+| Remain repeatable   | Detect compatible existing setup and reject conflicting partial setup. |
+
+Current CLI installers:
+
+| Installer      | Purpose                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| Transloco      | Runtime i18n provider, loader and EN/IT translation assets.                                |
+| Runtime Config | Deployable YAML configuration with preview, apply and safety guards.                       |
+| SignalStore    | Feature or root stores with safe target detection and provider registration.               |
+| Docker SSR     | Container baseline for the generated Angular Node server.                                  |
+| Bootstrap      | Bootstrap setup and selected starter-owned UI wrapper components.                          |
+| Tailwind       | Tailwind CSS setup and selected starter-owned UI wrapper components.                       |
+| AI Genkit      | Server-side, multi-provider-ready Genkit foundation with Gemini and opt-in typed examples. |
+
+The catalog is manifest-backed so help, parsing, validation, packaging and documentation share the same evolution identifiers. See the [Evolution CLI overview](./docs/schematics.md) and [installer guides](./docs/evolution-cli/README.md).
+
+## Adopting the Starter
+
+After cloning the repository for a real product, preview starter-only files that can be removed:
 
 ```bash
 npm run starter:cleanup
 ```
 
-Apply cleanup only when you are ready:
+Apply the reviewed cleanup:
 
 ```bash
 npm run starter:cleanup:apply
 ```
 
-The cleanup script removes starter community and planning files only.
-It does not remove `LICENSE`, `README.md`, `package.json` or technical documentation.
+The cleanup preserves the project license, README, package metadata and technical documentation.
 
-For product repositories that should not keep local installer sources, use consumer mode after the project baseline is ready:
+When a product repository should no longer contain local installer sources, use consumer mode:
 
 ```bash
 npm run starter:cleanup:consumer
 ```
 
-Consumer mode removes local installer tooling while keeping evolutions available through:
+The published CLI remains available afterward through the versioned npm package.
 
-```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution
-```
+## Essential Scripts
 
-This is the recommended long-term flow for real product repositories: keep the application clean, then receive newer installer behavior from the versioned npm package.
+| Command                            | Purpose                                                   |
+| ---------------------------------- | --------------------------------------------------------- |
+| `npm run start`                    | Start the local development server.                       |
+| `npm run build`                    | Generate production browser and server bundles.           |
+| `npm run serve:ssr`                | Run the generated SSR server after a build.               |
+| `npm run test`                     | Run Angular tests.                                        |
+| `npm run lint`                     | Run ESLint checks.                                        |
+| `npm run format:check`             | Verify Prettier formatting.                               |
+| `npm run docs:check`               | Validate documentation structure and local links.         |
+| `npm run schematics:test`          | Run Evolution CLI installer tests.                        |
+| `npm run starter:evolution`        | Open the guided Evolution CLI.                            |
+| `npm run starter:cleanup`          | Preview removable starter-only files.                     |
+| `npm run starter:cleanup:apply`    | Apply the reviewed starter cleanup.                       |
+| `npm run starter:cleanup:consumer` | Remove local installer tooling from a product repository. |
 
-## Evolutions Catalog
-
-See [Evolutions](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions.md) for the complete branch catalog, implemented variants, planned variants, compatibility notes and maintenance rules.
-
-## Scripts
-
-Essential commands for working with the starter:
-
-| Command                            | Purpose                                                        |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `npm run start`                    | Start the local development server.                            |
-| `npm run build`                    | Generate the production browser/server bundle.                 |
-| `npm run test`                     | Run the test suite.                                            |
-| `npm run lint`                     | Run ESLint checks.                                             |
-| `npm run format:check`             | Verify Prettier formatting.                                    |
-| `npm run serve:ssr`                | Run the generated SSR server after a build.                    |
-| `npm run starter:evolution`        | Open the guided Evolution CLI.                                 |
-| `npm run starter:cleanup`          | Preview starter-only files that can be removed after cloning.  |
-| `npm run starter:cleanup:apply`    | Remove starter-only files after reviewing the cleanup preview. |
-| `npm run starter:cleanup:consumer` | Remove local installer tooling from product repositories.      |
-
-Environment-specific scripts such as `start:dev`, `build:test` and `build:prod` are available in `package.json` and documented in [Configuration](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/configuration.md).
-
-To test the generated SSR/server bundle locally:
-
-```bash
-npm run build
-npm run serve:ssr
-```
+Environment-specific commands such as `start:dev`, `build:test` and `build:prod` are documented in [Configuration](./docs/configuration.md).
 
 ## Documentation
 
-Canonical documentation is maintained on `main` and is intended to be readable from every branch.
-
-- [Architecture Guidelines](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/architecture.md)
-- [Configuration](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/configuration.md)
-- [API Contracts](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/api.md)
-- [Routing and SSR](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/routing.md)
-- [State Management](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/state-management.md)
-- [Testing Strategy](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/testing.md)
-- [Evolutions](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions.md)
-- [Evolution CLI](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md)
-- [Versioning](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/versioning.md)
-- [Current Status](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/current-status.md)
-- [Roadmap](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/ROADMAP.md)
-- [Changelog](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/CHANGELOG.md)
-
-## Runtime Config Documentation
-
-Use these canonical guides when choosing `evo/config/runtime-config`.
-
-- [Runtime Config Overview](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config.md)
-- [Architecture](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config/architecture.md)
-- [Configuration](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config/configuration.md)
-- [Flow](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config/flow.md)
-- [API Usage](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config/api.md)
-- [State Usage](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config/state-management.md)
-
-## Evolution Documentation
-
-Evolution guides are centralized on `main`; evolution branches should focus on implementation code and link back to these canonical pages.
-
-- [Transloco Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/i18n-transloco.md)
-- [Runtime Config Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/runtime-config.md)
-- [PrimeNG Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/primeng.md)
-- [Tailwind Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/tailwind.md)
-- [Angular Material Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/angular-material.md)
-- [Bootstrap Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/bootstrap.md)
-- [Docker SSR Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/docker-ssr.md)
-- [Signal Store Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/signal-store.md)
-- [Dependency Monitoring Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/dependency-monitoring.md)
-- [AI Genkit Evolution](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions/ai-genkit.md)
+| Area                 | Guide                                                |
+| -------------------- | ---------------------------------------------------- |
+| Architecture         | [Architecture Guidelines](./docs/architecture.md)    |
+| Configuration        | [Configuration](./docs/configuration.md)             |
+| API conventions      | [API Contracts](./docs/api.md)                       |
+| Routing and SSR      | [Routing and SSR](./docs/routing.md)                 |
+| State management     | [State Management](./docs/state-management.md)       |
+| Testing              | [Testing Strategy](./docs/testing.md)                |
+| Evolutions           | [Evolutions Catalog](./docs/evolutions.md)           |
+| Evolution CLI        | [CLI Overview](./docs/schematics.md)                 |
+| CLI installer guides | [Operational Guides](./docs/evolution-cli/README.md) |
+| Versioning           | [Versioning](./docs/versioning.md)                   |
+| Project status       | [Current Status](./docs/current-status.md)           |
+| Roadmap              | [Roadmap](./ROADMAP.md)                              |
+| Release history      | [Changelog](./CHANGELOG.md)                          |
 
 ## Community
 
@@ -314,16 +263,13 @@ Evolution guides are centralized on `main`; evolution branches should focus on i
 - [Code of Conduct](./CODE_OF_CONDUCT.md)
 - [Pull Request Template](./.github/pull_request_template.md)
 
-## Alpha Notes
+## Alpha Status
 
-The repository is public and currently in alpha pre-release.
-The root Angular starter application remains marked as `private` to prevent accidental npm publication.
-The Evolution CLI is packaged separately for npm usage.
+The project is currently published as `v0.7.0-alpha.0`.
 
-Before the first stable release:
+The Angular application remains marked as `private` to prevent accidental npm publication. The Evolution CLI is packaged and published separately.
 
-- review documentation and examples
-- remove or adapt demonstrative examples such as `dashboard-api.routes.ts` and `DashboardService`
+Before using the starter in a product, review and adapt demonstrative code such as `dashboard-api.routes.ts` and `DashboardService`.
 
 ## Trademark Notice
 

@@ -34,7 +34,7 @@ It executes bundled schematics directly, so the target workspace does not need a
 Start the guided CLI:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution
+npx @filippolacagnina/angular-enterprise-starter evolution
 ```
 
 This is the main usage flow.
@@ -46,13 +46,13 @@ Non-interactive examples are available when you want to script or test a specifi
 Preview before applying:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name tailwind --preview
+npx @filippolacagnina/angular-enterprise-starter evolution --name tailwind --preview
 ```
 
 Apply when ready:
 
 ```bash
-npx @filippolacagnina/angular-enterprise-starter@alpha evolution --name tailwind --apply
+npx @filippolacagnina/angular-enterprise-starter evolution --name tailwind --apply
 ```
 
 Use `--apply` only after validating the command with `--preview`.
@@ -75,18 +75,25 @@ The CLI is conservative by design:
 The CLI is designed for projects based on Angular Enterprise Starter.
 It is not intended to patch arbitrary Angular applications with unrelated structure or conventions.
 
-## npm tag
+## npm tags
 
-During alpha, use the `@alpha` tag:
+The default command follows the npm `latest` dist-tag:
+
+```bash
+npx @filippolacagnina/angular-enterprise-starter evolution
+```
+
+Use the explicit `@alpha` tag when a workflow should keep tracking the public alpha line:
 
 ```bash
 npx @filippolacagnina/angular-enterprise-starter@alpha evolution
 ```
 
-Future stable releases will use the default npm `latest` tag.
+During the current public alpha, releases are intentionally assigned to both `latest` and `alpha`.
 
 ## Documentation
 
 - [Starter documentation](https://github.com/FilippoLacagnina/angular-enterprise-starter#documentation)
+- [Interactive Builder](https://angular-enterprise-starter-builder.onrender.com/)
 - [Evolution CLI guide](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/schematics.md)
 - [Evolution catalog](https://github.com/FilippoLacagnina/angular-enterprise-starter/blob/main/docs/evolutions.md)

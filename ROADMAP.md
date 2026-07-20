@@ -1,69 +1,52 @@
 # Roadmap
 
-This roadmap tracks public alpha work before the first stable release.
+This roadmap tracks the public alpha work required to evolve Angular Enterprise Starter without compromising its minimal, composable baseline.
 
 ## Current Phase
 
-Public alpha Evolution CLI work.
+Evolution CLI reliability, sustainable installer maintenance and Builder alignment.
 
-## Milestone 0.4.0-alpha.0
+Current priorities:
 
-Goal: publish the Evolution CLI as a versioned npm package while keeping the root starter as a GitHub baseline.
+- keep `main` minimal and independent from optional evolutions;
+- keep the Interactive Builder aligned with published CLI capabilities;
+- maintain one manifest-backed contract for installable evolutions;
+- expand safety guards, generated-workspace verification and documentation checks;
+- add new evolutions only when their long-term maintenance model is clear.
 
-### Scope
+## Delivered Milestones
 
-- Keep the root Angular starter package private.
-- Package the Evolution CLI separately under `@filippolacagnina/angular-enterprise-starter`.
-- Publish alpha versions with the npm `alpha` dist-tag.
-- Support consumer repositories that remove local installer tooling.
-- Keep CLI package documentation linked back to the starter documentation.
+| Milestone       | Outcome                                                                  |
+| --------------- | ------------------------------------------------------------------------ |
+| `0.1.0-alpha.0` | Minimal Angular enterprise architecture, SSR and quality baseline.       |
+| `0.2.0-alpha.0` | Optional `evo/*` branch model and runtime configuration reference.       |
+| `0.3.0-alpha.0` | Centralized evolution documentation and Evolution CLI preview.           |
+| `0.4.0-alpha.0` | Versioned Evolution CLI package published on npm.                        |
+| `0.5.0-alpha.0` | Transloco and Tailwind CLI installers.                                   |
+| `0.5.1-alpha.0` | Bundled, render-safe schematic execution for consumer workspaces.        |
+| `0.6.0-alpha.0` | Runtime Config installer with preview, apply and safety guards.          |
+| `0.7.0-alpha.0` | AI Genkit installer, multi-provider-ready foundation and Angular 21 LTS. |
 
-## Milestone 0.3.0-alpha.0
+## Next
 
-Goal: centralize evolution documentation and introduce the Evolution CLI as the guided installation model.
-
-### Scope
-
-- Keep evolution documentation canonical on `main`.
-- Add dedicated guides for implemented `evo/*` branches.
-- Introduce the Evolution CLI documentation and README positioning.
-- Clarify CLI installers versus manual `evo/*` branch usage.
-- Keep the starter composable without turning `main` into an all-in-one template.
-
-## Milestone 0.2.0-alpha.0
-
-Goal: document and validate the optional evolution branch model.
-
-### Scope
-
-- Keep `main` minimal and documented.
-- Document implemented `evo/*` branches.
-- Add runtime configuration as an optional baseline.
-- Add design system and Docker SSR evolution references.
-- Clarify environment configuration vs runtime configuration strategy.
-
-## Milestone 0.1.0-alpha.0
-
-Goal: provide a coherent private alpha that can be reviewed before publication.
-
-### Scope
-
-- Confirm base architecture and routing conventions.
-- Keep layout intentionally unstyled and easy to customize.
-- Keep demonstrative dashboard examples clearly documented.
-- Confirm configuration strategy for `local`, `dev`, `test` and `prod`.
-- Confirm API route contracts and interceptor baseline.
-- Review README, technical docs and changelog before publication.
+- Keep the Builder catalog and configurators synchronized with the Evolution CLI manifest.
+- Continue compatibility testing across supported combinations of evolutions.
+- Improve generated-project verification beyond in-memory schematic tests.
+- Review Angular and ecosystem dependency updates without destabilizing existing evolutions.
+- Prioritize optional testing and authentication foundations after the current installer set remains stable.
 
 ## Before Stable Release
 
-- Decide first stable version target.
-- Review repository metadata and GitHub topics.
-- Remove or adapt demonstrative dashboard API/service examples.
-- Expand CLI installers only when the maintenance model remains sustainable.
+- Decide the first stable version target and support policy.
+- Define the compatibility window for Angular, Node and Evolution CLI releases.
+- Review repository metadata, GitHub topics and public onboarding.
+- Remove or adapt demonstrative dashboard API and service examples.
+- Confirm that every installable evolution has preview, apply, rollback, documentation and generated-workspace coverage.
+- Confirm Builder and CLI behavior against the same released starter baseline.
 
 ## Later
 
-- Add additional Evolution CLI installers.
-- Add optional testing strategy.
-- Add optional auth/session examples.
+- Add further Evolution CLI installers only after branch-level validation.
+- Evaluate optional end-to-end testing foundations.
+- Evaluate an optional OIDC authentication and session foundation.
+- Reassess planned evolutions against adoption value and maintenance cost.

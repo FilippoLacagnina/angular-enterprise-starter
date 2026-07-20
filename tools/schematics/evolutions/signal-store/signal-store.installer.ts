@@ -1,19 +1,18 @@
 import { type SchematicContext, SchematicsException, type Tree } from '@angular-devkit/schematics';
 
+import { getEvolutionDependencyRequirement } from '../../evolution/evolution-manifest';
 import { type EvolutionOptions } from '../../evolution/schema';
+import {
+  createPackageDependenciesPreview,
+  ensurePackageDependency,
+} from '../../shared/package-dependency';
 import {
   type EvolutionDefinition,
   type EvolutionPreview,
   EvolutionUserActionRequiredError,
 } from '../evolution-definition';
 
-const NGRX_SIGNALS_VERSION = '^21.1.0';
-
-interface PackageJson {
-  dependencies?: Record<string, string>;
-  devDependencies?: Record<string, string>;
-  [key: string]: unknown;
-}
+const SIGNAL_STORE_DEPENDENCY = getEvolutionDependencyRequirement('signal-store', '@ngrx/signals');
 
 interface SignalStorePlan {
   readonly scope: 'feature' | 'root';
@@ -39,7 +38,8 @@ export function installSignalStoreEvolution(
 ): void {
   const plan = createSignalStorePlan(options);
 
-  addPackageDependency(tree, '@ngrx/signals', NGRX_SIGNALS_VERSION);
+  assertSignalStoreInstallationAvailable(tree, plan);
+  ensurePackageDependency(tree, SIGNAL_STORE_DEPENDENCY);
   createStateFiles(tree, plan);
 
   if (plan.scope === 'feature' && plan.featureComponent === 'create') {
@@ -56,6 +56,7 @@ export function installSignalStoreEvolution(
 
 export function getSignalStorePreview(options: EvolutionOptions, tree: Tree): EvolutionPreview {
   const plan = createSignalStorePlan(options);
+  const dependencyPreview = createPackageDependenciesPreview(tree, [SIGNAL_STORE_DEPENDENCY]);
   const targetPaths = getSignalStoreTargetPaths(plan);
   const existingTargetPaths = getExistingTargetPaths(tree, targetPaths);
   const creates = targetPaths
@@ -75,20 +76,23 @@ export function getSignalStorePreview(options: EvolutionOptions, tree: Tree): Ev
   }
 
   const blockingNotes = createBlockingNotes(plan, tree, existing);
+  const notes = createPreviewNotes(plan);
+
+  blockingNotes.push(...createRouteStructureBlockingNotes(plan, tree));
+  blockingNotes.push(...dependencyPreview.blockingNotes);
+  notes.push(...dependencyPreview.notes);
 
   return {
-    dependencies: ['@ngrx/signals'],
+    dependencies: dependencyPreview.dependencies,
     creates,
     updates,
     existing,
     blockingNotes,
-    notes: createPreviewNotes(plan),
+    notes,
   };
 }
 
 function createStateFiles(tree: Tree, plan: SignalStorePlan): void {
-  assertSignalStoreTargetAvailable(tree, plan);
-
   createFile(
     tree,
     plan.statePath,
@@ -128,8 +132,6 @@ ${plan.scope === 'root' ? "  { providedIn: 'root' },\n" : ''}  withState(${plan.
 }
 
 function createFeatureComponentFiles(tree: Tree, plan: SignalStorePlan): void {
-  assertFeatureComponentTargetAvailable(tree, plan);
-
   createFile(
     tree,
     requiredPath(plan.routePath),
@@ -179,17 +181,41 @@ export class ${requiredValue(plan.componentClassName)} {}
 function registerStoreProviderInRoute(tree: Tree, plan: SignalStorePlan): void {
   const routePath = requiredPath(plan.routePath);
 
-  if (!tree.exists(routePath)) {
-    throw new SchematicsException(
-      `Missing route file for feature "${plan.featureName}". Expected ${routePath}. Create the route first or use --feature-component create.`,
-    );
-  }
-
   updateFile(tree, routePath, (content) => {
     const contentWithImport = addImport(content, createStoreRouteImport(plan));
 
     return addRouteProvider(contentWithImport, plan);
   });
+}
+
+function assertSignalStoreInstallationAvailable(tree: Tree, plan: SignalStorePlan): void {
+  assertSignalStoreTargetAvailable(tree, plan);
+
+  if (plan.scope !== 'feature') {
+    return;
+  }
+
+  if (plan.featureComponent === 'create') {
+    assertFeatureComponentTargetAvailable(tree, plan);
+    return;
+  }
+
+  const routePath = requiredPath(plan.routePath);
+
+  if (!tree.exists(routePath)) {
+    throw new EvolutionUserActionRequiredError(
+      `Missing route file for feature "${plan.featureName}". Expected ${routePath}. Create the route first or use --feature-component create.`,
+    );
+  }
+
+  try {
+    const contentWithImport = addImport(tree.readText(routePath), createStoreRouteImport(plan));
+    addRouteProvider(contentWithImport, plan);
+  } catch (error) {
+    throw new EvolutionUserActionRequiredError(
+      error instanceof Error ? error.message : String(error),
+    );
+  }
 }
 
 function createStoreRouteImport(plan: SignalStorePlan): string {
@@ -378,6 +404,26 @@ function createBlockingNotes(
   ];
 }
 
+function createRouteStructureBlockingNotes(plan: SignalStorePlan, tree: Tree): string[] {
+  if (plan.scope !== 'feature' || plan.featureComponent !== 'existing') {
+    return [];
+  }
+
+  const routePath = requiredPath(plan.routePath);
+
+  if (!tree.exists(routePath)) {
+    return [];
+  }
+
+  try {
+    const contentWithImport = addImport(tree.readText(routePath), createStoreRouteImport(plan));
+    addRouteProvider(contentWithImport, plan);
+    return [];
+  } catch (error) {
+    return [`Apply would stop: ${error instanceof Error ? error.message : String(error)}`];
+  }
+}
+
 function createPreviewNotes(plan: SignalStorePlan): string[] {
   if (plan.scope === 'root') {
     return [
@@ -397,27 +443,6 @@ function createPreviewNotes(plan: SignalStorePlan): string[] {
   }
 
   return notes;
-}
-
-function addPackageDependency(tree: Tree, packageName: string, version: string): void {
-  const packageJsonPath = '/package.json';
-
-  if (!tree.exists(packageJsonPath)) {
-    throw new SchematicsException('Missing package.json. Cannot add SignalStore dependency.');
-  }
-
-  const packageJson = JSON.parse(tree.readText(packageJsonPath)) as PackageJson;
-
-  if (packageJson.dependencies?.[packageName] || packageJson.devDependencies?.[packageName]) {
-    return;
-  }
-
-  packageJson.dependencies = sortObject({
-    ...packageJson.dependencies,
-    [packageName]: version,
-  });
-
-  tree.overwrite(packageJsonPath, `${JSON.stringify(packageJson, null, 2)}\n`);
 }
 
 function createFile(tree: Tree, path: string, content: string): void {
@@ -482,10 +507,4 @@ function requiredValue(value: string | undefined): string {
 
 function toDisplayPath(path: string): string {
   return path.replace(/^\//, '');
-}
-
-function sortObject(value: Record<string, string>): Record<string, string> {
-  return Object.fromEntries(
-    Object.entries(value).sort(([first], [second]) => first.localeCompare(second)),
-  );
 }

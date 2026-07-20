@@ -14,6 +14,7 @@ export interface CreateDesignSystemPreviewOptions<
   readonly plan: DesignSystemInstallPlan<string, TComponent>;
   readonly indexPath: string;
   readonly dependencies: readonly string[];
+  readonly blockingNotes?: readonly string[];
   readonly updates: readonly string[];
   readonly notes: readonly string[];
 }
@@ -23,6 +24,7 @@ export function createDesignSystemPreview<TComponent extends DesignSystemCompone
   plan,
   indexPath,
   dependencies,
+  blockingNotes = [],
   updates,
   notes,
 }: CreateDesignSystemPreviewOptions<TComponent>): EvolutionPreview {
@@ -54,7 +56,7 @@ export function createDesignSystemPreview<TComponent extends DesignSystemCompone
       ...(indexExists && missingExportLines.length ? [toDisplayPath(indexPath)] : []),
     ],
     existing: createExistingNotes(completeComponentStatuses),
-    blockingNotes: createBlockingNotes(partialComponentStatuses),
+    blockingNotes: [...blockingNotes, ...createBlockingNotes(partialComponentStatuses)],
     notes: [...notes, ...createSkippedNotes(completeComponentStatuses)],
   };
 }

@@ -16,6 +16,10 @@ This evolution adds a minimal Tailwind CSS baseline.
 
 The goal is to make Tailwind available as a utility-first styling foundation without turning the starter into a pre-designed UI kit.
 
+This document owns Tailwind architecture, SCSS conventions and wrapper API. For preview, apply,
+component selection, safety and troubleshooting, see the
+[Tailwind CLI Installer](../evolution-cli/tailwind.md).
+
 ## Official resources
 
 - [Tailwind CSS documentation](https://tailwindcss.com/docs)
@@ -63,20 +67,9 @@ This keeps the evolution branch easier to merge with other optional branches.
 ## Evolution CLI installer
 
 Tailwind can be installed through the Evolution CLI.
-When available, the CLI is more powerful than using the `evo/design-system/tailwind` branch directly because it supports dynamic component selection, preview mode, repeatable installation and safe skip/block behavior.
-
-CLI-specific behavior is documented in the dedicated guide:
-
-```text
-docs/evolution-cli/tailwind.md
-```
-
-Preview examples:
-
-```bash
-npm run starter:evolution -- --name tailwind --preview --tailwind-mode all
-npm run starter:evolution -- --name tailwind --preview --tailwind-mode select --tailwind-components button,input
-```
+Use the branch as the reference implementation and the
+[operational installer guide](../evolution-cli/tailwind.md) for commands, component selection,
+repeatability and safety behavior.
 
 The installer can also generate starter-owned UI wrappers:
 
