@@ -2,7 +2,7 @@
 
 ## Date
 
-July 20, 2026
+July 21, 2026
 
 ## Completed
 
@@ -57,7 +57,7 @@ July 20, 2026
 
 9. CLI-installable evolutions
 
-- Added Transloco i18n installer.
+- Added a Transloco i18n installer with configurable languages, default/fallback and generated assets.
 - Added Runtime Config installer with deployable `assets/config/values.yml` generation and safety guards.
 - Added SignalStore installer with feature/root store generation.
 - Added Docker SSR installer.

@@ -9,7 +9,28 @@ describe('Transloco evolution preview', () => {
 
     expect(preview.dependencies).toEqual(['@jsverse/transloco ^8.3.0']);
     expect(preview.blockingNotes).toEqual([]);
+    expect(preview.creates).toContain('src/app/core/i18n/i18n.config.ts');
+    expect(preview.creates).toContain('src/assets/i18n/en.json');
+    expect(preview.creates).toContain('src/assets/i18n/it.json');
+    expect(preview.notes).toContain('Default and fallback language: en.');
     expect(preview.notes).toContain('Adds @jsverse/transloco ^8.3.0 to dependencies.');
+  });
+
+  it('shows the selected language assets and explicit default', () => {
+    const preview = getTranslocoPreview(
+      {
+        name: 'transloco',
+        translocoLanguages: 'en,es,fr',
+        translocoDefaultLanguage: 'fr',
+      },
+      createTree({ dependencies: {} }),
+    );
+
+    expect(preview.creates).toContain('src/assets/i18n/en.json');
+    expect(preview.creates).toContain('src/assets/i18n/es.json');
+    expect(preview.creates).toContain('src/assets/i18n/fr.json');
+    expect(preview.creates).not.toContain('src/assets/i18n/it.json');
+    expect(preview.notes).toContain('Default and fallback language: fr.');
   });
 
   it('reports an incompatible existing dependency as a blocking note', () => {

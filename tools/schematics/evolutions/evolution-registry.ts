@@ -25,10 +25,10 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     name: 'transloco',
     ...getManifestDefinitionMetadata('transloco'),
     creates: [
+      'src/app/core/i18n/i18n.config.ts',
       'src/app/core/i18n/i18n.provider.ts',
       'src/app/core/i18n/transloco-http-loader.ts',
-      'src/assets/i18n/en.json',
-      'src/assets/i18n/it.json',
+      'src/assets/i18n/<language>.json',
     ],
     updates: [
       'package.json',
@@ -36,7 +36,7 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
       'src/app/app.config.ts',
       '.angular-enterprise-starter.json',
     ],
-    notes: ['Adds a runtime i18n baseline without changing existing feature texts.'],
+    notes: ['Adds a configurable runtime i18n baseline without changing existing feature texts.'],
     preview: getTranslocoPreview,
     install: installTranslocoEvolution,
   },

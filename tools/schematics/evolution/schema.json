@@ -56,6 +56,16 @@
       "description": "Show what the selected evolution would do without changing files.",
       "default": false
     },
+    "translocoLanguages": {
+      "type": "string",
+      "description": "Comma-separated languages to configure and generate.",
+      "default": "en,it"
+    },
+    "translocoDefaultLanguage": {
+      "type": "string",
+      "description": "Default and fallback language; it must be selected in --transloco-languages.",
+      "default": "en"
+    },
     "storeScope": {
       "type": "string",
       "description": "SignalStore scope.",

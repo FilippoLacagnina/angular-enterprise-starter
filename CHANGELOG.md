@@ -18,6 +18,7 @@ The project is public and currently in alpha pre-release.
 ### Changed
 
 - Hardened preview and apply behavior across all seven CLI-installable evolutions.
+- Evolved Transloco from fixed EN/IT assets to a configurable language catalog with an explicit default and centralized runtime contract.
 - Expanded schematic, parser, dependency and packaging coverage.
 - Standardized Evolution CLI documentation around purpose, prerequisites, safety, verification and rollback.
 - Refocused the README on the starter foundation while giving the Interactive Builder a first-class composition path.

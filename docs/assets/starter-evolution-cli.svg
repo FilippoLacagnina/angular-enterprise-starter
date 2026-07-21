@@ -21,7 +21,7 @@
 
     <text x="34" y="505" fill="#34D6C3" font-size="20" font-weight="700">1.</text>
     <text x="70" y="505" fill="#D8E2EA" font-size="20" font-weight="700">Transloco i18n</text>
-    <text x="70" y="538" fill="#7E8B96" font-size="20">Runtime i18n baseline with EN/IT assets.</text>
+    <text x="70" y="538" fill="#7E8B96" font-size="20">Configurable runtime i18n language assets.</text>
 
     <text x="34" y="575" fill="#34D6C3" font-size="20" font-weight="700">2.</text>
     <text x="70" y="575" fill="#D8E2EA" font-size="20" font-weight="700">Runtime Config</text>

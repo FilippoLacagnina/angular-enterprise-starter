@@ -31,6 +31,27 @@ describe('Evolution CLI arguments', () => {
     });
   });
 
+  it('parses configurable Transloco languages and default language', () => {
+    expect(
+      parseCliArgs(
+        [
+          '--name',
+          'transloco',
+          '--transloco-languages',
+          'en,it,fr',
+          '--transloco-default-language=fr',
+          '--preview',
+        ],
+        manifest,
+      ),
+    ).toEqual({
+      name: 'transloco',
+      translocoLanguages: 'en,it,fr',
+      translocoDefaultLanguage: 'fr',
+      preview: true,
+    });
+  });
+
   it('rejects options without values and conflicting execution modes', () => {
     expect(() => parseCliArgs(['--name'], manifest)).toThrow('Option --name requires a value.');
     expect(() => parseCliArgs(['--name', 'transloco', '--preview', '--apply'], manifest)).toThrow(
@@ -63,6 +84,10 @@ describe('Evolution CLI arguments', () => {
 
     expect(completeHelp).toContain('Available evolutions:');
     expect(completeHelp).toContain('--store-scope <feature|root>');
+    expect(completeHelp).toContain('--transloco-languages <en|it|es|fr|de|pt|nl|zh|ja|ko|ar|hi>');
+    expect(completeHelp).toContain(
+      '--transloco-default-language <en|it|es|fr|de|pt|nl|zh|ja|ko|ar|hi>',
+    );
     expect(completeHelp).toContain('--bootstrap-components <alert|badge|button|card|input>');
     expect(aiHelp).toContain('Selected evolution:');
     expect(aiHelp).toContain('--ai-model <value>');

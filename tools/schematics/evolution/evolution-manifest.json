@@ -1,6 +1,68 @@
 {
   "schemaVersion": 1,
   "optionCatalogs": {
+    "translocoLanguages": [
+      {
+        "value": "en",
+        "label": "English",
+        "description": "English translation asset."
+      },
+      {
+        "value": "it",
+        "label": "Italian",
+        "description": "Italian translation asset."
+      },
+      {
+        "value": "es",
+        "label": "Spanish",
+        "description": "Spanish translation asset."
+      },
+      {
+        "value": "fr",
+        "label": "French",
+        "description": "French translation asset."
+      },
+      {
+        "value": "de",
+        "label": "German",
+        "description": "German translation asset."
+      },
+      {
+        "value": "pt",
+        "label": "Portuguese",
+        "description": "Portuguese translation asset."
+      },
+      {
+        "value": "nl",
+        "label": "Dutch",
+        "description": "Dutch translation asset."
+      },
+      {
+        "value": "zh",
+        "label": "Chinese",
+        "description": "Chinese translation asset."
+      },
+      {
+        "value": "ja",
+        "label": "Japanese",
+        "description": "Japanese translation asset."
+      },
+      {
+        "value": "ko",
+        "label": "Korean",
+        "description": "Korean translation asset."
+      },
+      {
+        "value": "ar",
+        "label": "Arabic",
+        "description": "Arabic translation asset."
+      },
+      {
+        "value": "hi",
+        "label": "Hindi",
+        "description": "Hindi translation asset."
+      }
+    ],
     "starterUiComponents": [
       {
         "value": "alert",
@@ -33,7 +95,7 @@
     {
       "name": "transloco",
       "label": "Transloco i18n",
-      "description": "Runtime i18n baseline with EN/IT translation assets.",
+      "description": "Runtime i18n baseline with configurable translation assets.",
       "category": "i18n",
       "repeatable": false,
       "referenceBranch": "evo/i18n/transloco",
@@ -44,7 +106,26 @@
           "target": "dependencies"
         }
       ],
-      "options": []
+      "options": [
+        {
+          "name": "translocoLanguages",
+          "cliFlag": "--transloco-languages",
+          "type": "string",
+          "description": "Comma-separated languages to configure and generate.",
+          "default": "en,it",
+          "choiceCatalog": "translocoLanguages",
+          "multiple": true,
+          "separator": ","
+        },
+        {
+          "name": "translocoDefaultLanguage",
+          "cliFlag": "--transloco-default-language",
+          "type": "string",
+          "description": "Default and fallback language; it must be selected in --transloco-languages.",
+          "default": "en",
+          "choiceCatalog": "translocoLanguages"
+        }
+      ]
     },
     {
       "name": "runtime-config",

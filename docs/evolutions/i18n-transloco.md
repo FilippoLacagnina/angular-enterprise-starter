@@ -34,13 +34,14 @@ Application-level i18n providers live in:
 
 ```text
 src/app/core/i18n/
+  i18n.config.ts
   i18n.provider.ts
   transloco-http-loader.ts
 ```
 
 The provider is registered in `app.config.ts`.
 
-Default languages:
+The reference branch uses the deterministic defaults:
 
 ```text
 en
@@ -53,13 +54,16 @@ Default language:
 en
 ```
 
+The Evolution CLI can instead select a configurable language set and default during installation.
+The generated `i18n.config.ts` centralizes supported, default and fallback languages for reuse by
+application code.
+
 ## Translation files
 
 Translation files are served from Angular static assets:
 
 ```text
-src/assets/i18n/en.json
-src/assets/i18n/it.json
+src/assets/i18n/<language>.json
 ```
 
 The HTTP loader resolves translations with:

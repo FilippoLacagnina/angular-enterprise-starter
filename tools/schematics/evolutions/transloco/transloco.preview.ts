@@ -5,17 +5,14 @@ import { type EvolutionOptions } from '../../evolution/schema';
 import { createPackageDependenciesPreview } from '../../shared/package-dependency';
 import { type EvolutionPreview } from '../evolution-definition';
 import { getTranslocoPreflightBlockingNotes } from './transloco.installer';
+import { createTranslocoInstallPlan, getTranslocoGeneratedFiles } from './transloco.plan';
 
 const TRANSLOCO_DEPENDENCY = getEvolutionDependencyRequirement('transloco', '@jsverse/transloco');
-const TRANSLATION_FILES = [
-  'src/app/core/i18n/i18n.provider.ts',
-  'src/app/core/i18n/transloco-http-loader.ts',
-  'src/assets/i18n/en.json',
-  'src/assets/i18n/it.json',
-] as const;
 
-export function getTranslocoPreview(_options: EvolutionOptions, tree: Tree): EvolutionPreview {
-  const existing = TRANSLATION_FILES.filter((path) => tree.exists(`/${path}`));
+export function getTranslocoPreview(options: EvolutionOptions, tree: Tree): EvolutionPreview {
+  const plan = createTranslocoInstallPlan(options);
+  const generatedFiles = getTranslocoGeneratedFiles(plan).map((path) => path.slice(1));
+  const existing = generatedFiles.filter((path) => tree.exists(`/${path}`));
   const dependencyPreview = createPackageDependenciesPreview(tree, [TRANSLOCO_DEPENDENCY]);
   const blockingNotes = existing.map(
     (path) => `${path} already exists and will not be overwritten.`,
@@ -26,7 +23,7 @@ export function getTranslocoPreview(_options: EvolutionOptions, tree: Tree): Evo
 
   return {
     dependencies: dependencyPreview.dependencies,
-    creates: TRANSLATION_FILES.filter((path) => !existing.includes(path)),
+    creates: generatedFiles.filter((path) => !existing.includes(path)),
     updates: [
       'package.json',
       'angular.json',
@@ -37,7 +34,9 @@ export function getTranslocoPreview(_options: EvolutionOptions, tree: Tree): Evo
     blockingNotes,
     notes: [
       'Adds a Transloco runtime i18n provider and HTTP loader.',
-      'Creates EN/IT translation assets with uppercase and nested key examples.',
+      `Selected languages: ${plan.languages.map((language) => `${language.label} (${language.code})`).join(', ')}.`,
+      `Default and fallback language: ${plan.defaultLanguage}.`,
+      'Creates one translation asset per selected language with uppercase and nested key examples.',
       ...dependencyPreview.notes,
       'Does not modify existing layout or feature templates.',
       'Run npm install after applying the evolution.',

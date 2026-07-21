@@ -90,7 +90,7 @@ npm --cache /private/tmp/aes-npm-cache exec \
 
 | Evolution      | Name             | Status      | Guide                                      | Notes                                                     |
 | -------------- | ---------------- | ----------- | ------------------------------------------ | --------------------------------------------------------- |
-| Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Runtime i18n baseline with EN/IT assets.                  |
+| Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Configurable languages, default and translation assets.   |
 | Runtime Config | `runtime-config` | installable | [Guide](./evolution-cli/runtime-config.md) | Deployable values.yml configuration baseline.             |
 | SignalStore    | `signal-store`   | installable | [Guide](./evolution-cli/signal-store.md)   | Parametrized feature/root store generation.               |
 | Docker SSR     | `docker-ssr`     | installable | [Guide](./evolution-cli/docker-ssr.md)     | SSR-oriented Docker deployment baseline.                  |

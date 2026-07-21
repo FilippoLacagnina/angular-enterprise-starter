@@ -185,7 +185,7 @@ Current CLI installers:
 
 | Installer      | Purpose                                                                                    |
 | -------------- | ------------------------------------------------------------------------------------------ |
-| Transloco      | Runtime i18n provider, loader and EN/IT translation assets.                                |
+| Transloco      | Runtime i18n with configurable languages, default/fallback and generated assets.           |
 | Runtime Config | Deployable YAML configuration with preview, apply and safety guards.                       |
 | SignalStore    | Feature or root stores with safe target detection and provider registration.               |
 | Docker SSR     | Container baseline for the generated Angular Node server.                                  |

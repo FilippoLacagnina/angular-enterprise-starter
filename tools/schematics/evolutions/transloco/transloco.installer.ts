@@ -8,20 +8,19 @@ import {
   type EvolutionDefinition,
   EvolutionUserActionRequiredError,
 } from '../evolution-definition';
+import { type TranslocoInstallPlan, type TranslocoTranslationSeed } from './transloco.model';
+import {
+  createTranslocoInstallPlan,
+  getTranslocoGeneratedFiles,
+  getTranslocoTranslationPath,
+  I18N_CONFIG_PATH,
+  I18N_PROVIDER_PATH,
+  TRANSLOCO_LOADER_PATH,
+} from './transloco.plan';
 
 const TRANSLOCO_DEPENDENCY = getEvolutionDependencyRequirement('transloco', '@jsverse/transloco');
 const ANGULAR_JSON_PATH = '/angular.json';
 const APP_CONFIG_PATH = '/src/app/app.config.ts';
-const I18N_PROVIDER_PATH = '/src/app/core/i18n/i18n.provider.ts';
-const TRANSLOCO_LOADER_PATH = '/src/app/core/i18n/transloco-http-loader.ts';
-const EN_TRANSLATION_PATH = '/src/assets/i18n/en.json';
-const IT_TRANSLATION_PATH = '/src/assets/i18n/it.json';
-const GENERATED_FILES = [
-  I18N_PROVIDER_PATH,
-  TRANSLOCO_LOADER_PATH,
-  EN_TRANSLATION_PATH,
-  IT_TRANSLATION_PATH,
-] as const;
 
 interface AngularJson {
   projects?: Record<
@@ -43,23 +42,36 @@ export function installTranslocoEvolution(
   tree: Tree,
   context: SchematicContext,
   definition: EvolutionDefinition,
-  _options: EvolutionOptions,
+  options: EvolutionOptions,
 ): void {
-  validateTranslocoInstallation(tree);
+  const plan = createTranslocoInstallPlan(options);
+
+  validateTranslocoInstallation(tree, plan);
   ensurePackageDependency(tree, TRANSLOCO_DEPENDENCY);
   addAssetsEntry(tree);
+  createFile(tree, I18N_CONFIG_PATH, createI18nConfigContent(plan));
   createFile(tree, I18N_PROVIDER_PATH, createI18nProviderContent());
   createFile(tree, TRANSLOCO_LOADER_PATH, createTranslocoLoaderContent());
-  createFile(tree, EN_TRANSLATION_PATH, createEnglishTranslationContent());
-  createFile(tree, IT_TRANSLATION_PATH, createItalianTranslationContent());
+
+  for (const language of plan.languages) {
+    createFile(
+      tree,
+      getTranslocoTranslationPath(language.code),
+      createTranslationContent(language.translation),
+    );
+  }
+
   updateAppConfig(tree);
 
-  context.logger.info(`${definition.label} files created.`);
+  context.logger.info(
+    `${definition.label} configured for: ${plan.languages.map((language) => language.code).join(', ')}.`,
+  );
+  context.logger.info(`Default and fallback language: ${plan.defaultLanguage}.`);
   context.logger.info('Run npm install to update the package lock before running quality checks.');
 }
 
-function validateTranslocoInstallation(tree: Tree): void {
-  const existingFiles = GENERATED_FILES.filter((path) => tree.exists(path));
+function validateTranslocoInstallation(tree: Tree, plan: TranslocoInstallPlan): void {
+  const existingFiles = getTranslocoGeneratedFiles(plan).filter((path) => tree.exists(path));
   const blockingNotes = getTranslocoPreflightBlockingNotes(tree);
 
   if (existingFiles.length > 0) {
@@ -232,18 +244,31 @@ function createFile(tree: Tree, path: string, content: string): void {
   tree.create(path, content);
 }
 
+function createI18nConfigContent(plan: TranslocoInstallPlan): string {
+  const languageCodes = plan.languages.map((language) => `'${language.code}'`).join(', ');
+
+  return `export const SUPPORTED_LANGUAGES = [${languageCodes}] as const;
+
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
+export const DEFAULT_LANGUAGE: SupportedLanguage = '${plan.defaultLanguage}';
+export const FALLBACK_LANGUAGE: SupportedLanguage = DEFAULT_LANGUAGE;
+`;
+}
+
 function createI18nProviderContent(): string {
   return `import { isDevMode, type Provider } from '@angular/core';
 import { provideTransloco } from '@jsverse/transloco';
 
+import { DEFAULT_LANGUAGE, FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES } from './i18n.config';
 import { TranslocoHttpLoader } from './transloco-http-loader';
 
 export const provideI18n = (): Provider =>
   provideTransloco({
     config: {
-      availableLangs: ['en', 'it'],
-      defaultLang: 'en',
-      fallbackLang: 'en',
+      availableLangs: [...SUPPORTED_LANGUAGES],
+      defaultLang: DEFAULT_LANGUAGE,
+      fallbackLang: FALLBACK_LANGUAGE,
       reRenderOnLangChange: true,
       prodMode: !isDevMode(),
     },
@@ -269,24 +294,16 @@ export class TranslocoHttpLoader implements TranslocoLoader {
 `;
 }
 
-function createEnglishTranslationContent(): string {
-  return `{
-  "EXAMPLE": "Example",
-  "EXAMPLE_GROUP": {
-    "DESCRIPTION": "Description",
-    "TITLE": "Title"
-  }
-}
-`;
-}
-
-function createItalianTranslationContent(): string {
-  return `{
-  "EXAMPLE": "Esempio",
-  "EXAMPLE_GROUP": {
-    "DESCRIPTION": "Descrizione",
-    "TITLE": "Titolo"
-  }
-}
-`;
+function createTranslationContent(translation: TranslocoTranslationSeed): string {
+  return `${JSON.stringify(
+    {
+      EXAMPLE: translation.example,
+      EXAMPLE_GROUP: {
+        DESCRIPTION: translation.description,
+        TITLE: translation.title,
+      },
+    },
+    null,
+    2,
+  )}\n`;
 }

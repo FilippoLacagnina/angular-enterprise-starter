@@ -8,6 +8,7 @@ import { evolution } from './evolution';
 import evolutionManifest from './evolution/evolution-manifest.json';
 import evolutionSchema from './evolution/schema.json';
 import { getEvolutionDefinitions } from './evolutions/evolution-registry';
+import { TRANSLOCO_LANGUAGE_DEFINITIONS } from './evolutions/transloco/transloco.model';
 import { ngAdd } from './ng-add';
 
 const STARTER_METADATA_PATH = '/.angular-enterprise-starter.json';
@@ -18,10 +19,13 @@ const TSCONFIG_SPEC_PATH = '/tsconfig.spec.json';
 const GLOBAL_STYLES_PATH = '/src/styles.scss';
 const APP_CONFIG_MODEL_PATH = '/src/app/core/config/app-config.model.ts';
 const ENVIRONMENT_PATH = '/src/environments/environment.ts';
+const I18N_CONFIG_PATH = '/src/app/core/i18n/i18n.config.ts';
 const I18N_PROVIDER_PATH = '/src/app/core/i18n/i18n.provider.ts';
 const TRANSLOCO_LOADER_PATH = '/src/app/core/i18n/transloco-http-loader.ts';
 const EN_TRANSLATION_PATH = '/src/assets/i18n/en.json';
 const IT_TRANSLATION_PATH = '/src/assets/i18n/it.json';
+const ES_TRANSLATION_PATH = '/src/assets/i18n/es.json';
+const FR_TRANSLATION_PATH = '/src/assets/i18n/fr.json';
 const RUNTIME_CONFIG_MODEL_PATH = '/src/app/core/runtime-config/runtime-config.model.ts';
 const RUNTIME_CONFIG_PARSER_PATH = '/src/app/core/runtime-config/runtime-config.parser.ts';
 const RUNTIME_CONFIG_PROVIDER_PATH = '/src/app/core/runtime-config/runtime-config.provider.ts';
@@ -239,11 +243,18 @@ describe('Angular Enterprise Starter schematics', () => {
       angularJson.projects['angular-enterprise-starter'].architect.build.options.assets;
 
     expect(packageJson.dependencies?.['@jsverse/transloco']).toBe('^8.3.0');
+    expect(result.exists(I18N_CONFIG_PATH)).toBe(true);
     expect(result.exists(I18N_PROVIDER_PATH)).toBe(true);
     expect(result.exists(TRANSLOCO_LOADER_PATH)).toBe(true);
     expect(result.exists(EN_TRANSLATION_PATH)).toBe(true);
     expect(result.exists(IT_TRANSLATION_PATH)).toBe(true);
     expect(readText(result, I18N_PROVIDER_PATH)).toContain('provideTransloco');
+    expect(readText(result, I18N_CONFIG_PATH)).toContain(
+      "export const SUPPORTED_LANGUAGES = ['en', 'it'] as const;",
+    );
+    expect(readText(result, I18N_CONFIG_PATH)).toContain(
+      "export const DEFAULT_LANGUAGE: SupportedLanguage = 'en';",
+    );
     expect(readText(result, TRANSLOCO_LOADER_PATH)).toContain('./assets/i18n/${lang}.json');
     expect(readText(result, EN_TRANSLATION_PATH)).toContain('"EXAMPLE_GROUP"');
     expect(readText(result, APP_CONFIG_PATH)).toContain(
@@ -254,7 +265,81 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(metadata.enabledEvolutions).toEqual(['transloco']);
   });
 
-  it('evolution preserves Prettier-compliant angular.json formatting for Transloco', async () => {
+  it('evolution installs a configurable Transloco language set and default', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'transloco',
+          translocoLanguages: 'en,es,fr',
+          translocoDefaultLanguage: 'fr',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists(EN_TRANSLATION_PATH)).toBe(true);
+    expect(result.exists(ES_TRANSLATION_PATH)).toBe(true);
+    expect(result.exists(FR_TRANSLATION_PATH)).toBe(true);
+    expect(result.exists(IT_TRANSLATION_PATH)).toBe(false);
+    expect(readText(result, ES_TRANSLATION_PATH)).toContain('"EXAMPLE": "Ejemplo"');
+    expect(readText(result, FR_TRANSLATION_PATH)).toContain('"TITLE": "Titre"');
+    expect(readText(result, I18N_CONFIG_PATH)).toContain(
+      "export const SUPPORTED_LANGUAGES = ['en', 'es', 'fr'] as const;",
+    );
+    expect(readText(result, I18N_CONFIG_PATH)).toContain(
+      "export const DEFAULT_LANGUAGE: SupportedLanguage = 'fr';",
+    );
+  });
+
+  it('evolution requires the implicit English default in the selected Transloco languages', async () => {
+    const tree = createStarterTree();
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(evolution({ name: 'transloco', translocoLanguages: 'it,fr' }), tree),
+      ),
+    ).rejects.toThrow('Transloco default language "en" must be included in --transloco-languages.');
+
+    expect(tree.exists(I18N_CONFIG_PATH)).toBe(false);
+    expect(readPackageJson(tree).dependencies?.['@jsverse/transloco']).toBeUndefined();
+  });
+
+  it('evolution accepts a selected non-English Transloco default when explicit', async () => {
+    const tree = createStarterTree();
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'transloco',
+          translocoLanguages: 'it,fr',
+          translocoDefaultLanguage: 'it',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists(EN_TRANSLATION_PATH)).toBe(false);
+    expect(readText(result, I18N_CONFIG_PATH)).toContain(
+      "export const DEFAULT_LANGUAGE: SupportedLanguage = 'it';",
+    );
+  });
+
+  it('evolution rejects unsupported Transloco languages before changing the workspace', async () => {
+    const tree = createStarterTree();
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(evolution({ name: 'transloco', translocoLanguages: 'en,xx' }), tree),
+      ),
+    ).rejects.toThrow('Unsupported Transloco language selection: xx.');
+
+    expect(tree.exists(I18N_CONFIG_PATH)).toBe(false);
+    expect(readPackageJson(tree).dependencies?.['@jsverse/transloco']).toBeUndefined();
+  });
+
+  it('evolution generates Prettier-compliant Transloco files', async () => {
     const tree = createStarterTree();
     tree.overwrite(
       ANGULAR_JSON_PATH,
@@ -263,7 +348,11 @@ describe('Angular Enterprise Starter schematics', () => {
 
     const result = await lastValueFrom(runner.callRule(evolution({ name: 'transloco' }), tree));
 
-    await expectTreeFileToBeFormatted(result, ANGULAR_JSON_PATH);
+    await expectTreeFilesToBeFormatted(result, [
+      ANGULAR_JSON_PATH,
+      ...getTreeFilePaths(result, '/src/app/core/i18n'),
+      ...getTreeFilePaths(result, '/src/assets/i18n'),
+    ]);
   });
 
   it('evolution preserves a compatible existing Transloco dependency', async () => {
@@ -1308,6 +1397,12 @@ export class DashboardService {
       .sort();
 
     expect(manifestOptionNames).toEqual(schemaOptionNames);
+    expect(
+      evolutionManifest.optionCatalogs.translocoLanguages.map(({ value, label }) => ({
+        code: value,
+        label,
+      })),
+    ).toEqual(TRANSLOCO_LANGUAGE_DEFINITIONS.map(({ code, label }) => ({ code, label })));
   });
 });
 

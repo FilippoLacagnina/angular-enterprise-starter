@@ -23,6 +23,7 @@ const EVOLUTION_MANIFEST_PATH =
 
 let evolutionManifest;
 let evolutions;
+let translocoLanguages;
 let designSystemComponents;
 let designSystemDefaultComponents;
 let defaultAiGenkitModel;
@@ -96,6 +97,10 @@ async function main() {
 }
 
 async function resolveEvolutionOptions(evolution, shouldAskOptions) {
+  if (evolution.name === 'transloco') {
+    return resolveTranslocoOptions(shouldAskOptions);
+  }
+
   if (evolution.name === 'ai-genkit') {
     return resolveAiGenkitOptions(shouldAskOptions);
   }
@@ -127,6 +132,30 @@ async function resolveEvolutionOptions(evolution, shouldAskOptions) {
   }
 
   return {};
+}
+
+async function resolveTranslocoOptions(shouldAskOptions) {
+  if (!shouldAskOptions) {
+    return createTranslocoOptions({
+      translocoLanguages: args.translocoLanguages,
+      translocoDefaultLanguage: args.translocoDefaultLanguage,
+    });
+  }
+
+  const selectedLanguages = await askTranslocoLanguages();
+  const selectedLanguageChoices = translocoLanguages.filter(([code]) =>
+    selectedLanguages.includes(code),
+  );
+  const defaultLanguage = await askChoice(
+    'Default language',
+    selectedLanguageChoices,
+    selectedLanguages.includes('en') ? 'en' : null,
+  );
+
+  return createTranslocoOptions({
+    translocoLanguages: selectedLanguages.join(','),
+    translocoDefaultLanguage: defaultLanguage,
+  });
 }
 
 async function resolveAiGenkitOptions(shouldAskOptions) {
@@ -347,7 +376,7 @@ async function askPreviewMode() {
   }
 }
 
-async function askChoice(title, choices) {
+async function askChoice(title, choices, defaultValue = choices[0]?.[0]) {
   const rl = createInterface({ input, output });
 
   try {
@@ -359,8 +388,11 @@ async function askChoice(title, choices) {
     }
 
     console.log('');
-    const answer = await rl.question(`${color.bold('Select option')} ${color.dim('[1]')} `);
-    const selectedIndex = answer === '' ? 0 : Number.parseInt(answer, 10) - 1;
+    const defaultIndex =
+      defaultValue === null ? undefined : choices.findIndex(([value]) => value === defaultValue);
+    const defaultHint = defaultIndex === undefined ? '' : ` ${color.dim(`[${defaultIndex + 1}]`)}`;
+    const answer = await rl.question(`${color.bold('Select option')}${defaultHint} `);
+    const selectedIndex = answer === '' ? defaultIndex : Number.parseInt(answer, 10) - 1;
     const selectedChoice = choices[selectedIndex];
 
     if (!selectedChoice) {
@@ -381,6 +413,35 @@ async function askText(label, defaultValue) {
     return answer.trim() || defaultValue;
   } finally {
     rl.close();
+  }
+}
+
+async function askTranslocoLanguages() {
+  while (true) {
+    printSection('Select languages');
+    console.log(color.dim('Choose the translation assets to configure and generate.'));
+    console.log(color.dim('Use numbers, language codes, or a mix of both.'));
+    console.log('');
+
+    printCatalogChoices(translocoLanguages);
+    console.log('');
+
+    const defaultLanguages = getManifestOptionDefault('transloco', 'translocoLanguages');
+    const answer = await askText('Languages', defaultLanguages);
+
+    try {
+      const selectedLanguages = parseCatalogSelection(answer, translocoLanguages, 'language');
+
+      console.log('');
+      console.log(
+        `${color.green('Selected')} ${color.bold(formatCatalogSelection(selectedLanguages, translocoLanguages))}`,
+      );
+
+      return selectedLanguages;
+    } catch (error) {
+      console.log('');
+      console.log(color.yellow(error instanceof Error ? error.message : String(error)));
+    }
   }
 }
 
@@ -425,7 +486,11 @@ async function askDesignSystemComponents(systemName) {
 }
 
 function printDesignSystemComponentChoices() {
-  for (const [index, [name, label, description]] of designSystemComponents.entries()) {
+  printCatalogChoices(designSystemComponents);
+}
+
+function printCatalogChoices(catalog) {
+  for (const [index, [name, label, description]] of catalog.entries()) {
     console.log(`${color.cyan(`${index + 1}.`)} ${color.bold(label)} ${color.dim(`(${name})`)}`);
     console.log(`   ${color.dim(description)}`);
   }
@@ -605,6 +670,32 @@ function createSignalStoreOptions(options) {
   };
 }
 
+function createTranslocoOptions(options) {
+  const selectedLanguages = parseCatalogSelection(
+    options.translocoLanguages ?? getManifestOptionDefault('transloco', 'translocoLanguages'),
+    translocoLanguages,
+    'language',
+  );
+  const defaultLanguage =
+    options.translocoDefaultLanguage?.trim().toLowerCase() ||
+    getManifestOptionDefault('transloco', 'translocoDefaultLanguage');
+
+  if (!translocoLanguages.some(([code]) => code === defaultLanguage)) {
+    throw new Error(`Unsupported Transloco default language: ${defaultLanguage}.`);
+  }
+
+  if (!selectedLanguages.includes(defaultLanguage)) {
+    throw new Error(
+      `Transloco default language "${defaultLanguage}" must be included in --transloco-languages.`,
+    );
+  }
+
+  return {
+    translocoLanguages: selectedLanguages.join(','),
+    translocoDefaultLanguage: defaultLanguage,
+  };
+}
+
 function createDesignSystemOptions({
   systemName,
   modeOptionName,
@@ -668,38 +759,40 @@ function normalizeFeatureName(value) {
 }
 
 function parseDesignSystemComponentSelection(value, systemName) {
-  if (!value?.trim()) {
-    throw new Error(`Select at least one ${systemName} component.`);
-  }
-
-  const selectedComponents = value
-    .split(',')
-    .map((component) => component.trim().toLowerCase())
-    .filter(Boolean)
-    .map((component) => resolveDesignSystemComponentName(component, systemName));
-
-  return [...new Set(selectedComponents)];
+  return parseCatalogSelection(value, designSystemComponents, `${systemName} component`);
 }
 
-function resolveDesignSystemComponentName(value, systemName) {
+function parseCatalogSelection(value, catalog, itemName) {
+  if (!value?.trim()) {
+    throw new Error(`Select at least one ${itemName}.`);
+  }
+
+  const selectedValues = value
+    .split(',')
+    .map((entry) => entry.trim().toLowerCase())
+    .filter(Boolean)
+    .map((entry) => resolveCatalogValue(entry, catalog, itemName));
+
+  return [...new Set(selectedValues)];
+}
+
+function resolveCatalogValue(value, catalog, itemName) {
   const componentIndex = Number.parseInt(value, 10);
 
   if (Number.isInteger(componentIndex) && String(componentIndex) === value) {
-    const component = designSystemComponents[componentIndex - 1];
+    const component = catalog[componentIndex - 1];
 
     if (component) {
       return component[0];
     }
   }
 
-  if (designSystemComponents.some(([componentName]) => componentName === value)) {
+  if (catalog.some(([componentName]) => componentName === value)) {
     return value;
   }
 
   throw new Error(
-    `Unsupported ${systemName} component: ${value}. Supported components: ${getDesignSystemComponentNames().join(
-      ', ',
-    )}.`,
+    `Unsupported ${itemName}: ${value}. Supported values: ${catalog.map(([name]) => name).join(', ')}.`,
   );
 }
 
@@ -714,11 +807,15 @@ function createDesignSystemSelectionHint() {
 }
 
 function formatDesignSystemComponentSelection(componentNames) {
-  return componentNames
-    .map((componentName) => {
-      const component = designSystemComponents.find(([name]) => name === componentName);
+  return formatCatalogSelection(componentNames, designSystemComponents);
+}
 
-      return component?.[1] ?? componentName;
+function formatCatalogSelection(values, catalog) {
+  return values
+    .map((value) => {
+      const option = catalog.find(([name]) => name === value);
+
+      return option ? `${option[1]} (${value})` : value;
     })
     .join(', ');
 }
@@ -733,6 +830,14 @@ function createOptionSummary(evolutionOptions) {
 function formatOptionSummaryValue(name, value) {
   if (name === 'bootstrapComponents' || name === 'tailwindComponents') {
     return formatDesignSystemComponentSelection(String(value).split(','));
+  }
+
+  if (name === 'translocoLanguages') {
+    return formatCatalogSelection(String(value).split(','), translocoLanguages);
+  }
+
+  if (name === 'translocoDefaultLanguage') {
+    return formatCatalogSelection([String(value)], translocoLanguages);
   }
 
   return value;
@@ -864,6 +969,12 @@ function initializeEvolutionManifest() {
   evolutionManifest = readEvolutionManifest();
   validateEvolutionManifest(evolutionManifest);
   evolutions = evolutionManifest.evolutions;
+
+  translocoLanguages = getManifestOptionCatalog('translocoLanguages').map((language) => [
+    language.value,
+    language.label,
+    language.description,
+  ]);
 
   designSystemComponents = getManifestOptionCatalog('starterUiComponents').map((component) => [
     component.value,

@@ -21,7 +21,7 @@ It executes bundled schematics directly, so the target workspace does not need a
 
 | Installer      | Name             | Purpose                                                         |
 | -------------- | ---------------- | --------------------------------------------------------------- |
-| Transloco      | `transloco`      | Add runtime i18n provider, loader and EN/IT translation assets. |
+| Transloco      | `transloco`      | Add runtime i18n with configurable language assets and default. |
 | Runtime Config | `runtime-config` | Add deployable values.yml runtime configuration with guards.    |
 | SignalStore    | `signal-store`   | Generate feature/root NgRx SignalStore state files.             |
 | Docker SSR     | `docker-ssr`     | Add an SSR-oriented Docker deployment baseline.                 |
