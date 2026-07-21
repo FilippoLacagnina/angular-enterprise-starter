@@ -79,8 +79,8 @@ describe('Evolution CLI arguments', () => {
   });
 
   it('generates complete and evolution-specific help from the manifest', () => {
-    const completeHelp = createCliHelp(manifest, '0.7.0-alpha.0');
-    const aiHelp = createCliHelp(manifest, '0.7.0-alpha.0', 'ai-genkit');
+    const completeHelp = createCliHelp(manifest, '0.8.0-alpha.0');
+    const aiHelp = createCliHelp(manifest, '0.8.0-alpha.0', 'ai-genkit');
 
     expect(completeHelp).toContain('Available evolutions:');
     expect(completeHelp).toContain('--store-scope <feature|root>');

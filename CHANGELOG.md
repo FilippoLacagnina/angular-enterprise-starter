@@ -6,6 +6,12 @@ The project is public and currently in alpha pre-release.
 
 ## Unreleased
 
+No unreleased changes yet.
+
+## 0.8.0-alpha.0 - 2026-07-21
+
+Evolution CLI hardening and configurable Transloco.
+
 ### Added
 
 - Added a manifest-backed Evolution CLI catalog shared by parsing, help, registry metadata and packaging.
@@ -24,6 +30,9 @@ The project is public and currently in alpha pre-release.
 - Refocused the README on the starter foundation while giving the Interactive Builder a first-class composition path.
 - Aligned npm documentation with the intentional `latest` and `alpha` dist-tag policy.
 - Extended CI to validate documentation, schematics and Evolution CLI packaging.
+- Refreshed transitive dependencies to resolve the current npm audit findings.
+- Normalized npm binary paths for npm 11 publication validation.
+- Updated the starter baseline, Evolution CLI package and release documentation to `0.8.0-alpha.0`.
 
 ## 0.7.0-alpha.0 - 2026-07-18
 

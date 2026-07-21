@@ -1,12 +1,12 @@
 {
   "name": "@filippolacagnina/angular-enterprise-starter",
-  "version": "0.7.0-alpha.0",
+  "version": "0.8.0-alpha.0",
   "description": "Versioned Evolution CLI and schematics for Angular Enterprise Starter.",
   "author": "Filippo Lacagnina",
   "license": "MIT",
   "bin": {
-    "angular-enterprise-starter": "./bin/angular-enterprise-starter.mjs",
-    "aes": "./bin/angular-enterprise-starter.mjs"
+    "angular-enterprise-starter": "bin/angular-enterprise-starter.mjs",
+    "aes": "bin/angular-enterprise-starter.mjs"
   },
   "schematics": "./schematics/collection.json",
   "files": [

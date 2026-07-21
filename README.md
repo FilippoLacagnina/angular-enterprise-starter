@@ -265,7 +265,7 @@ Environment-specific commands such as `start:dev`, `build:test` and `build:prod`
 
 ## Alpha Status
 
-The project is currently published as `v0.7.0-alpha.0`.
+The current release candidate is `v0.8.0-alpha.0`.
 
 The Angular application remains marked as `private` to prevent accidental npm publication. The Evolution CLI is packaged and published separately.
 

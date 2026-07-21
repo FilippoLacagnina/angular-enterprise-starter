@@ -26,6 +26,7 @@ Current priorities:
 | `0.5.1-alpha.0` | Bundled, render-safe schematic execution for consumer workspaces.        |
 | `0.6.0-alpha.0` | Runtime Config installer with preview, apply and safety guards.          |
 | `0.7.0-alpha.0` | AI Genkit installer, multi-provider-ready foundation and Angular 21 LTS. |
+| `0.8.0-alpha.0` | Hardened Evolution CLI and configurable Transloco language generation.   |
 
 ## Next
 
