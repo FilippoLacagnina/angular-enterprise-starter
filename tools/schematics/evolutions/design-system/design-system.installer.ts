@@ -33,7 +33,7 @@ export function installDesignSystemComponents<TComponent extends DesignSystemCom
   const componentStatuses = getDesignSystemComponentStatuses((path) => tree.exists(path), plan);
 
   for (const componentStatus of componentStatuses) {
-    if (componentStatus.status === 'complete') {
+    if (componentStatus.status !== 'missing') {
       continue;
     }
 

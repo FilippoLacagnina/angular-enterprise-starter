@@ -12,7 +12,7 @@ import {
 import { BOOTSTRAP_INDEX_PATH, createBootstrapInstallPlan } from './bootstrap.plan';
 
 const BOOTSTRAP_DEPENDENCIES = getEvolutionDependencyRequirements('bootstrap');
-const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
+const BOOTSTRAP_STYLE_DIRECTIVE = "@use 'bootstrap/dist/css/bootstrap.min.css';";
 
 export function installBootstrapEvolution(
   tree: Tree,
@@ -24,7 +24,7 @@ export function installBootstrapEvolution(
 
   assertDesignSystemComponentsInstallable({ tree, plan, displayName: 'Bootstrap' });
   ensurePackageDependencies(tree, BOOTSTRAP_DEPENDENCIES);
-  addBootstrapStyleImport(tree);
+  addBootstrapStyleDirective(tree);
   installDesignSystemComponents({ tree, plan, displayName: 'Bootstrap' });
   updateDesignSystemIndex({ tree, plan, indexPath: BOOTSTRAP_INDEX_PATH });
 
@@ -32,27 +32,27 @@ export function installBootstrapEvolution(
   context.logger.info('Run npm install to update the package lock before running quality checks.');
 }
 
-function addBootstrapStyleImport(tree: Tree): void {
+function addBootstrapStyleDirective(tree: Tree): void {
   const stylesPath = '/src/styles.scss';
 
   if (!tree.exists(stylesPath)) {
-    tree.create(stylesPath, `${BOOTSTRAP_STYLE_IMPORT}\n`);
+    tree.create(stylesPath, `${BOOTSTRAP_STYLE_DIRECTIVE}\n`);
     return;
   }
 
   const stylesContent = tree.readText(stylesPath);
 
-  if (hasBootstrapImport(stylesContent)) {
+  if (hasBootstrapStyleReference(stylesContent)) {
     return;
   }
 
   const nextContent = stylesContent.trim()
-    ? `${BOOTSTRAP_STYLE_IMPORT}\n\n${stylesContent}`
-    : `${BOOTSTRAP_STYLE_IMPORT}\n`;
+    ? `${BOOTSTRAP_STYLE_DIRECTIVE}\n\n${stylesContent}`
+    : `${BOOTSTRAP_STYLE_DIRECTIVE}\n`;
 
   tree.overwrite(stylesPath, nextContent);
 }
 
-function hasBootstrapImport(stylesContent: string): boolean {
+function hasBootstrapStyleReference(stylesContent: string): boolean {
   return /bootstrap\/(dist\/css\/bootstrap(\.min)?\.css|scss\/bootstrap)/.test(stylesContent);
 }

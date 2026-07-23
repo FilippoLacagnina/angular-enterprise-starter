@@ -9,8 +9,24 @@
     "aes": "bin/angular-enterprise-starter.mjs"
   },
   "schematics": "./schematics/collection.json",
+  "exports": {
+    "./design-system-catalog": {
+      "types": "./catalog/design-system-catalog.d.ts",
+      "import": "./catalog/design-system-catalog.mjs",
+      "default": "./catalog/design-system-catalog.mjs"
+    },
+    "./design-system-catalog.json": "./catalog/design-system-catalog.json",
+    "./design-system-sources": {
+      "types": "./catalog/design-system-sources.d.ts",
+      "import": "./catalog/design-system-sources.mjs",
+      "default": "./catalog/design-system-sources.mjs"
+    },
+    "./design-system-sources.json": "./catalog/design-system-sources.json",
+    "./package.json": "./package.json"
+  },
   "files": [
     "bin/",
+    "catalog/",
     "schematics/",
     "package.json",
     "README.md"
@@ -49,6 +65,8 @@
     "ssr",
     "tailwind",
     "bootstrap",
+    "component-catalog",
+    "design-system",
     "transloco"
   ],
   "dependencies": {

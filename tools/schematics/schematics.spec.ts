@@ -40,18 +40,24 @@ const APP_STORE_PATH = '/src/app/core/state/app.store.ts';
 const DASHBOARD_ROUTES_PATH = '/src/app/features/dashboard/dashboard.routes.ts';
 const BOOTSTRAP_INDEX_PATH = '/src/app/shared/components/bootstrap/index.ts';
 const BOOTSTRAP_ALERT_PATH = '/src/app/shared/components/bootstrap/alert/alert.ts';
+const BOOTSTRAP_ALERT_SPEC_PATH = '/src/app/shared/components/bootstrap/alert/alert.spec.ts';
 const BOOTSTRAP_BADGE_PATH = '/src/app/shared/components/bootstrap/badge/badge.ts';
 const BOOTSTRAP_BUTTON_PATH = '/src/app/shared/components/bootstrap/button/button.ts';
+const BOOTSTRAP_BUTTON_SPEC_PATH = '/src/app/shared/components/bootstrap/button/button.spec.ts';
 const BOOTSTRAP_CARD_PATH = '/src/app/shared/components/bootstrap/card/card.ts';
+const BOOTSTRAP_CARD_SPEC_PATH = '/src/app/shared/components/bootstrap/card/card.spec.ts';
 const BOOTSTRAP_CARD_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/card/card.html';
 const BOOTSTRAP_INPUT_PATH = '/src/app/shared/components/bootstrap/input/input.ts';
 const BOOTSTRAP_INPUT_TEMPLATE_PATH = '/src/app/shared/components/bootstrap/input/input.html';
-const BOOTSTRAP_STYLE_IMPORT = "@import 'bootstrap/dist/css/bootstrap.min.css';";
+const BOOTSTRAP_STYLE_DIRECTIVE = "@use 'bootstrap/dist/css/bootstrap.min.css';";
 const TAILWIND_INDEX_PATH = '/src/app/shared/components/tailwind/index.ts';
 const TAILWIND_ALERT_PATH = '/src/app/shared/components/tailwind/alert/alert.ts';
+const TAILWIND_ALERT_SPEC_PATH = '/src/app/shared/components/tailwind/alert/alert.spec.ts';
 const TAILWIND_BADGE_PATH = '/src/app/shared/components/tailwind/badge/badge.ts';
 const TAILWIND_BUTTON_PATH = '/src/app/shared/components/tailwind/button/button.ts';
+const TAILWIND_BUTTON_SPEC_PATH = '/src/app/shared/components/tailwind/button/button.spec.ts';
 const TAILWIND_CARD_PATH = '/src/app/shared/components/tailwind/card/card.ts';
+const TAILWIND_CARD_SPEC_PATH = '/src/app/shared/components/tailwind/card/card.spec.ts';
 const TAILWIND_CARD_TEMPLATE_PATH = '/src/app/shared/components/tailwind/card/card.html';
 const TAILWIND_INPUT_PATH = '/src/app/shared/components/tailwind/input/input.ts';
 const TAILWIND_INPUT_TEMPLATE_PATH = '/src/app/shared/components/tailwind/input/input.html';
@@ -615,15 +621,25 @@ export class DashboardService {
     const stylesContent = readText(result, GLOBAL_STYLES_PATH);
 
     expect(packageJson.dependencies?.bootstrap).toBe('^5.3.8');
-    expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n\nbody { margin: 0; }\n`);
+    expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_DIRECTIVE}\n\nbody { margin: 0; }\n`);
     expect(result.exists(BOOTSTRAP_ALERT_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_ALERT_SPEC_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_BADGE_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_BUTTON_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_BUTTON_SPEC_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_CARD_PATH)).toBe(true);
+    expect(result.exists(BOOTSTRAP_CARD_SPEC_PATH)).toBe(true);
     expect(result.exists(BOOTSTRAP_INPUT_PATH)).toBe(true);
     expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain("selector: 'app-bootstrap-button'");
     expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain('readonly variant = input');
+    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain('readonly loading = input');
+    expect(readText(result, BOOTSTRAP_BUTTON_PATH)).toContain(
+      'changeDetection: ChangeDetectionStrategy.OnPush',
+    );
+    expect(readText(result, BOOTSTRAP_ALERT_PATH)).toContain('readonly open = model(true)');
+    expect(readText(result, BOOTSTRAP_ALERT_PATH)).toContain('readonly dismissed = output<void>()');
     expect(readText(result, BOOTSTRAP_CARD_PATH)).toContain('readonly imageSrc = input');
+    expect(readText(result, BOOTSTRAP_CARD_PATH)).toContain('readonly headingLevel = input');
     expect(readText(result, BOOTSTRAP_CARD_TEMPLATE_PATH)).toContain('card-img-top');
     expect(readText(result, BOOTSTRAP_INPUT_PATH)).toContain('readonly label = input');
     expect(readText(result, BOOTSTRAP_INPUT_TEMPLATE_PATH)).toContain('class="form-label"');
@@ -686,14 +702,14 @@ export class DashboardService {
         2,
       ),
     );
-    tree.create(GLOBAL_STYLES_PATH, `${BOOTSTRAP_STYLE_IMPORT}\n`);
+    tree.create(GLOBAL_STYLES_PATH, `${BOOTSTRAP_STYLE_DIRECTIVE}\n`);
 
     const result = await lastValueFrom(runner.callRule(evolution({ name: 'bootstrap' }), tree));
     const packageJson = readPackageJson(result);
     const stylesContent = readText(result, GLOBAL_STYLES_PATH);
 
     expect(packageJson.dependencies?.bootstrap).toBe('^5.3.8');
-    expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_IMPORT}\n`);
+    expect(stylesContent).toBe(`${BOOTSTRAP_STYLE_DIRECTIVE}\n`);
   });
 
   it('evolution blocks an incompatible existing Bootstrap dependency', async () => {
@@ -790,13 +806,23 @@ export class DashboardService {
     expect(postcssConfig.plugins?.['@tailwindcss/postcss']).toEqual({});
     expect(stylesContent).toBe(`${TAILWIND_STYLE_IMPORT}\n\nbody { margin: 0; }\n`);
     expect(result.exists(TAILWIND_ALERT_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_ALERT_SPEC_PATH)).toBe(true);
     expect(result.exists(TAILWIND_BADGE_PATH)).toBe(true);
     expect(result.exists(TAILWIND_BUTTON_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_BUTTON_SPEC_PATH)).toBe(true);
     expect(result.exists(TAILWIND_CARD_PATH)).toBe(true);
+    expect(result.exists(TAILWIND_CARD_SPEC_PATH)).toBe(true);
     expect(result.exists(TAILWIND_INPUT_PATH)).toBe(true);
     expect(readText(result, TAILWIND_BUTTON_PATH)).toContain("selector: 'app-tailwind-button'");
     expect(readText(result, TAILWIND_BUTTON_PATH)).toContain('readonly variant = input');
+    expect(readText(result, TAILWIND_BUTTON_PATH)).toContain('readonly loading = input');
+    expect(readText(result, TAILWIND_BUTTON_PATH)).toContain(
+      'changeDetection: ChangeDetectionStrategy.OnPush',
+    );
+    expect(readText(result, TAILWIND_ALERT_PATH)).toContain('readonly open = model(true)');
+    expect(readText(result, TAILWIND_ALERT_PATH)).toContain('readonly dismissed = output<void>()');
     expect(readText(result, TAILWIND_CARD_PATH)).toContain('readonly imageSrc = input');
+    expect(readText(result, TAILWIND_CARD_PATH)).toContain('readonly headingLevel = input');
     expect(readText(result, TAILWIND_CARD_TEMPLATE_PATH)).toContain('rounded-xl');
     expect(readText(result, TAILWIND_INPUT_PATH)).toContain('readonly label = input');
     expect(readText(result, TAILWIND_INPUT_TEMPLATE_PATH)).toContain('text-slate-700');
@@ -944,6 +970,32 @@ export class DashboardService {
     const metadata = readMetadata(result);
 
     expect(metadata.enabledEvolutions).toEqual(['bootstrap', 'tailwind']);
+  });
+
+  it('evolution composes Bootstrap and Tailwind Sass modules in either installation order', async () => {
+    const installationOrders = [
+      {
+        first: 'bootstrap',
+        second: 'tailwind',
+        expectedStyles: `${TAILWIND_STYLE_IMPORT}\n\n${BOOTSTRAP_STYLE_DIRECTIVE}\n`,
+      },
+      {
+        first: 'tailwind',
+        second: 'bootstrap',
+        expectedStyles: `${BOOTSTRAP_STYLE_DIRECTIVE}\n\n${TAILWIND_STYLE_IMPORT}\n`,
+      },
+    ] as const;
+
+    for (const { first, second, expectedStyles } of installationOrders) {
+      const tree = createStarterTree();
+      const firstResult = await lastValueFrom(runner.callRule(evolution({ name: first }), tree));
+      const secondResult = await lastValueFrom(
+        runner.callRule(evolution({ name: second }), firstResult),
+      );
+
+      expect(readText(secondResult, GLOBAL_STYLES_PATH)).toBe(expectedStyles);
+      expect(readMetadata(secondResult).enabledEvolutions).toEqual(['bootstrap', 'tailwind']);
+    }
   });
 
   it('evolution preview does not update starter metadata', async () => {

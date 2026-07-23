@@ -58,12 +58,23 @@ Available starter-owned wrapper components:
 | `card`    | `app-bootstrap-card`   | `shared/components/bootstrap/card/card.ts`     |
 | `input`   | `app-bootstrap-input`  | `shared/components/bootstrap/input/input.ts`   |
 
-The generated wrappers intentionally expose a small API:
+The generated wrappers expose a small, provider-owned API:
 
-| Component | Supported options                                                                   |
-| --------- | ----------------------------------------------------------------------------------- |
-| `card`    | `title`, `subtitle`, `imageSrc`, `imageAlt`, `imagePosition` (`top` or `bottom`).   |
-| `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attrs. |
+| Component | Supported options                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------- |
+| `alert`   | `variant`, `dismissible`, `dismissLabel`, `role`, two-way `open`, `dismissed`.                                      |
+| `badge`   | `variant`, `pill`, `ariaLabel`.                                                                                     |
+| `button`  | `variant`, `outline`, `size`, `type`, `disabled`, `loading`, `fullWidth`, `ariaLabel`.                              |
+| `card`    | `title`, `subtitle`, `headingLevel`, image source, alternative text, position, loading and dimensions, `ariaLabel`. |
+| `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attributes.                            |
+
+Alert and Badge support `primary`, `secondary`, `success`, `danger`, `warning`, `info`, `light`,
+`dark` and `neutral`. Button supports the same semantic variants except `neutral`, plus `link` and
+`ghost`.
+
+Button, Badge, Alert and Card use `ChangeDetectionStrategy.OnPush`. Newly generated versions also
+include focused component tests. These tests are supplemental: a complete wrapper created by an
+older CLI version remains valid and is never overwritten only because its generated test is absent.
 
 Generated wrappers are exported from:
 
@@ -90,7 +101,33 @@ Example:
 This branch does not apply Bootstrap classes to the existing layout or dashboard templates by default.
 This keeps the evolution branch easier to merge with other optional branches.
 
-Generated Angular wrappers use `input()` signals for dynamic options and stay aligned with Bootstrap 5.3 classes.
+Generated Angular wrappers use signal inputs and stay aligned with Bootstrap 5.3 classes.
+
+Example loading action:
+
+```html
+<app-bootstrap-button
+  ariaLabel="Save account"
+  loading
+>
+  Save
+</app-bootstrap-button>
+```
+
+Example controlled alert:
+
+```html
+<app-bootstrap-alert
+  dismissLabel="Dismiss notification"
+  dismissible
+  role="status"
+  variant="success"
+  [(open)]="notificationOpen"
+  (dismissed)="handleNotificationDismissed()"
+>
+  Account saved.
+</app-bootstrap-alert>
+```
 
 ## Guidelines
 

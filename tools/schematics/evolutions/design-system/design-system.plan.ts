@@ -7,7 +7,10 @@ import {
 export function getDesignSystemComponentFiles<TComponent extends DesignSystemComponentDefinition>(
   plan: DesignSystemInstallPlan<string, TComponent>,
 ) {
-  return plan.components.flatMap((component) => component.files);
+  return plan.components.flatMap((component) => [
+    ...component.files,
+    ...(component.supplementalFiles ?? []),
+  ]);
 }
 
 export function getDesignSystemExportLines<TComponent extends DesignSystemComponentDefinition>(
@@ -25,27 +28,39 @@ export function getDesignSystemComponentStatuses<
   plan: DesignSystemInstallPlan<string, TComponent>,
 ): readonly DesignSystemComponentStatus<TComponent>[] {
   return plan.components.map((component) => {
-    const existingFiles = component.files.filter((file) => hasFile(file.path));
-    const missingFiles = component.files.filter((file) => !hasFile(file.path));
+    const supplementalFiles = component.supplementalFiles ?? [];
+    const existingRequiredFiles = component.files.filter((file) => hasFile(file.path));
+    const missingRequiredFiles = component.files.filter((file) => !hasFile(file.path));
+    const existingSupplementalFiles = supplementalFiles.filter((file) => hasFile(file.path));
+    const missingSupplementalFiles = supplementalFiles.filter((file) => !hasFile(file.path));
 
     return {
       component,
-      existingFiles,
-      missingFiles,
-      status: resolveDesignSystemComponentStatus(existingFiles.length, missingFiles.length),
+      existingFiles: [...existingRequiredFiles, ...existingSupplementalFiles],
+      missingFiles: [...missingRequiredFiles, ...missingSupplementalFiles],
+      existingRequiredFiles,
+      missingRequiredFiles,
+      existingSupplementalFiles,
+      missingSupplementalFiles,
+      status: resolveDesignSystemComponentStatus(
+        existingRequiredFiles.length,
+        missingRequiredFiles.length,
+        existingSupplementalFiles.length,
+      ),
     };
   });
 }
 
 function resolveDesignSystemComponentStatus(
-  existingFileCount: number,
-  missingFileCount: number,
+  existingRequiredFileCount: number,
+  missingRequiredFileCount: number,
+  existingSupplementalFileCount: number,
 ): DesignSystemComponentStatus['status'] {
-  if (existingFileCount === 0) {
+  if (existingRequiredFileCount === 0 && existingSupplementalFileCount === 0) {
     return 'missing';
   }
 
-  if (missingFileCount === 0) {
+  if (missingRequiredFileCount === 0) {
     return 'complete';
   }
 

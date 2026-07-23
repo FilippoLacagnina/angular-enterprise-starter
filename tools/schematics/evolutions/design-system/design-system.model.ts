@@ -11,6 +11,7 @@ export interface DesignSystemComponentDefinition<TName extends string = string> 
   readonly className: string;
   readonly exportPath: string;
   readonly files: readonly DesignSystemFileDefinition[];
+  readonly supplementalFiles?: readonly DesignSystemFileDefinition[];
 }
 
 export interface DesignSystemInstallPlan<
@@ -28,4 +29,8 @@ export interface DesignSystemComponentStatus<
   readonly status: DesignSystemComponentInstallStatus;
   readonly existingFiles: readonly DesignSystemFileDefinition[];
   readonly missingFiles: readonly DesignSystemFileDefinition[];
+  readonly existingRequiredFiles: readonly DesignSystemFileDefinition[];
+  readonly missingRequiredFiles: readonly DesignSystemFileDefinition[];
+  readonly existingSupplementalFiles: readonly DesignSystemFileDefinition[];
+  readonly missingSupplementalFiles: readonly DesignSystemFileDefinition[];
 }

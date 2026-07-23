@@ -58,6 +58,52 @@ npx @filippolacagnina/angular-enterprise-starter evolution --name tailwind --app
 Use `--apply` only after validating the command with `--preview`.
 For installer-specific options, see the Evolution CLI guide.
 
+## Design system data contracts
+
+The package exposes two versioned, serializable contracts for tools such as the Interactive Builder.
+They let a trusted Node build process inspect and compile the starter-owned Bootstrap and Tailwind
+components without copying implementations or importing internal Schematics paths.
+
+The semantic catalog describes selectors, imports, inputs, outputs and representative examples:
+
+```ts
+import {
+  designSystemCatalog,
+  type DesignSystemCatalog,
+} from '@filippolacagnina/angular-enterprise-starter/design-system-catalog';
+```
+
+The source manifest contains the same components' generated runtime files, provider style strategy,
+declared package requirements and deterministic SHA-256 drift hashes:
+
+```ts
+import {
+  designSystemSources,
+  type DesignSystemSources,
+} from '@filippolacagnina/angular-enterprise-starter/design-system-sources';
+```
+
+Raw JSON assets are available for non-TypeScript tooling:
+
+```text
+@filippolacagnina/angular-enterprise-starter/design-system-catalog.json
+@filippolacagnina/angular-enterprise-starter/design-system-sources.json
+```
+
+Consume both contracts from the same pinned package version:
+
+```text
+validate schemas -> correlate components -> check hashes -> materialize files -> install styles -> compile
+```
+
+The catalog and source manifest have independent `schemaVersion` values. Validate both before use
+and reject misaligned provider IDs, component IDs or class names. Source hashes support drift
+detection and caching; they are not authenticity signatures. Package-manager integrity, provenance
+and the consumer lockfile remain the trust boundary.
+
+The Evolution CLI remains responsible for safely installing components into product workspaces.
+The source manifest is a build-time integration contract, not an Angular runtime component library.
+
 ## Safety model
 
 The CLI is conservative by design:

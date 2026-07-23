@@ -124,6 +124,10 @@ Templates can use utility classes for small local layouts. Reusable product prim
 prefer a stable semantic wrapper API, with `@apply` in component SCSS where it improves
 readability.
 
+Button, Badge, Alert and Card share the same semantic inputs and outputs as the equivalent Bootstrap
+wrappers. This keeps feature-level contracts stable when a project standardizes on either provider;
+the generated implementation and styling remain provider-specific.
+
 Example:
 
 ```html
@@ -148,8 +152,13 @@ Before dependencies, styles or components change, the preflight validates:
 - existing PostCSS JSON and plugin structure;
 - complete or partial state for every selected wrapper.
 
-Complete wrappers are skipped. Partial wrappers, invalid PostCSS configuration or dependency
-conflicts block the complete invocation without leaving package or style changes.
+Complete wrappers are skipped. Wrappers with only some required source files, invalid PostCSS
+configuration or dependency conflicts block the complete invocation without leaving package or
+style changes.
+
+New Button, Badge, Alert and Card wrappers include generated component tests. Tests are supplemental
+for compatibility: existing complete wrappers without those tests stay complete and are not
+modified by a later invocation.
 
 ## Compatibility
 

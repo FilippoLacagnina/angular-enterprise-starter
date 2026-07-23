@@ -115,6 +115,10 @@ Existing global styles are preserved.
 Generated wrappers expose a deliberately small starter-owned API. Extend those wrappers rather than
 scattering inconsistent Bootstrap variants across features.
 
+Button, Badge, Alert and Card share the same semantic inputs and outputs as the equivalent Tailwind
+wrappers. This keeps feature-level contracts stable when a project standardizes on either provider;
+the generated implementation and styling remain provider-specific.
+
 Example:
 
 ```html
@@ -134,7 +138,11 @@ Wrapper inputs and selectors are documented in
 Bootstrap is repeatable.
 
 Later invocations can add missing wrappers. Complete selected components are skipped safely, while a
-component with only some expected files blocks the entire preflight.
+component with only some required source files blocks the entire preflight.
+
+New Button, Badge, Alert and Card wrappers include generated component tests. Tests are supplemental
+for compatibility: existing complete wrappers without those tests stay complete and are not
+modified by a later invocation.
 
 All component and dependency checks run before package or stylesheet changes. Existing generated
 files are never overwritten or silently completed.

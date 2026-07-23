@@ -8,19 +8,36 @@ export const tailwindBadgeDefinition: TailwindComponentDefinition = {
   files: [
     {
       path: '/src/app/shared/components/tailwind/badge/badge.ts',
-      content: `import { booleanAttribute, Component, computed, input } from '@angular/core';
+      content: `import {
+  booleanAttribute,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+} from '@angular/core';
 
-type TailwindBadgeVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'neutral';
+export type TailwindBadgeVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'light'
+  | 'dark'
+  | 'neutral';
 
 @Component({
   selector: 'app-tailwind-badge',
   imports: [],
   templateUrl: './badge.html',
   styleUrl: './badge.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TailwindBadge {
   readonly variant = input<TailwindBadgeVariant>('primary');
   readonly pill = input(false, { transform: booleanAttribute });
+  readonly ariaLabel = input<string | null>(null);
 
   protected readonly badgeClasses = computed(() =>
     [
@@ -37,6 +54,9 @@ export class TailwindBadge {
       success: 'bg-emerald-50 text-emerald-700 ring-emerald-700/10',
       danger: 'bg-rose-50 text-rose-700 ring-rose-700/10',
       warning: 'bg-amber-50 text-amber-800 ring-amber-700/10',
+      info: 'bg-cyan-50 text-cyan-700 ring-cyan-700/10',
+      light: 'bg-white text-slate-700 ring-slate-300',
+      dark: 'bg-slate-900 text-white ring-slate-900',
       neutral: 'bg-zinc-50 text-zinc-700 ring-zinc-700/10',
     };
   }
@@ -45,7 +65,10 @@ export class TailwindBadge {
     },
     {
       path: '/src/app/shared/components/tailwind/badge/badge.html',
-      content: `<span [class]="badgeClasses()">
+      content: `<span
+  [attr.aria-label]="ariaLabel()"
+  [class]="badgeClasses()"
+>
   <ng-content />
 </span>
 `,
@@ -53,6 +76,45 @@ export class TailwindBadge {
     {
       path: '/src/app/shared/components/tailwind/badge/badge.scss',
       content: '',
+    },
+  ],
+  supplementalFiles: [
+    {
+      path: '/src/app/shared/components/tailwind/badge/badge.spec.ts',
+      content: `import { type ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { TailwindBadge } from './badge';
+
+describe('TailwindBadge', () => {
+  let fixture: ComponentFixture<TailwindBadge>;
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TailwindBadge);
+    fixture.detectChanges();
+  });
+
+  it('renders the primary variant by default', () => {
+    expect(getBadge().classList.contains('bg-sky-50')).toBe(true);
+  });
+
+  it('applies the selected variant and exposes accessible labeling', () => {
+    fixture.componentRef.setInput('variant', 'dark');
+    fixture.componentRef.setInput('pill', true);
+    fixture.componentRef.setInput('ariaLabel', 'Active items');
+    fixture.detectChanges();
+
+    const badge = getBadge();
+
+    expect(badge.classList.contains('bg-slate-900')).toBe(true);
+    expect(badge.classList.contains('rounded-full')).toBe(true);
+    expect(badge.getAttribute('aria-label')).toBe('Active items');
+  });
+
+  function getBadge(): HTMLSpanElement {
+    return fixture.nativeElement.querySelector('span') as HTMLSpanElement;
+  }
+});
+`,
     },
   ],
 };

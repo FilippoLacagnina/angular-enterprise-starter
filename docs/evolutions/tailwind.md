@@ -81,6 +81,50 @@ The installer can also generate starter-owned UI wrappers:
 | `card`    | `app-tailwind-card`   | `shared/components/tailwind/card/card.ts`     |
 | `input`   | `app-tailwind-input`  | `shared/components/tailwind/input/input.ts`   |
 
+The wrappers expose the same semantic contract as their Bootstrap counterparts:
+
+| Component | Supported options                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------- |
+| `alert`   | `variant`, `dismissible`, `dismissLabel`, `role`, two-way `open`, `dismissed`.                                      |
+| `badge`   | `variant`, `pill`, `ariaLabel`.                                                                                     |
+| `button`  | `variant`, `outline`, `size`, `type`, `disabled`, `loading`, `fullWidth`, `ariaLabel`.                              |
+| `card`    | `title`, `subtitle`, `headingLevel`, image source, alternative text, position, loading and dimensions, `ariaLabel`. |
+| `input`   | `id`, `name`, `label`, `type`, `value`, `placeholder`, `size`, accessibility attributes.                            |
+
+Alert and Badge support `primary`, `secondary`, `success`, `danger`, `warning`, `info`, `light`,
+`dark` and `neutral`. Button supports the same semantic variants except `neutral`, plus `link` and
+`ghost`.
+
+Button, Badge, Alert and Card use `ChangeDetectionStrategy.OnPush`. Newly generated versions also
+include focused component tests. These tests are supplemental: a complete wrapper created by an
+older CLI version remains valid and is never overwritten only because its generated test is absent.
+
+Example loading action:
+
+```html
+<app-tailwind-button
+  ariaLabel="Save account"
+  loading
+>
+  Save
+</app-tailwind-button>
+```
+
+Example controlled alert:
+
+```html
+<app-tailwind-alert
+  dismissLabel="Dismiss notification"
+  dismissible
+  role="status"
+  variant="success"
+  [(open)]="notificationOpen"
+  (dismissed)="handleNotificationDismissed()"
+>
+  Account saved.
+</app-tailwind-alert>
+```
+
 ## Guidelines
 
 - Keep Tailwind usage intentional and project-specific.
