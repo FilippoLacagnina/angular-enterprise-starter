@@ -120,6 +120,7 @@ export function createCliHelp(manifest, version, selectedEvolutionName) {
     'Examples:',
     '  angular-enterprise-starter evolution',
     '  angular-enterprise-starter evolution --name bootstrap --preview',
+    '  angular-enterprise-starter evolution --name layout-shell --preview --layout-mode select --layout-components shell,header,sidebar',
     '  angular-enterprise-starter evolution --name ai-genkit --apply --yes',
   );
 

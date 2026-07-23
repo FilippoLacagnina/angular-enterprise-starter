@@ -26,6 +26,7 @@ let evolutions;
 let translocoLanguages;
 let designSystemComponents;
 let designSystemDefaultComponents;
+let layoutComponents;
 let defaultAiGenkitModel;
 let args;
 
@@ -107,6 +108,10 @@ async function resolveEvolutionOptions(evolution, shouldAskOptions) {
 
   if (evolution.name === 'signal-store') {
     return resolveSignalStoreOptions(shouldAskOptions);
+  }
+
+  if (evolution.name === 'layout-shell') {
+    return resolveLayoutShellOptions(shouldAskOptions);
   }
 
   if (evolution.name === 'bootstrap') {
@@ -241,6 +246,77 @@ async function resolveSignalStoreOptions(shouldAskOptions) {
       });
     }
   }
+}
+
+async function resolveLayoutShellOptions(shouldAskOptions) {
+  if (!shouldAskOptions) {
+    return createLayoutShellOptions({
+      layoutMode: args.layoutMode,
+      layoutComponents: args.layoutComponents,
+      layoutHeaderBehavior: args.layoutHeaderBehavior,
+      layoutSidebarMode: args.layoutSidebarMode,
+      layoutSidebarPosition: args.layoutSidebarPosition,
+      layoutSidebarInitialState: args.layoutSidebarInitialState,
+      layoutFooterBehavior: args.layoutFooterBehavior,
+      layoutContentWidth: args.layoutContentWidth,
+    });
+  }
+
+  const layoutMode = await askChoice(
+    'Layout setup',
+    getManifestChoices('layout-shell', 'layoutMode'),
+  );
+
+  if (layoutMode === 'content-only') {
+    return createLayoutShellOptions({ layoutMode });
+  }
+
+  const selectedComponents =
+    layoutMode === 'all' ? layoutComponents.map(([name]) => name) : await askLayoutComponents();
+  const selectedComponentSet = new Set(selectedComponents);
+  const selectedOptions = {
+    layoutMode,
+    ...(layoutMode === 'select' ? { layoutComponents: selectedComponents.join(',') } : {}),
+  };
+
+  if (selectedComponentSet.has('header')) {
+    selectedOptions.layoutHeaderBehavior = await askChoice(
+      'Header behavior',
+      getManifestChoices('layout-shell', 'layoutHeaderBehavior'),
+    );
+  }
+
+  if (selectedComponentSet.has('sidebar')) {
+    selectedOptions.layoutSidebarMode = await askChoice(
+      'Sidebar mode',
+      getManifestChoices('layout-shell', 'layoutSidebarMode'),
+    );
+    selectedOptions.layoutSidebarPosition = await askChoice(
+      'Sidebar position',
+      getManifestChoices('layout-shell', 'layoutSidebarPosition'),
+    );
+
+    if (selectedOptions.layoutSidebarMode === 'collapsible') {
+      selectedOptions.layoutSidebarInitialState = await askChoice(
+        'Sidebar initial state',
+        getManifestChoices('layout-shell', 'layoutSidebarInitialState'),
+      );
+    }
+  }
+
+  if (selectedComponentSet.has('footer')) {
+    selectedOptions.layoutFooterBehavior = await askChoice(
+      'Footer behavior',
+      getManifestChoices('layout-shell', 'layoutFooterBehavior'),
+    );
+  }
+
+  selectedOptions.layoutContentWidth = await askChoice(
+    'Content width',
+    getManifestChoices('layout-shell', 'layoutContentWidth'),
+  );
+
+  return createLayoutShellOptions(selectedOptions);
 }
 
 async function resolveDesignSystemOptions({
@@ -485,6 +561,47 @@ async function askDesignSystemComponents(systemName) {
   }
 }
 
+async function askLayoutComponents() {
+  while (true) {
+    printSection('Select layout components');
+    console.log(color.dim('Choose Shell and only the layout regions the application needs.'));
+    console.log(color.dim('Use numbers, names, or a mix of both.'));
+    console.log('');
+
+    printCatalogChoices(layoutComponents);
+    console.log('');
+
+    const defaultComponents = getManifestOptionSuggestedValue('layout-shell', 'layoutComponents');
+    const answer = await askText('Components', defaultComponents);
+
+    try {
+      const selectedComponents = parseCatalogSelection(
+        answer,
+        layoutComponents,
+        'layout component',
+      );
+
+      if (!selectedComponents.includes('shell')) {
+        throw new Error(
+          'Shell is required when Header, Sidebar or Footer is selected. Choose content-only to install no layout components.',
+        );
+      }
+
+      console.log('');
+      console.log(
+        `${color.green('Selected')} ${color.bold(
+          formatCatalogSelection(selectedComponents, layoutComponents),
+        )}`,
+      );
+
+      return selectedComponents;
+    } catch (error) {
+      console.log('');
+      console.log(color.yellow(error instanceof Error ? error.message : String(error)));
+    }
+  }
+}
+
 function printDesignSystemComponentChoices() {
   printCatalogChoices(designSystemComponents);
 }
@@ -696,6 +813,153 @@ function createTranslocoOptions(options) {
   };
 }
 
+function createLayoutShellOptions(options) {
+  const layoutMode = options.layoutMode ?? getManifestOptionDefault('layout-shell', 'layoutMode');
+
+  assertManifestChoice('layout-shell', 'layoutMode', layoutMode, 'layout mode');
+
+  if (layoutMode === 'content-only') {
+    const unsupportedFlags = [
+      ['--layout-components', options.layoutComponents],
+      ['--layout-header-behavior', options.layoutHeaderBehavior],
+      ['--layout-sidebar-mode', options.layoutSidebarMode],
+      ['--layout-sidebar-position', options.layoutSidebarPosition],
+      ['--layout-sidebar-initial-state', options.layoutSidebarInitialState],
+      ['--layout-footer-behavior', options.layoutFooterBehavior],
+      ['--layout-content-width', options.layoutContentWidth],
+    ]
+      .filter(([, value]) => value !== undefined)
+      .map(([flag]) => flag);
+
+    if (unsupportedFlags.length > 0) {
+      throw new Error(
+        `Layout behavior options are not available with --layout-mode content-only: ${unsupportedFlags.join(', ')}.`,
+      );
+    }
+
+    return { layoutMode };
+  }
+
+  let selectedComponents;
+
+  if (layoutMode === 'all') {
+    if (options.layoutComponents !== undefined) {
+      throw new Error('--layout-components can be used only with --layout-mode select.');
+    }
+
+    selectedComponents = layoutComponents.map(([name]) => name);
+  } else {
+    selectedComponents = parseCatalogSelection(
+      options.layoutComponents,
+      layoutComponents,
+      'layout component',
+    );
+
+    if (!selectedComponents.includes('shell')) {
+      throw new Error(
+        'Shell is required when Header, Sidebar or Footer is selected. Use --layout-mode content-only to install no layout components.',
+      );
+    }
+  }
+
+  const selectedComponentSet = new Set(selectedComponents);
+  const layoutOptions = {
+    layoutMode,
+    ...(layoutMode === 'select' ? { layoutComponents: selectedComponents.join(',') } : {}),
+  };
+
+  assertLayoutComponentOption(
+    selectedComponentSet,
+    'header',
+    options.layoutHeaderBehavior,
+    '--layout-header-behavior',
+  );
+  assertLayoutComponentOption(
+    selectedComponentSet,
+    'sidebar',
+    options.layoutSidebarMode,
+    '--layout-sidebar-mode',
+  );
+  assertLayoutComponentOption(
+    selectedComponentSet,
+    'sidebar',
+    options.layoutSidebarPosition,
+    '--layout-sidebar-position',
+  );
+  assertLayoutComponentOption(
+    selectedComponentSet,
+    'sidebar',
+    options.layoutSidebarInitialState,
+    '--layout-sidebar-initial-state',
+  );
+  assertLayoutComponentOption(
+    selectedComponentSet,
+    'footer',
+    options.layoutFooterBehavior,
+    '--layout-footer-behavior',
+  );
+
+  if (selectedComponentSet.has('header')) {
+    layoutOptions.layoutHeaderBehavior = resolveManifestChoiceOption(
+      'layout-shell',
+      'layoutHeaderBehavior',
+      options.layoutHeaderBehavior,
+      'Header behavior',
+    );
+  }
+
+  if (selectedComponentSet.has('sidebar')) {
+    layoutOptions.layoutSidebarMode = resolveManifestChoiceOption(
+      'layout-shell',
+      'layoutSidebarMode',
+      options.layoutSidebarMode,
+      'Sidebar mode',
+    );
+    layoutOptions.layoutSidebarPosition = resolveManifestChoiceOption(
+      'layout-shell',
+      'layoutSidebarPosition',
+      options.layoutSidebarPosition,
+      'Sidebar position',
+    );
+
+    if (
+      layoutOptions.layoutSidebarMode !== 'collapsible' &&
+      options.layoutSidebarInitialState !== undefined
+    ) {
+      throw new Error(
+        '--layout-sidebar-initial-state can be used only with --layout-sidebar-mode collapsible.',
+      );
+    }
+
+    if (layoutOptions.layoutSidebarMode === 'collapsible') {
+      layoutOptions.layoutSidebarInitialState = resolveManifestChoiceOption(
+        'layout-shell',
+        'layoutSidebarInitialState',
+        options.layoutSidebarInitialState,
+        'Sidebar initial state',
+      );
+    }
+  }
+
+  if (selectedComponentSet.has('footer')) {
+    layoutOptions.layoutFooterBehavior = resolveManifestChoiceOption(
+      'layout-shell',
+      'layoutFooterBehavior',
+      options.layoutFooterBehavior,
+      'Footer behavior',
+    );
+  }
+
+  layoutOptions.layoutContentWidth = resolveManifestChoiceOption(
+    'layout-shell',
+    'layoutContentWidth',
+    options.layoutContentWidth,
+    'content width',
+  );
+
+  return layoutOptions;
+}
+
 function createDesignSystemOptions({
   systemName,
   modeOptionName,
@@ -721,6 +985,32 @@ function createDesignSystemOptions({
       ',',
     ),
   };
+}
+
+function assertLayoutComponentOption(selectedComponents, component, value, flag) {
+  if (!selectedComponents.has(component) && value !== undefined) {
+    throw new Error(
+      `${flag} requires the ${formatOptionName(component)} component to be selected.`,
+    );
+  }
+}
+
+function resolveManifestChoiceOption(evolutionName, optionName, value, label) {
+  const resolvedValue = value ?? getManifestOptionDefault(evolutionName, optionName);
+
+  assertManifestChoice(evolutionName, optionName, resolvedValue, label);
+
+  return resolvedValue;
+}
+
+function assertManifestChoice(evolutionName, optionName, value, label) {
+  const supportedValues = getManifestChoiceValues(evolutionName, optionName);
+
+  if (!supportedValues.includes(value)) {
+    throw new Error(
+      `Unsupported ${label}: ${value}. Supported values: ${supportedValues.join(', ')}.`,
+    );
+  }
 }
 
 function createAiGenkitOptions(options) {
@@ -838,6 +1128,10 @@ function formatOptionSummaryValue(name, value) {
 
   if (name === 'translocoDefaultLanguage') {
     return formatCatalogSelection([String(value)], translocoLanguages);
+  }
+
+  if (name === 'layoutComponents') {
+    return formatCatalogSelection(String(value).split(','), layoutComponents);
   }
 
   return value;
@@ -977,6 +1271,12 @@ function initializeEvolutionManifest() {
   ]);
 
   designSystemComponents = getManifestOptionCatalog('starterUiComponents').map((component) => [
+    component.value,
+    component.label,
+    component.description,
+  ]);
+
+  layoutComponents = getManifestOptionCatalog('layoutComponents').map((component) => [
     component.value,
     component.label,
     component.description,

@@ -52,6 +52,40 @@ describe('Evolution CLI arguments', () => {
     });
   });
 
+  it('parses configurable Layout Shell options', () => {
+    expect(
+      parseCliArgs(
+        [
+          '--name',
+          'layout-shell',
+          '--layout-mode',
+          'select',
+          '--layout-components=shell,header,sidebar',
+          '--layout-header-behavior',
+          'sticky',
+          '--layout-sidebar-mode=collapsible',
+          '--layout-sidebar-position',
+          'end',
+          '--layout-sidebar-initial-state=collapsed',
+          '--layout-content-width',
+          'contained',
+          '--preview',
+        ],
+        manifest,
+      ),
+    ).toEqual({
+      name: 'layout-shell',
+      layoutMode: 'select',
+      layoutComponents: 'shell,header,sidebar',
+      layoutHeaderBehavior: 'sticky',
+      layoutSidebarMode: 'collapsible',
+      layoutSidebarPosition: 'end',
+      layoutSidebarInitialState: 'collapsed',
+      layoutContentWidth: 'contained',
+      preview: true,
+    });
+  });
+
   it('rejects options without values and conflicting execution modes', () => {
     expect(() => parseCliArgs(['--name'], manifest)).toThrow('Option --name requires a value.');
     expect(() => parseCliArgs(['--name', 'transloco', '--preview', '--apply'], manifest)).toThrow(
@@ -89,6 +123,9 @@ describe('Evolution CLI arguments', () => {
       '--transloco-default-language <en|it|es|fr|de|pt|nl|zh|ja|ko|ar|hi>',
     );
     expect(completeHelp).toContain('--bootstrap-components <alert|badge|button|card|input>');
+    expect(completeHelp).toContain('--layout-mode <all|select|content-only>');
+    expect(completeHelp).toContain('--layout-components <shell|header|sidebar|footer>');
+    expect(completeHelp).toContain('--layout-sidebar-mode <persistent|collapsible>');
     expect(aiHelp).toContain('Selected evolution:');
     expect(aiHelp).toContain('--ai-model <value>');
     expect(aiHelp).not.toContain('--store-scope');

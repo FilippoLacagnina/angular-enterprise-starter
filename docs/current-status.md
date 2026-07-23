@@ -59,6 +59,7 @@ July 23, 2026
 
 - Added a Transloco i18n installer with configurable languages, default/fallback and generated assets.
 - Added Runtime Config installer with deployable `assets/config/values.yml` generation and safety guards.
+- Added the configurable Layout Shell installer with selectable regions and content-only mode.
 - Added SignalStore installer with feature/root store generation.
 - Added Docker SSR installer.
 - Added Bootstrap and Tailwind design-system installers with parametrized UI primitive generation.
@@ -83,6 +84,13 @@ July 23, 2026
 - Added deterministic source hashes and provider styling requirements for Builder synchronization.
 - Added package-consumer and generated-workspace verification for isolated and combined design systems.
 - Made Bootstrap and Tailwind stylesheet setup valid in either installation order.
+
+12. Layout Shell contract
+
+- Added container-query responsive behavior with configurable minimum block size.
+- Added the public serializable Layout Shell Catalog package export.
+- Added a deterministic render-contract hash for static Builder preview synchronization.
+- Kept layout preview rendering outside consumer projects and the Evolution CLI runtime.
 
 ## Current Design Choice
 

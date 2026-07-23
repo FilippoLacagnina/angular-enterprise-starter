@@ -14,6 +14,7 @@
 - [Maintenance rules](#maintenance-rules)
 - [Tooling structure](#tooling-structure)
 - [Public design-system contracts](#public-design-system-contracts)
+- [Public Layout Shell catalog](#public-layout-shell-catalog)
 - [Quality checks](#quality-checks)
 
 ## Purpose
@@ -93,6 +94,7 @@ npm --cache /private/tmp/aes-npm-cache exec \
 | -------------- | ---------------- | ----------- | ------------------------------------------ | --------------------------------------------------------- |
 | Transloco      | `transloco`      | installable | [Guide](./evolution-cli/transloco.md)      | Configurable languages, default and translation assets.   |
 | Runtime Config | `runtime-config` | installable | [Guide](./evolution-cli/runtime-config.md) | Deployable values.yml configuration baseline.             |
+| Layout Shell   | `layout-shell`   | installable | [Guide](./evolution-cli/layout-shell.md)   | Configurable Shell and optional layout regions.           |
 | SignalStore    | `signal-store`   | installable | [Guide](./evolution-cli/signal-store.md)   | Parametrized feature/root store generation.               |
 | Docker SSR     | `docker-ssr`     | installable | [Guide](./evolution-cli/docker-ssr.md)     | SSR-oriented Docker deployment baseline.                  |
 | Bootstrap      | `bootstrap`      | installable | [Guide](./evolution-cli/bootstrap.md)      | Parametrized Bootstrap UI primitive generation.           |
@@ -134,6 +136,7 @@ Preview examples:
 npm run starter:evolution -- --name signal-store --preview
 npm run starter:evolution -- --name transloco --preview
 npm run starter:evolution -- --name runtime-config --preview
+npm run starter:evolution -- --name layout-shell --preview
 npm run starter:evolution -- --name docker-ssr --preview
 npm run starter:evolution -- --name bootstrap --preview
 npm run starter:evolution -- --name tailwind --preview
@@ -147,6 +150,7 @@ Apply examples:
 npm run starter:evolution -- --name signal-store --apply
 npm run starter:evolution -- --name transloco --apply
 npm run starter:evolution -- --name runtime-config --apply
+npm run starter:evolution -- --name layout-shell --apply
 npm run starter:evolution -- --name docker-ssr --apply
 npm run starter:evolution -- --name bootstrap --apply
 npm run starter:evolution -- --name tailwind --apply
@@ -159,6 +163,7 @@ Non-interactive apply examples:
 npm run starter:evolution -- --name signal-store --apply --yes
 npm run starter:evolution -- --name transloco --apply --yes
 npm run starter:evolution -- --name runtime-config --apply --yes
+npm run starter:evolution -- --name layout-shell --apply --yes
 npm run starter:evolution -- --name docker-ssr --apply --yes
 npm run starter:evolution -- --name bootstrap --apply --yes
 npm run starter:evolution -- --name tailwind --apply --yes
@@ -376,6 +381,28 @@ prove package authenticity. Consumers must continue to rely on their package man
 npm integrity or provenance controls as the trust boundary. The source manifest is intended for a
 trusted Node build process and should not be shipped unnecessarily in an application browser
 bundle.
+
+## Public Layout Shell catalog
+
+The npm package exposes the ordered, serializable contract used by static layout tooling:
+
+```ts
+import {
+  layoutShellCatalog,
+  type LayoutShellCatalog,
+} from '@filippolacagnina/angular-enterprise-starter/layout-shell-catalog';
+```
+
+Raw JSON is available from
+`@filippolacagnina/angular-enterprise-starter/layout-shell-catalog.json`.
+
+The catalog derives CLI flags and choices from the evolution manifest, uses the layout model
+defaults and is tested against plan validation. Its `renderContractHash` covers representative
+`all`, `select` and `content-only` generated output.
+
+A Builder with a static Layout Studio should pin the expected hash. A changed hash requires visual
+review and an explicit preview update. The catalog intentionally contains no Angular implementation
+sources and is not a runtime component library.
 
 ## Quality checks
 

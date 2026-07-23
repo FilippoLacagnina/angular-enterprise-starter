@@ -9,6 +9,7 @@
 - [Merge strategy](#merge-strategy)
 - [Documentation strategy](#documentation-strategy)
 - [Evolution CLI model](#evolution-cli-model)
+- [CLI-owned evolutions](#cli-owned-evolutions)
 - [Implemented evolution branches](#implemented-evolution-branches)
 - [Planned evolution branches](#planned-evolution-branches)
 - [Usage model](#usage-model)
@@ -156,6 +157,15 @@ The CLI can provide more functionality than the related branch because it can as
 The `evo/*` branch remains the implementation reference and manual fallback.
 
 Every CLI installer must stay aligned with its related reference branch, the dedicated [Evolution CLI guide](./schematics.md) and its installer-specific guide under `docs/evolution-cli/`.
+
+## CLI-owned evolutions
+
+CLI-owned evolutions do not require an `evo/*` reference branch. Their manifest, installer, tests
+and canonical documentation on `main` are the implementation source of truth.
+
+| Evolution      | Guide                                    | Area   | Description                                     |
+| -------------- | ---------------------------------------- | ------ | ----------------------------------------------- |
+| `layout-shell` | [Guide](./evolution-cli/layout-shell.md) | layout | Configurable Shell and optional layout regions. |
 
 ## Implemented evolution branches
 

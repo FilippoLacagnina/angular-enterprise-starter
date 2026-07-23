@@ -22,6 +22,12 @@
       "default": "./catalog/design-system-sources.mjs"
     },
     "./design-system-sources.json": "./catalog/design-system-sources.json",
+    "./layout-shell-catalog": {
+      "types": "./catalog/layout-shell-catalog.d.ts",
+      "import": "./catalog/layout-shell-catalog.mjs",
+      "default": "./catalog/layout-shell-catalog.mjs"
+    },
+    "./layout-shell-catalog.json": "./catalog/layout-shell-catalog.json",
     "./package.json": "./package.json"
   },
   "files": [

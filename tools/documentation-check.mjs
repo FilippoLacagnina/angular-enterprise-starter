@@ -85,7 +85,7 @@ function validateEvolutionGuides(evolutionManifest) {
       );
     }
 
-    if (!guide.includes(evolution.referenceBranch)) {
+    if (evolution.referenceBranch && !guide.includes(evolution.referenceBranch)) {
       failures.push(
         `${toRelativePath(guidePath)} must reference branch "${evolution.referenceBranch}".`,
       );

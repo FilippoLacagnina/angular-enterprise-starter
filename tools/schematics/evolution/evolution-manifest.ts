@@ -18,7 +18,7 @@ interface EvolutionManifestEntry {
   readonly name: EvolutionName;
   readonly label: string;
   readonly repeatable: boolean;
-  readonly referenceBranch: string;
+  readonly referenceBranch?: string;
   readonly dependencies: readonly EvolutionManifestDependency[];
 }
 

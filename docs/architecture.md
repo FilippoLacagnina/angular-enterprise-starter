@@ -29,6 +29,16 @@ The shell is intentionally unstyled:
 
 This keeps the starter neutral and ready for custom branding or design systems.
 
+The optional `layout-shell` Evolution CLI installer replaces only pristine placeholders with a
+typed, configurable layout. It can generate all regions, a selected subset with Shell, or a
+content-only root. Generated Shell styling remains structural and design-system-neutral.
+
+Responsive stacking is based on the Shell container rather than the global viewport. The container
+keeps the `64rem` breakpoint while `--layout-viewport-min-block-size` defaults to `100dvh` and can
+be overridden for embedded surfaces.
+
+See [Layout Shell Evolution](./evolutions/layout-shell.md).
+
 ## Recommended project structure
 
 The starter is organized around explicit application layers.

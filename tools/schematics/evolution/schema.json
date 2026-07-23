@@ -10,6 +10,7 @@
       "enum": [
         "transloco",
         "runtime-config",
+        "layout-shell",
         "signal-store",
         "docker-ssr",
         "bootstrap",
@@ -27,6 +28,10 @@
           {
             "value": "runtime-config",
             "label": "Runtime config"
+          },
+          {
+            "value": "layout-shell",
+            "label": "Layout Shell"
           },
           {
             "value": "signal-store",
@@ -65,6 +70,52 @@
       "type": "string",
       "description": "Default and fallback language; it must be selected in --transloco-languages.",
       "default": "en"
+    },
+    "layoutMode": {
+      "type": "string",
+      "description": "Layout component generation mode.",
+      "enum": ["all", "select", "content-only"],
+      "default": "all"
+    },
+    "layoutComponents": {
+      "type": "string",
+      "description": "Comma-separated layout components to generate when --layout-mode select is used."
+    },
+    "layoutHeaderBehavior": {
+      "type": "string",
+      "description": "Header positioning behavior when Header is selected.",
+      "enum": ["flow", "sticky"],
+      "default": "flow"
+    },
+    "layoutSidebarMode": {
+      "type": "string",
+      "description": "Sidebar interaction mode when Sidebar is selected.",
+      "enum": ["persistent", "collapsible"],
+      "default": "persistent"
+    },
+    "layoutSidebarPosition": {
+      "type": "string",
+      "description": "Logical Sidebar position when Sidebar is selected.",
+      "enum": ["start", "end"],
+      "default": "start"
+    },
+    "layoutSidebarInitialState": {
+      "type": "string",
+      "description": "Initial Sidebar state when collapsible mode is used.",
+      "enum": ["expanded", "collapsed"],
+      "default": "expanded"
+    },
+    "layoutFooterBehavior": {
+      "type": "string",
+      "description": "Footer positioning behavior when Footer is selected.",
+      "enum": ["flow", "sticky"],
+      "default": "flow"
+    },
+    "layoutContentWidth": {
+      "type": "string",
+      "description": "Main content width behavior when Shell is selected.",
+      "enum": ["fluid", "contained"],
+      "default": "fluid"
     },
     "storeScope": {
       "type": "string",

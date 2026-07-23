@@ -37,12 +37,14 @@ cpSync(schematicsOutputRoot, resolve(packageOutputRoot, 'schematics'), { recursi
 
 mkdirSync(catalogOutputRoot, { recursive: true });
 
-emitDesignSystemDataModule({
+emitDataModule({
+  sourceDirectory: 'evolutions/design-system',
   fileName: 'design-system-catalog',
   dataExportName: 'designSystemCatalog',
   constantExportNames: ['DESIGN_SYSTEM_CATALOG_SCHEMA_VERSION'],
 });
-emitDesignSystemDataModule({
+emitDataModule({
+  sourceDirectory: 'evolutions/design-system',
   fileName: 'design-system-sources',
   dataExportName: 'designSystemSources',
   constantExportNames: [
@@ -50,11 +52,17 @@ emitDesignSystemDataModule({
     'DESIGN_SYSTEM_SOURCES_HASH_ALGORITHM',
   ],
 });
+emitDataModule({
+  sourceDirectory: 'evolutions/layout-shell',
+  fileName: 'layout-shell-catalog',
+  dataExportName: 'layoutShellCatalog',
+  constantExportNames: ['LAYOUT_SHELL_CATALOG_SCHEMA_VERSION'],
+});
 
 console.log(`Evolution CLI package assembled at ${packageOutputRoot}`);
 
-function emitDesignSystemDataModule({ fileName, dataExportName, constantExportNames }) {
-  const sourceRoot = resolve(schematicsOutputRoot, 'evolutions/design-system');
+function emitDataModule({ sourceDirectory, fileName, dataExportName, constantExportNames }) {
+  const sourceRoot = resolve(schematicsOutputRoot, sourceDirectory);
   const sourceModule = require(resolve(sourceRoot, `${fileName}.js`));
   const data = sourceModule[dataExportName];
 

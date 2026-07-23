@@ -89,6 +89,28 @@
         "label": "Input",
         "description": "Basic form-control input."
       }
+    ],
+    "layoutComponents": [
+      {
+        "value": "shell",
+        "label": "Shell",
+        "description": "Application layout composition root and routed content host."
+      },
+      {
+        "value": "header",
+        "label": "Header",
+        "description": "Optional application header region."
+      },
+      {
+        "value": "sidebar",
+        "label": "Sidebar",
+        "description": "Optional responsive primary navigation region."
+      },
+      {
+        "value": "footer",
+        "label": "Footer",
+        "description": "Optional application footer region."
+      }
     ]
   },
   "evolutions": [
@@ -142,6 +164,172 @@
         }
       ],
       "options": []
+    },
+    {
+      "name": "layout-shell",
+      "label": "Layout Shell",
+      "description": "Configurable and design-system-neutral application layout.",
+      "category": "layout",
+      "repeatable": false,
+      "dependencies": [],
+      "options": [
+        {
+          "name": "layoutMode",
+          "cliFlag": "--layout-mode",
+          "type": "string",
+          "description": "Layout component generation mode.",
+          "default": "all",
+          "choices": [
+            {
+              "value": "all",
+              "label": "Install complete layout",
+              "description": "Configure Shell, Header, Sidebar and Footer."
+            },
+            {
+              "value": "select",
+              "label": "Select layout components",
+              "description": "Choose Shell and only the layout regions the application needs."
+            },
+            {
+              "value": "content-only",
+              "label": "Content only",
+              "description": "Remove the pristine layout and render RouterOutlet directly."
+            }
+          ]
+        },
+        {
+          "name": "layoutComponents",
+          "cliFlag": "--layout-components",
+          "type": "string",
+          "description": "Comma-separated layout components to generate when --layout-mode select is used.",
+          "choiceCatalog": "layoutComponents",
+          "multiple": true,
+          "separator": ",",
+          "suggestedValue": "shell,header,sidebar,footer",
+          "when": {
+            "option": "layoutMode",
+            "equals": "select"
+          }
+        },
+        {
+          "name": "layoutHeaderBehavior",
+          "cliFlag": "--layout-header-behavior",
+          "type": "string",
+          "description": "Header positioning behavior when Header is selected.",
+          "default": "flow",
+          "choices": [
+            {
+              "value": "flow",
+              "label": "Flow",
+              "description": "Keep Header in the normal document flow."
+            },
+            {
+              "value": "sticky",
+              "label": "Sticky",
+              "description": "Keep Header visible at the logical block start while scrolling."
+            }
+          ]
+        },
+        {
+          "name": "layoutSidebarMode",
+          "cliFlag": "--layout-sidebar-mode",
+          "type": "string",
+          "description": "Sidebar interaction mode when Sidebar is selected.",
+          "default": "persistent",
+          "choices": [
+            {
+              "value": "persistent",
+              "label": "Persistent",
+              "description": "Keep Sidebar expanded without a collapse control."
+            },
+            {
+              "value": "collapsible",
+              "label": "Collapsible",
+              "description": "Add an accessible Signal-based collapse control."
+            }
+          ]
+        },
+        {
+          "name": "layoutSidebarPosition",
+          "cliFlag": "--layout-sidebar-position",
+          "type": "string",
+          "description": "Logical Sidebar position when Sidebar is selected.",
+          "default": "start",
+          "choices": [
+            {
+              "value": "start",
+              "label": "Start",
+              "description": "Place Sidebar at the logical inline start."
+            },
+            {
+              "value": "end",
+              "label": "End",
+              "description": "Place Sidebar at the logical inline end."
+            }
+          ]
+        },
+        {
+          "name": "layoutSidebarInitialState",
+          "cliFlag": "--layout-sidebar-initial-state",
+          "type": "string",
+          "description": "Initial Sidebar state when collapsible mode is used.",
+          "default": "expanded",
+          "choices": [
+            {
+              "value": "expanded",
+              "label": "Expanded",
+              "description": "Render navigation expanded initially."
+            },
+            {
+              "value": "collapsed",
+              "label": "Collapsed",
+              "description": "Render navigation collapsed initially."
+            }
+          ],
+          "when": {
+            "option": "layoutSidebarMode",
+            "equals": "collapsible"
+          }
+        },
+        {
+          "name": "layoutFooterBehavior",
+          "cliFlag": "--layout-footer-behavior",
+          "type": "string",
+          "description": "Footer positioning behavior when Footer is selected.",
+          "default": "flow",
+          "choices": [
+            {
+              "value": "flow",
+              "label": "Flow",
+              "description": "Keep Footer in the normal document flow."
+            },
+            {
+              "value": "sticky",
+              "label": "Sticky",
+              "description": "Keep Footer visible at the logical block end while scrolling."
+            }
+          ]
+        },
+        {
+          "name": "layoutContentWidth",
+          "cliFlag": "--layout-content-width",
+          "type": "string",
+          "description": "Main content width behavior when Shell is selected.",
+          "default": "fluid",
+          "choices": [
+            {
+              "value": "fluid",
+              "label": "Fluid",
+              "description": "Allow routed content to use all available width."
+            },
+            {
+              "value": "contained",
+              "label": "Contained",
+              "description": "Center routed content within the configured maximum width."
+            }
+          ]
+        }
+      ]
     },
     {
       "name": "signal-store",

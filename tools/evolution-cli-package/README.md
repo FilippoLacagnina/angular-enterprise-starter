@@ -23,6 +23,7 @@ It executes bundled schematics directly, so the target workspace does not need a
 | -------------- | ---------------- | --------------------------------------------------------------- |
 | Transloco      | `transloco`      | Add runtime i18n with configurable language assets and default. |
 | Runtime Config | `runtime-config` | Add deployable values.yml runtime configuration with guards.    |
+| Layout Shell   | `layout-shell`   | Generate a configurable application Shell and layout regions.   |
 | SignalStore    | `signal-store`   | Generate feature/root NgRx SignalStore state files.             |
 | Docker SSR     | `docker-ssr`     | Add an SSR-oriented Docker deployment baseline.                 |
 | Bootstrap      | `bootstrap`      | Add Bootstrap and selected starter-owned UI wrapper components. |
@@ -103,6 +104,29 @@ and the consumer lockfile remain the trust boundary.
 
 The Evolution CLI remains responsible for safely installing components into product workspaces.
 The source manifest is a build-time integration contract, not an Angular runtime component library.
+
+## Layout Shell catalog
+
+The package exposes the serializable Layout Shell configuration contract for build-time tools such
+as the Interactive Builder:
+
+```ts
+import {
+  layoutShellCatalog,
+  type LayoutShellCatalog,
+} from '@filippolacagnina/angular-enterprise-starter/layout-shell-catalog';
+```
+
+Raw JSON is available from:
+
+```text
+@filippolacagnina/angular-enterprise-starter/layout-shell-catalog.json
+```
+
+The catalog contains ordered modes, components, defaults, CLI flags, applicability conditions and
+content-only behavior. `renderContractHash` fingerprints representative generated output so a
+static preview can detect when it requires visual review. It does not expose Angular runtime
+components or source files.
 
 ## Safety model
 

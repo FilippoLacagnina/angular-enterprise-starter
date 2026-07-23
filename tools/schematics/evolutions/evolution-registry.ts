@@ -7,6 +7,8 @@ import { getBootstrapPreview } from './bootstrap/bootstrap.preview';
 import { installDockerSsrEvolution } from './docker-ssr/docker-ssr.installer';
 import { getDockerSsrPreview } from './docker-ssr/docker-ssr.preview';
 import { type EvolutionDefinition } from './evolution-definition';
+import { installLayoutShellEvolution } from './layout-shell/layout-shell.installer';
+import { getLayoutShellPreview } from './layout-shell/layout-shell.preview';
 import { installRuntimeConfigEvolution } from './runtime-config/runtime-config.installer';
 import { getRuntimeConfigPreview } from './runtime-config/runtime-config.preview';
 import {
@@ -66,6 +68,29 @@ const EVOLUTION_REGISTRY: Record<EvolutionName, EvolutionDefinition> = {
     ],
     preview: getRuntimeConfigPreview,
     install: installRuntimeConfigEvolution,
+  },
+  'layout-shell': {
+    name: 'layout-shell',
+    ...getManifestDefinitionMetadata('layout-shell'),
+    creates: [
+      'src/app/layout/layout.model.ts',
+      'src/app/layout/layout.config.ts',
+      'src/app/layout/<selected-component>/*',
+    ],
+    updates: [
+      'src/app/app.ts',
+      'src/app/app.html',
+      'src/app/app.spec.ts',
+      'src/app/layout/<selected-component>/*',
+      '.angular-enterprise-starter.json',
+    ],
+    notes: [
+      'Adds a configurable application shell without requiring a design system.',
+      'Can retain only selected pristine layout regions or generate a content-only root.',
+      'Stops before replacing, deleting or combining customized layout files.',
+    ],
+    preview: getLayoutShellPreview,
+    install: installLayoutShellEvolution,
   },
   'signal-store': {
     name: 'signal-store',
@@ -143,13 +168,18 @@ function getManifestDefinitionMetadata(
   'dependencies' | 'label' | 'referenceBranch' | 'referenceUrl' | 'repeatable'
 > {
   const manifestEntry = getEvolutionManifestEntry(evolutionName);
+  const referenceBranch = manifestEntry.referenceBranch;
 
   return {
     dependencies: manifestEntry.dependencies.map((dependency) => dependency.name),
     label: manifestEntry.label,
-    referenceBranch: manifestEntry.referenceBranch,
-    referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/${manifestEntry.referenceBranch}`,
     repeatable: manifestEntry.repeatable,
+    ...(referenceBranch
+      ? {
+          referenceBranch,
+          referenceUrl: `${GITHUB_REPOSITORY_URL}/tree/${referenceBranch}`,
+        }
+      : {}),
   };
 }
 

@@ -86,6 +86,7 @@ function printEvolutionPreview(
   printSection('Dependencies', preview.dependencies);
   printSection('Files to create', preview.creates);
   printSection('Files to update', preview.updates);
+  printOptionalSection('Files to delete', preview.deletes);
   printOptionalSection('Existing files detected', preview.existing);
   printOptionalSection('Blocking notes', preview.blockingNotes);
   printSection('Notes', preview.notes);
@@ -123,11 +124,9 @@ function createEvolutionInstallException(
 ): SchematicsException {
   const reason = error instanceof Error ? error.message : String(error);
 
-  return new SchematicsException(`Unable to safely install the ${definition.label} evolution.
-
-Reason:
-- ${reason}
-
+  const referenceBranchHelp =
+    definition.referenceBranch && definition.referenceUrl
+      ? `
 You can still inspect or merge the reference evolution branch manually.
 
 Branch:
@@ -138,7 +137,15 @@ ${definition.referenceUrl}
 
 Suggested manual flow:
 git fetch origin
-git merge origin/${definition.referenceBranch}`);
+git merge origin/${definition.referenceBranch}`
+      : `
+Review the reported reason and restore a compatible starter baseline before retrying.`;
+
+  return new SchematicsException(`Unable to safely install the ${definition.label} evolution.
+
+Reason:
+- ${reason}
+${referenceBranchHelp}`);
 }
 
 function printSection(title: string, values: readonly string[]): void {

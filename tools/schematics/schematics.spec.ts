@@ -8,6 +8,13 @@ import { evolution } from './evolution';
 import evolutionManifest from './evolution/evolution-manifest.json';
 import evolutionSchema from './evolution/schema.json';
 import { getEvolutionDefinitions } from './evolutions/evolution-registry';
+import {
+  APP_BASELINE_FILES,
+  APP_SPEC_BASELINE_FILE,
+  LAYOUT_BASELINE_FILE_SETS,
+  LAYOUT_CONFIG_PATH,
+  LAYOUT_MODEL_PATH,
+} from './evolutions/layout-shell/layout-shell.baseline';
 import { TRANSLOCO_LANGUAGE_DEFINITIONS } from './evolutions/transloco/transloco.model';
 import { ngAdd } from './ng-add';
 
@@ -234,6 +241,100 @@ describe('Angular Enterprise Starter schematics', () => {
       'CMD ["node", "dist/angular-enterprise-starter/server/server.mjs"]',
     );
     expect(metadata.enabledEvolutions).toEqual(['docker-ssr']);
+  });
+
+  it('evolution installs the complete configurable Layout Shell', async () => {
+    const tree = createStarterTree();
+    addLayoutBaseline(tree);
+
+    const result = await lastValueFrom(runner.callRule(evolution({ name: 'layout-shell' }), tree));
+    const metadata = readMetadata(result);
+
+    expect(result.exists(LAYOUT_MODEL_PATH)).toBe(true);
+    expect(result.exists(LAYOUT_CONFIG_PATH)).toBe(true);
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("mode: 'persistent'");
+    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-header>');
+    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-sidebar');
+    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-footer>');
+    expect(metadata.enabledEvolutions).toEqual(['layout-shell']);
+  });
+
+  it('evolution installs only selected Layout Shell components', async () => {
+    const tree = createStarterTree();
+    addLayoutBaseline(tree);
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'layout-shell',
+          layoutMode: 'select',
+          layoutComponents: 'shell,header,sidebar',
+          layoutHeaderBehavior: 'sticky',
+          layoutSidebarMode: 'collapsible',
+          layoutSidebarPosition: 'end',
+          layoutSidebarInitialState: 'collapsed',
+          layoutContentWidth: 'contained',
+        }),
+        tree,
+      ),
+    );
+
+    expect(result.exists('/src/app/layout/footer/footer.ts')).toBe(false);
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("behavior: 'sticky'");
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("mode: 'collapsible'");
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("position: 'end'");
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("initialState: 'collapsed'");
+    expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("width: 'contained'");
+    expect(readText(result, '/src/app/layout/shell/shell.ts')).not.toContain('FooterComponent');
+  });
+
+  it('evolution converts the pristine baseline to content-only', async () => {
+    const tree = createStarterTree();
+    addLayoutBaseline(tree);
+
+    const result = await lastValueFrom(
+      runner.callRule(
+        evolution({
+          name: 'layout-shell',
+          layoutMode: 'content-only',
+        }),
+        tree,
+      ),
+    );
+
+    expect(readText(result, '/src/app/app.ts')).toContain('imports: [RouterOutlet]');
+    expect(readText(result, '/src/app/app.html')).toBe('<router-outlet></router-outlet>\n');
+    expect(result.exists('/src/app/layout/shell/shell.ts')).toBe(false);
+    expect(result.exists('/src/app/layout/header/header.ts')).toBe(false);
+    expect(result.exists('/src/app/layout/sidebar/sidebar.ts')).toBe(false);
+    expect(result.exists('/src/app/layout/footer/footer.ts')).toBe(false);
+    expect(readMetadata(result).enabledEvolutions).toEqual(['layout-shell']);
+  });
+
+  it('Layout Shell preflight blocks customized files atomically', async () => {
+    const tree = createStarterTree();
+    addLayoutBaseline(tree);
+    tree.overwrite('/src/app/layout/header/header.html', '<header>Custom</header>\n');
+    const shellBefore = readText(tree, '/src/app/layout/shell/shell.ts');
+
+    await expect(
+      lastValueFrom(
+        runner.callRule(
+          evolution({
+            name: 'layout-shell',
+            layoutMode: 'select',
+            layoutComponents: 'shell,header',
+          }),
+          tree,
+        ),
+      ),
+    ).rejects.toThrow('Layout Shell preflight failed');
+
+    expect(tree.exists(LAYOUT_MODEL_PATH)).toBe(false);
+    expect(tree.exists(LAYOUT_CONFIG_PATH)).toBe(false);
+    expect(readText(tree, '/src/app/layout/shell/shell.ts')).toBe(shellBefore);
+    expect(tree.exists('/src/app/layout/footer/footer.ts')).toBe(true);
+    expect(readMetadata(tree).enabledEvolutions).toEqual([]);
   });
 
   it('evolution installs Transloco i18n baseline', async () => {
@@ -1389,6 +1490,7 @@ export class DashboardService {
     expect(evolutionNames).toEqual([
       'transloco',
       'runtime-config',
+      'layout-shell',
       'signal-store',
       'docker-ssr',
       'bootstrap',
@@ -1419,7 +1521,9 @@ export class DashboardService {
       expect(definition?.install).toBeTypeOf('function');
       expect(definition?.preview).toBeTypeOf('function');
       expect(definition?.referenceUrl).toBe(
-        `https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/${manifestEvolution.referenceBranch}`,
+        manifestEvolution.referenceBranch
+          ? `https://github.com/FilippoLacagnina/angular-enterprise-starter/tree/${manifestEvolution.referenceBranch}`
+          : undefined,
       );
 
       for (const option of manifestEvolution.options) {
@@ -1656,6 +1760,20 @@ export const appConfig: ApplicationConfig = {
   );
 
   return tree;
+}
+
+function addLayoutBaseline(tree: Tree): void {
+  for (const file of [
+    ...APP_BASELINE_FILES,
+    APP_SPEC_BASELINE_FILE,
+    ...LAYOUT_BASELINE_FILE_SETS.flatMap((fileSet) => fileSet.files),
+  ]) {
+    if (tree.exists(file.path)) {
+      tree.overwrite(file.path, file.content);
+    } else {
+      tree.create(file.path, file.content);
+    }
+  }
 }
 
 function readMetadata(tree: Tree): { enabledEvolutions: string[] } {
