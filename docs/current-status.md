@@ -2,7 +2,7 @@
 
 ## Date
 
-July 21, 2026
+July 23, 2026
 
 ## Completed
 
@@ -74,6 +74,15 @@ July 21, 2026
 - Standardized all operational installer guides and added automated documentation checks.
 - Added formatting regressions for generated configuration and design-system files.
 - Refocused the README on the starter while promoting the Interactive Builder as a first-class composition path.
+
+11. Design-system contracts and component hardening
+
+- Hardened the Bootstrap and Tailwind Alert, Badge, Button and Card wrappers.
+- Added generated component specifications and shared partial-state handling.
+- Added public Design System Catalog and Design System Sources package exports.
+- Added deterministic source hashes and provider styling requirements for Builder synchronization.
+- Added package-consumer and generated-workspace verification for isolated and combined design systems.
+- Made Bootstrap and Tailwind stylesheet setup valid in either installation order.
 
 ## Current Design Choice
 
