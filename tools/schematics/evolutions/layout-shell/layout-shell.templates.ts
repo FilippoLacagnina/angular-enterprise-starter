@@ -410,7 +410,7 @@ function createShellFiles(plan: LayoutShellInstallPlan): readonly LayoutGenerate
       path: '/src/app/layout/shell/shell.ts',
       content: `${angularCoreImport}
 ${compactDrawerImports}import { ${routerImports} } from '@angular/router';
-${hasCompactDrawer ? "import { filter } from 'rxjs';\n" : ''}${componentImports.length > 0 ? `${componentImports.join('\n')}\n` : ''}
+${componentImports.length > 0 ? `${componentImports.join('\n')}\n` : ''}${hasCompactDrawer ? "import { filter } from 'rxjs';\n" : ''}
 import { LAYOUT_CONFIG } from '../layout.config';
 ${compactBreakpointImport}@Component({
   selector: 'app-shell',
@@ -624,7 +624,7 @@ const HEADER_FILES: readonly LayoutBaselineFile[] = [
     content: `import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
+  type ElementRef,
   inject,
   input,
   output,
@@ -758,7 +758,7 @@ const SIDEBAR_FILES: readonly LayoutBaselineFile[] = [
     content: `import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
+  type ElementRef,
   inject,
   input,
   output,

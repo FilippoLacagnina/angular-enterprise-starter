@@ -8,7 +8,7 @@
     <rect x="38" y="38" width="684" height="138" rx="6" stroke="#34D6C3" stroke-width="2.5"/>
     <text x="380" y="83" fill="#D8E2EA" font-size="25" font-weight="700" text-anchor="middle">ANGULAR ENTERPRISE STARTER</text>
     <text x="380" y="122" fill="#D8E2EA" font-size="20" font-weight="700" text-anchor="middle">Evolution CLI</text>
-    <text x="380" y="150" fill="#7E8B96" font-size="18" text-anchor="middle">v0.9.0-alpha.0</text>
+    <text x="380" y="150" fill="#7E8B96" font-size="18" text-anchor="middle">v0.10.0-alpha.0</text>
 
     <text x="34" y="250" fill="#C8D3DC" font-size="20" font-weight="700">Modular Angular starter capabilities.</text>
     <text x="34" y="286" fill="#C8D3DC" font-size="20" font-weight="700">Preview first. </text>

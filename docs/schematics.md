@@ -84,7 +84,7 @@ When testing a local package build before publishing, use the generated tarball:
 ```bash
 npm run evolution-cli:pack
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview
 ```
 
@@ -438,23 +438,27 @@ Recommended package smoke checks:
 
 ```bash
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name transloco --preview
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name runtime-config --preview
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
+  -- angular-enterprise-starter evolution --name layout-shell --preview
+
+npm --cache /private/tmp/aes-npm-cache exec \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name bootstrap --preview --bootstrap-mode select --bootstrap-components button,input
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name tailwind --preview --tailwind-mode select --tailwind-components button,input
 
 npm --cache /private/tmp/aes-npm-cache exec \
-  --package ./dist/filippolacagnina-angular-enterprise-starter-0.9.0-alpha.0.tgz \
+  --package ./dist/filippolacagnina-angular-enterprise-starter-0.10.0-alpha.0.tgz \
   -- angular-enterprise-starter evolution --name ai-genkit --preview --ai-example summary
 ```
 

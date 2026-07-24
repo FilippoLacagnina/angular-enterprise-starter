@@ -8,6 +8,36 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.10.0-alpha.0 - 2026-07-24
+
+Configurable Layout Shell and responsive navigation.
+
+### Added
+
+- Added the optional `layout-shell` Evolution CLI installer with `all`, `select` and
+  `content-only` generation modes.
+- Added typed configuration for Header, Sidebar, Footer and content behavior without coupling the
+  layout to Bootstrap, Tailwind or another design system.
+- Added preview, apply and atomic safety guards for pristine, partial and customized layout files.
+- Added a public serializable Layout Shell Catalog with ordered CLI options, applicability rules,
+  responsive metadata and ESM, TypeScript declaration and raw JSON exports.
+- Added a deterministic render-contract hash covering default, configured, partial and content-only
+  generated output for Builder synchronization.
+- Added an accessible compact navigation drawer when Header and Sidebar coexist.
+
+### Changed
+
+- Made Header sticky by default while preserving `flow` as an explicit option.
+- Added Shell-owned responsive state based on the `64rem` container breakpoint.
+- Added Sidebar drawer dismissal through its close button, backdrop, `Escape` and completed route
+  changes, including focus restoration and accessible ARIA state.
+- Preserved desktop Sidebar behavior and compact stacking when Sidebar is generated without Header.
+- Added logical `start` and `end` positioning with right-to-left support.
+- Documented installation, configuration, responsive behavior, static Builder integration and
+  removal boundaries.
+- Updated the starter baseline, Evolution CLI package and release documentation to
+  `0.10.0-alpha.0`.
+
 ## 0.9.0-alpha.0 - 2026-07-23
 
 Builder-ready design-system contracts and component hardening.

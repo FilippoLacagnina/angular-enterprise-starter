@@ -16,18 +16,19 @@ Current priorities:
 
 ## Delivered Milestones
 
-| Milestone       | Outcome                                                                  |
-| --------------- | ------------------------------------------------------------------------ |
-| `0.1.0-alpha.0` | Minimal Angular enterprise architecture, SSR and quality baseline.       |
-| `0.2.0-alpha.0` | Optional `evo/*` branch model and runtime configuration reference.       |
-| `0.3.0-alpha.0` | Centralized evolution documentation and Evolution CLI preview.           |
-| `0.4.0-alpha.0` | Versioned Evolution CLI package published on npm.                        |
-| `0.5.0-alpha.0` | Transloco and Tailwind CLI installers.                                   |
-| `0.5.1-alpha.0` | Bundled, render-safe schematic execution for consumer workspaces.        |
-| `0.6.0-alpha.0` | Runtime Config installer with preview, apply and safety guards.          |
-| `0.7.0-alpha.0` | AI Genkit installer, multi-provider-ready foundation and Angular 21 LTS. |
-| `0.8.0-alpha.0` | Hardened Evolution CLI and configurable Transloco language generation.   |
-| `0.9.0-alpha.0` | Builder-ready design-system contracts and hardened UI primitives.        |
+| Milestone        | Outcome                                                                  |
+| ---------------- | ------------------------------------------------------------------------ |
+| `0.1.0-alpha.0`  | Minimal Angular enterprise architecture, SSR and quality baseline.       |
+| `0.2.0-alpha.0`  | Optional `evo/*` branch model and runtime configuration reference.       |
+| `0.3.0-alpha.0`  | Centralized evolution documentation and Evolution CLI preview.           |
+| `0.4.0-alpha.0`  | Versioned Evolution CLI package published on npm.                        |
+| `0.5.0-alpha.0`  | Transloco and Tailwind CLI installers.                                   |
+| `0.5.1-alpha.0`  | Bundled, render-safe schematic execution for consumer workspaces.        |
+| `0.6.0-alpha.0`  | Runtime Config installer with preview, apply and safety guards.          |
+| `0.7.0-alpha.0`  | AI Genkit installer, multi-provider-ready foundation and Angular 21 LTS. |
+| `0.8.0-alpha.0`  | Hardened Evolution CLI and configurable Transloco language generation.   |
+| `0.9.0-alpha.0`  | Builder-ready design-system contracts and hardened UI primitives.        |
+| `0.10.0-alpha.0` | Configurable Layout Shell and accessible responsive navigation.          |
 
 ## Next
 
