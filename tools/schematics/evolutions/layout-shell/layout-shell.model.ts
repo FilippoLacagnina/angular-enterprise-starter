@@ -5,6 +5,7 @@ export const LAYOUT_SIDEBAR_MODES = ['persistent', 'collapsible'] as const;
 export const LAYOUT_SIDEBAR_POSITIONS = ['start', 'end'] as const;
 export const LAYOUT_SIDEBAR_INITIAL_STATES = ['expanded', 'collapsed'] as const;
 export const LAYOUT_CONTENT_WIDTHS = ['fluid', 'contained'] as const;
+export const LAYOUT_COMPACT_BREAKPOINT_REM = 64 as const;
 
 export type LayoutComponentName = (typeof LAYOUT_COMPONENT_NAMES)[number];
 export type LayoutMode = (typeof LAYOUT_MODES)[number];
@@ -57,7 +58,7 @@ export interface LayoutShellInstallPlan {
 }
 
 export const DEFAULT_LAYOUT_MODE: LayoutMode = 'all';
-export const DEFAULT_LAYOUT_HEADER_BEHAVIOR: LayoutRegionBehavior = 'flow';
+export const DEFAULT_LAYOUT_HEADER_BEHAVIOR: LayoutRegionBehavior = 'sticky';
 export const DEFAULT_LAYOUT_SIDEBAR_MODE: LayoutSidebarMode = 'persistent';
 export const DEFAULT_LAYOUT_SIDEBAR_POSITION: LayoutSidebarPosition = 'start';
 export const DEFAULT_LAYOUT_SIDEBAR_INITIAL_STATE: LayoutSidebarInitialState = 'expanded';

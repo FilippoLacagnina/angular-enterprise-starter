@@ -33,6 +33,11 @@ describe('Layout Shell Catalog', () => {
     expect(optionValues('layoutFooterBehavior')).toEqual(LAYOUT_REGION_BEHAVIORS);
     expect(optionValues('layoutContentWidth')).toEqual(LAYOUT_CONTENT_WIDTHS);
     expect(layoutShellCatalog.defaults.components).toEqual(LAYOUT_COMPONENT_NAMES);
+    expect(layoutShellCatalog.defaults.headerBehavior).toBe('sticky');
+    expect(
+      layoutShellCatalog.options.find((option) => option.id === 'layoutHeaderBehavior')
+        ?.defaultValue,
+    ).toBe('sticky');
   });
 
   it('keeps option identifiers, flags, dependencies and order deterministic', () => {
@@ -77,6 +82,18 @@ describe('Layout Shell Catalog', () => {
         layoutSidebarInitialState: 'collapsed',
       }),
     ).toThrow('can be used only with --layout-sidebar-mode collapsible');
+  });
+
+  it('publishes the standard responsive drawer contract', () => {
+    expect(layoutShellCatalog.responsive).toEqual({
+      breakpoint: '64rem',
+      compactNavigation: 'drawer',
+      requiresComponents: ['header', 'sidebar'],
+      initialOpen: false,
+      positions: ['start', 'end'],
+      closeTriggers: ['button', 'backdrop', 'escape', 'navigation-end'],
+      sidebarWithoutHeader: 'stacked',
+    });
   });
 
   it('produces a reproducible hash and detects render source drift', () => {

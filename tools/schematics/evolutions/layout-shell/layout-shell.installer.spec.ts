@@ -19,15 +19,27 @@ describe('Layout Shell evolution installer', () => {
 
     expect(tree.exists(LAYOUT_MODEL_PATH)).toBe(true);
     expect(tree.exists(LAYOUT_CONFIG_PATH)).toBe(true);
-    expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("behavior: 'flow'");
+    expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("behavior: 'sticky'");
     expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("mode: 'persistent'");
     expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("title: 'Header'");
     expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("label: 'Sidebar'");
     expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("text: 'Footer'");
     expect(tree.readText(LAYOUT_CONFIG_PATH)).not.toContain('Dashboard');
-    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain('<app-header>');
+    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain('<app-header');
     expect(tree.readText('/src/app/layout/shell/shell.html')).toContain('<app-sidebar');
-    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain('<app-footer>');
+    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain('<app-footer');
+    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain(
+      '[menuAvailable]="compactViewport()"',
+    );
+    expect(tree.readText('/src/app/layout/shell/shell.html')).toContain(
+      '(drawerClose)="closeCompactSidebar()"',
+    );
+    expect(tree.readText('/src/app/layout/header/header.html')).toContain(
+      '[attr.aria-expanded]="menuExpanded()"',
+    );
+    expect(tree.readText('/src/app/layout/sidebar/sidebar.html')).toContain(
+      '[attr.aria-label]="sidebar.drawerCloseLabel"',
+    );
     expect(tree.readText('/src/app/layout/shell/shell.scss')).not.toContain('bootstrap');
     expect(tree.readText('/src/app/layout/shell/shell.scss')).not.toContain('@apply');
     expect(tree.readText('/src/app/layout/shell/shell.scss')).toContain(
@@ -61,6 +73,7 @@ describe('Layout Shell evolution installer', () => {
     expect(tree.readText(LAYOUT_CONFIG_PATH)).toContain("width: 'contained'");
     expect(tree.readText('/src/app/layout/shell/shell.ts')).not.toContain('FooterComponent');
     expect(tree.readText('/src/app/layout/shell/shell.html')).not.toContain('<app-footer>');
+    expect(tree.readText('/src/app/layout/shell/shell.ts')).toContain('ResizeObserver');
   });
 
   it('installs a Shell-only layout without orphan imports', () => {

@@ -33,9 +33,11 @@ The optional `layout-shell` Evolution CLI installer replaces only pristine place
 typed, configurable layout. It can generate all regions, a selected subset with Shell, or a
 content-only root. Generated Shell styling remains structural and design-system-neutral.
 
-Responsive stacking is based on the Shell container rather than the global viewport. The container
-keeps the `64rem` breakpoint while `--layout-viewport-min-block-size` defaults to `100dvh` and can
-be overridden for embedded surfaces.
+Responsive behavior is based on the Shell container rather than the global viewport. At the
+`64rem` breakpoint, Header and Sidebar cooperate through Shell-owned state to expose an accessible
+overlay drawer. Sidebar without Header keeps compact stacking. The
+`--layout-viewport-min-block-size` custom property defaults to `100dvh` and can be overridden for
+embedded surfaces.
 
 See [Layout Shell Evolution](./evolutions/layout-shell.md).
 

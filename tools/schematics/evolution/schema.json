@@ -85,7 +85,7 @@
       "type": "string",
       "description": "Header positioning behavior when Header is selected.",
       "enum": ["flow", "sticky"],
-      "default": "flow"
+      "default": "sticky"
     },
     "layoutSidebarMode": {
       "type": "string",

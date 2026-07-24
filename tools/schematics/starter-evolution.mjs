@@ -283,6 +283,7 @@ async function resolveLayoutShellOptions(shouldAskOptions) {
     selectedOptions.layoutHeaderBehavior = await askChoice(
       'Header behavior',
       getManifestChoices('layout-shell', 'layoutHeaderBehavior'),
+      getManifestOptionDefault('layout-shell', 'layoutHeaderBehavior'),
     );
   }
 

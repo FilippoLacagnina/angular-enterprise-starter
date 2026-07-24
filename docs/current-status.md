@@ -88,6 +88,8 @@ July 23, 2026
 12. Layout Shell contract
 
 - Added container-query responsive behavior with configurable minimum block size.
+- Added a Shell-owned compact navigation drawer for Header and Sidebar with accessible dismissal
+  and route-change handling.
 - Added the public serializable Layout Shell Catalog package export.
 - Added a deterministic render-contract hash for static Builder preview synchronization.
 - Kept layout preview rendering outside consumer projects and the Evolution CLI runtime.

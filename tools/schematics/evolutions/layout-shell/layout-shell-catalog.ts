@@ -104,6 +104,15 @@ export interface LayoutShellCatalog {
     readonly rejectsAdditionalOptions: true;
     readonly renderingStrategy: 'direct-content';
   };
+  readonly responsive: {
+    readonly breakpoint: '64rem';
+    readonly compactNavigation: 'drawer';
+    readonly requiresComponents: readonly ['header', 'sidebar'];
+    readonly initialOpen: false;
+    readonly positions: readonly ['start', 'end'];
+    readonly closeTriggers: readonly ['button', 'backdrop', 'escape', 'navigation-end'];
+    readonly sidebarWithoutHeader: 'stacked';
+  };
 }
 
 export const layoutShellCatalog: LayoutShellCatalog = createLayoutShellCatalog();

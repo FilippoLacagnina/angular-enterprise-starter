@@ -41,7 +41,7 @@ The evolution adds no package dependencies.
 | -------------------------------- | ---------- | -------------------------------------- |
 | `--layout-mode`                  | `all`      | `all`, `select`, `content-only`        |
 | `--layout-components`            | all        | `shell`, `header`, `sidebar`, `footer` |
-| `--layout-header-behavior`       | `flow`     | `flow`, `sticky`                       |
+| `--layout-header-behavior`       | `sticky`   | `flow`, `sticky`                       |
 | `--layout-sidebar-mode`          | persistent | `persistent`, `collapsible`            |
 | `--layout-sidebar-position`      | `start`    | `start`, `end`                         |
 | `--layout-sidebar-initial-state` | `expanded` | `expanded`, `collapsed`                |
@@ -92,7 +92,18 @@ Shell-based installations expose `LAYOUT_CONFIG` and `DEFAULT_LAYOUT_CONFIG` fro
 after installation.
 
 Structural sizing, borders and motion are exposed as CSS custom properties on Shell. Responsive
-stacking uses a `64rem` container query. The default
+behavior uses a `64rem` container query. When Header and Sidebar are both present, the Header shows
+an accessible hamburger control at or below the breakpoint and Sidebar becomes a closed-by-default
+overlay drawer. It opens from the configured `start` or `end` side and closes through its button,
+the backdrop, `Escape` or a completed route change.
+
+Shell owns the responsive state and observes its own inline size. Header emits the menu request and
+Sidebar emits the close request; neither region owns application-level navigation state. A Sidebar
+generated without Header keeps the compact stacked behavior because no standard opener is
+available. Desktop Sidebar behavior remains persistent or collapsible according to its existing
+configuration.
+
+The default
 `--layout-viewport-min-block-size: 100dvh` keeps the application at least viewport height while
 allowing constrained previews and embedded shells to override it.
 
@@ -123,8 +134,10 @@ npm run lint
 npm run format:check
 ```
 
-After apply, run the application and verify the selected regions, Sidebar behavior, sticky regions,
-contained width and responsive stacking.
+After apply, run the application and verify the selected regions, desktop Sidebar behavior, sticky
+regions and contained width. With Header and Sidebar selected, also verify the compact drawer from
+both sides, focus entry/return, backdrop, `Escape`, route-change closure and accessible labels.
+With Sidebar but no Header, verify compact stacking.
 
 ## Removal and rollback
 

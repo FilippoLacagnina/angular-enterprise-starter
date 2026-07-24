@@ -216,7 +216,7 @@
           "cliFlag": "--layout-header-behavior",
           "type": "string",
           "description": "Header positioning behavior when Header is selected.",
-          "default": "flow",
+          "default": "sticky",
           "choices": [
             {
               "value": "flow",

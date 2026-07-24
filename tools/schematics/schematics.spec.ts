@@ -253,9 +253,9 @@ describe('Angular Enterprise Starter schematics', () => {
     expect(result.exists(LAYOUT_MODEL_PATH)).toBe(true);
     expect(result.exists(LAYOUT_CONFIG_PATH)).toBe(true);
     expect(readText(result, LAYOUT_CONFIG_PATH)).toContain("mode: 'persistent'");
-    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-header>');
+    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-header');
     expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-sidebar');
-    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-footer>');
+    expect(readText(result, '/src/app/layout/shell/shell.html')).toContain('<app-footer');
     expect(metadata.enabledEvolutions).toEqual(['layout-shell']);
   });
 

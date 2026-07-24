@@ -82,7 +82,7 @@ describe('Layout Shell installation plan', () => {
       createLayoutShellInstallPlan({
         layoutMode: 'select',
         layoutComponents: 'shell',
-        layoutHeaderBehavior: 'flow',
+        layoutHeaderBehavior: 'sticky',
         layoutSidebarMode: 'persistent',
         layoutSidebarPosition: 'start',
         layoutSidebarInitialState: 'expanded',
@@ -100,7 +100,7 @@ describe('Layout Shell installation plan', () => {
     expect(
       createLayoutShellInstallPlan({
         layoutMode: 'content-only',
-        layoutHeaderBehavior: 'flow',
+        layoutHeaderBehavior: 'sticky',
         layoutSidebarMode: 'persistent',
         layoutSidebarPosition: 'start',
         layoutSidebarInitialState: 'expanded',
@@ -159,7 +159,7 @@ describe('Layout Shell installation plan', () => {
       createLayoutShellInstallPlan({
         layoutMode: 'select',
         layoutComponents: 'shell',
-        layoutHeaderBehavior: 'sticky',
+        layoutHeaderBehavior: 'flow',
       }),
     ).toThrow('--layout-header-behavior requires the Header component');
 

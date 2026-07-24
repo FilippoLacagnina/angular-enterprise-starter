@@ -17,6 +17,7 @@ import {
   DEFAULT_LAYOUT_SIDEBAR_INITIAL_STATE,
   DEFAULT_LAYOUT_SIDEBAR_MODE,
   DEFAULT_LAYOUT_SIDEBAR_POSITION,
+  LAYOUT_COMPACT_BREAKPOINT_REM,
   LAYOUT_COMPONENT_NAMES,
   type LayoutComponentName,
   type LayoutMode,
@@ -182,6 +183,15 @@ export function createLayoutShellCatalog(): LayoutShellCatalog {
       rejectsAdditionalOptions: true,
       renderingStrategy: 'direct-content',
     },
+    responsive: {
+      breakpoint: `${LAYOUT_COMPACT_BREAKPOINT_REM}rem`,
+      compactNavigation: 'drawer',
+      requiresComponents: ['header', 'sidebar'],
+      initialOpen: false,
+      positions: ['start', 'end'],
+      closeTriggers: ['button', 'backdrop', 'escape', 'navigation-end'],
+      sidebarWithoutHeader: 'stacked',
+    },
   };
 }
 
@@ -205,6 +215,10 @@ export function createLayoutShellRenderContractHash(
 
 function createRenderContractProfiles(): readonly RenderContractProfile[] {
   return [
+    {
+      id: 'all-default',
+      files: createLayoutShellGeneratedFiles(createLayoutShellInstallPlan({})),
+    },
     {
       id: 'all-configured',
       files: createLayoutShellGeneratedFiles(

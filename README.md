@@ -187,7 +187,7 @@ Current CLI installers:
 | -------------- | ------------------------------------------------------------------------------------------ |
 | Transloco      | Runtime i18n with configurable languages, default/fallback and generated assets.           |
 | Runtime Config | Deployable YAML configuration with preview, apply and safety guards.                       |
-| Layout Shell   | Configurable Shell with optional Header, Sidebar, Footer and content-only mode.            |
+| Layout Shell   | Configurable Shell, optional regions, accessible compact drawer and content-only mode.     |
 | SignalStore    | Feature or root stores with safe target detection and provider registration.               |
 | Docker SSR     | Container baseline for the generated Angular Node server.                                  |
 | Bootstrap      | Bootstrap setup and selected starter-owned UI wrapper components.                          |
