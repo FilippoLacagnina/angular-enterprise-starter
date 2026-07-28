@@ -8,6 +8,28 @@ The project is public and currently in alpha pre-release.
 
 No unreleased changes yet.
 
+## 0.10.1-alpha.0 - 2026-07-28
+
+Independent desktop Sidebar scrolling.
+
+### Changed
+
+- Made the desktop Sidebar independently scrollable while preserving the Main document scroll.
+- Added viewport-bounded Sidebar sizing that accounts for generated Header and Footer regions and
+  supports embedded Builder previews through the existing viewport sizing contract.
+- Preserved the responsive drawer and compact stacked behaviors by resetting desktop scrolling at
+  the `64rem` container breakpoint.
+- Extended the public Layout Shell Catalog with deterministic desktop Sidebar scrolling metadata.
+- Expanded generated-template, installer and catalog coverage for the new scrolling behavior.
+- Documented the desktop scrolling model, sizing properties and verification workflow.
+- Updated the starter baseline, Evolution CLI package and release documentation to
+  `0.10.1-alpha.0`.
+
+### Fixed
+
+- Added explicit Sidebar box sizing to avoid unnecessary scrollbars when padding and borders are
+  present.
+
 ## 0.10.0-alpha.0 - 2026-07-24
 
 Configurable Layout Shell and responsive navigation.

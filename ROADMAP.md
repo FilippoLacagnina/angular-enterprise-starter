@@ -29,6 +29,7 @@ Current priorities:
 | `0.8.0-alpha.0`  | Hardened Evolution CLI and configurable Transloco language generation.   |
 | `0.9.0-alpha.0`  | Builder-ready design-system contracts and hardened UI primitives.        |
 | `0.10.0-alpha.0` | Configurable Layout Shell and accessible responsive navigation.          |
+| `0.10.1-alpha.0` | Independent desktop Sidebar scrolling and Layout Shell hardening.        |
 
 ## Next
 

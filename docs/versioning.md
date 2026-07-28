@@ -16,7 +16,7 @@ The project is currently in alpha pre-release.
 Current package version:
 
 ```text
-0.10.0-alpha.0
+0.10.1-alpha.0
 ```
 
 The package remains marked as private:
@@ -41,13 +41,13 @@ That package can be published to npm while the root starter application remains 
 Current Git tag:
 
 ```text
-v0.10.0-alpha.0
+v0.10.1-alpha.0
 ```
 
 Current GitHub Release:
 
 ```text
-v0.10.0-alpha.0 - Configurable Layout Shell and responsive navigation
+v0.10.1-alpha.0 - Independent desktop Sidebar scrolling
 ```
 
 ## Version strategy
@@ -68,6 +68,7 @@ Recommended flow:
 0.8.0-alpha.0   -> Evolution CLI hardening and configurable Transloco
 0.9.0-alpha.0   -> Builder-ready design-system contracts and component hardening
 0.10.0-alpha.0  -> Configurable Layout Shell and responsive navigation
+0.10.1-alpha.0  -> Independent desktop Sidebar scrolling
 0.10.x-alpha.N  -> CLI and documentation iterations with possible breaking changes
 0.10.x-beta.0   -> structure mostly stable, feedback phase
 1.0.0           -> stable starter baseline
@@ -83,7 +84,7 @@ Each implemented evolution branch declares which `main` baseline it is compatibl
 Example:
 
 ```text
-main                  -> v0.10.0-alpha.0
+main                  -> v0.10.1-alpha.0
 evo/i18n/transloco    -> compatible with v0.5.0-alpha.0+
 ```
 
@@ -120,19 +121,20 @@ v0.7.0-alpha.0 - AI Genkit Evolution CLI installer
 v0.8.0-alpha.0 - Evolution CLI hardening and configurable Transloco
 v0.9.0-alpha.0 - Builder-ready design-system contracts and component hardening
 v0.10.0-alpha.0 - Configurable Layout Shell and responsive navigation
+v0.10.1-alpha.0 - Independent desktop Sidebar scrolling
 ```
 
 For future releases, create and push a new tag:
 
 ```bash
-git tag v0.10.0-alpha.0
-git push origin v0.10.0-alpha.0
+git tag v0.10.1-alpha.0
+git push origin v0.10.1-alpha.0
 ```
 
 Suggested GitHub release title:
 
 ```text
-v0.10.0-alpha.0 - Configurable Layout Shell and responsive navigation
+v0.10.1-alpha.0 - Independent desktop Sidebar scrolling
 ```
 
 ## npm publication
