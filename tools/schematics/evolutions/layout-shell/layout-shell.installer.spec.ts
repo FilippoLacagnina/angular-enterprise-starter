@@ -48,6 +48,11 @@ describe('Layout Shell evolution installer', () => {
     expect(tree.readText('/src/app/layout/shell/shell.scss')).toContain(
       '--layout-viewport-min-block-size: 100dvh',
     );
+    expect(tree.readText('/src/app/layout/shell/shell.scss')).toContain('position: sticky');
+    expect(tree.readText('/src/app/layout/shell/shell.scss')).toContain('overflow-y: auto');
+    expect(tree.readText('/src/app/layout/shell/shell.scss')).toContain(
+      '--layout-sidebar-header-reserve: var(--layout-header-height)',
+    );
   });
 
   it('installs only selected components and removes pristine unselected regions', () => {

@@ -339,6 +339,9 @@ function createShellFiles(plan: LayoutShellInstallPlan): readonly LayoutGenerate
   [attr.data-sidebar-position]="config.sidebar?.position"
   [attr.data-sidebar-collapsed]="sidebarCollapsed()"`
     : '';
+  const headerBehaviorAttribute = hasHeader
+    ? '\n  [attr.data-header-behavior]="config.header?.behavior"'
+    : '';
   const compactDrawerAttributes = hasCompactDrawer
     ? `
   data-responsive-drawer="true"
@@ -428,7 +431,7 @@ ${sidebarState}${compactDrawerState}}
       path: '/src/app/layout/shell/shell.html',
       content: `<div
   class="layout-shell"
-  [attr.data-content-width]="config.content.width"${sidebarAttributes}${compactDrawerAttributes}
+  [attr.data-content-width]="config.content.width"${headerBehaviorAttribute}${sidebarAttributes}${compactDrawerAttributes}
 >
 ${headerTemplate}${sidebarTemplate}${mainTemplateOpening}
     <div class="layout-shell__content">
@@ -449,9 +452,16 @@ ${
       path: '/src/app/layout/shell/shell.scss',
       content: `:host {
   --layout-header-height: 4rem;
+  --layout-footer-height: 3rem;
   --layout-sidebar-expanded-width: 18rem;
   --layout-sidebar-width: var(--layout-sidebar-expanded-width);
   --layout-sidebar-collapsed-width: 4rem;
+  --layout-sidebar-header-reserve: ${hasHeader ? 'var(--layout-header-height)' : '0rem'};
+  --layout-sidebar-footer-reserve: ${hasFooter ? 'var(--layout-footer-height)' : '0rem'};
+  --layout-sidebar-block-reserve: calc(
+    var(--layout-sidebar-header-reserve) + var(--layout-sidebar-footer-reserve)
+  );
+  --layout-sidebar-sticky-offset: 0rem;
   --layout-content-max-width: 90rem;
   --layout-inline-padding: 1.5rem;
   --layout-block-padding: 1.5rem;
@@ -510,6 +520,23 @@ ${
   --layout-sidebar-width: var(--layout-sidebar-collapsed-width);
 }
 
+.layout-shell[data-header-behavior='sticky'] {
+  --layout-sidebar-sticky-offset: var(--layout-header-height);
+}
+
+.layout-shell[data-sidebar-position] app-sidebar {
+  position: sticky;
+  inset-block-start: var(--layout-sidebar-sticky-offset);
+  align-self: start;
+  block-size: max(
+    0px,
+    calc(var(--layout-viewport-min-block-size) - var(--layout-sidebar-block-reserve))
+  );
+  overflow-y: auto;
+  overscroll-behavior-block: contain;
+  scrollbar-gutter: stable;
+}
+
 app-header {
   border-block-end: 1px solid var(--layout-region-border-color);
 }
@@ -534,6 +561,15 @@ app-footer {
 }
 
 @container layout-shell (width <= ${LAYOUT_COMPACT_BREAKPOINT_REM}rem) {
+  .layout-shell[data-sidebar-position] app-sidebar {
+    position: static;
+    inset-block-start: auto;
+    block-size: auto;
+    overflow: visible;
+    overscroll-behavior-block: auto;
+    scrollbar-gutter: auto;
+  }
+
   .layout-shell[data-sidebar-position]:not([data-responsive-drawer='true']) {
     grid-template-areas:
       'header'
@@ -851,6 +887,7 @@ export class SidebarComponent {
   {
     path: '/src/app/layout/sidebar/sidebar.scss',
     content: `:host {
+  box-sizing: border-box;
   display: block;
   grid-area: sidebar;
   min-inline-size: 0;
@@ -858,6 +895,7 @@ export class SidebarComponent {
 }
 
 .layout-sidebar {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 1rem;

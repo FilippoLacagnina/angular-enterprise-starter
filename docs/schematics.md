@@ -399,8 +399,9 @@ Raw JSON is available from
 The catalog derives CLI flags and choices from the evolution manifest, uses the layout model
 defaults and is tested against plan validation. It also publishes the standard compact drawer
 contract: `64rem` breakpoint, required Header and Sidebar, opening positions, initial state,
-dismissal triggers and Sidebar-without-Header fallback. Its `renderContractHash` covers default and
-configured `all` output together with representative `select` and `content-only` generated output.
+dismissal triggers, independent desktop Sidebar scrolling and Sidebar-without-Header fallback. Its
+`renderContractHash` covers default and configured `all` output together with representative
+`select` and `content-only` generated output.
 
 A Builder with a static Layout Studio should pin the expected hash. A changed hash requires visual
 review and an explicit preview update. The catalog intentionally contains no Angular implementation

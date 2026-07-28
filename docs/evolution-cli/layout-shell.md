@@ -103,6 +103,14 @@ generated without Header keeps the compact stacked behavior because no standard 
 available. Desktop Sidebar behavior remains persistent or collapsible according to its existing
 configuration.
 
+On desktop, Sidebar uses a sticky viewport-bounded region with its own vertical overflow. Main
+content keeps the document scroll, so long navigation and long routed content can move
+independently. Shell reserves the generated Header and Footer heights and offsets Sidebar below a
+sticky Header. Override `--layout-header-height` or `--layout-footer-height` when product styling
+changes those structural sizes. The calculation uses `--layout-viewport-min-block-size`, so
+constrained previews can reduce the Sidebar scrolling area together with Shell. Compact stacking
+and drawer modes reset the desktop sticky scroll.
+
 The default
 `--layout-viewport-min-block-size: 100dvh` keeps the application at least viewport height while
 allowing constrained previews and embedded shells to override it.
@@ -137,7 +145,8 @@ npm run format:check
 After apply, run the application and verify the selected regions, desktop Sidebar behavior, sticky
 regions and contained width. With Header and Sidebar selected, also verify the compact drawer from
 both sides, focus entry/return, backdrop, `Escape`, route-change closure and accessible labels.
-With Sidebar but no Header, verify compact stacking.
+On desktop, verify long Sidebar content scrolls independently from long routed content. With
+Sidebar but no Header, verify desktop scrolling and compact stacking.
 
 ## Removal and rollback
 

@@ -35,7 +35,8 @@ content-only root. Generated Shell styling remains structural and design-system-
 
 Responsive behavior is based on the Shell container rather than the global viewport. At the
 `64rem` breakpoint, Header and Sidebar cooperate through Shell-owned state to expose an accessible
-overlay drawer. Sidebar without Header keeps compact stacking. The
+overlay drawer. On desktop, Sidebar has viewport-bounded sticky scrolling independent from Main
+document scrolling. Sidebar without Header keeps compact stacking. The
 `--layout-viewport-min-block-size` custom property defaults to `100dvh` and can be overridden for
 embedded surfaces.
 

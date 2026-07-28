@@ -19,6 +19,18 @@ The generated layout separates:
 The real Shell always keeps `RouterOutlet`. Content-only removes Shell and renders the router outlet
 directly from the application root.
 
+## Desktop scrolling
+
+Desktop Sidebar scrolling is independent from Main content. Sidebar is sticky within the Shell,
+uses a viewport-bounded block size and owns its vertical overflow, while Main content keeps the
+document scroll.
+
+Shell reserves the generated Header and Footer heights when calculating the available Sidebar
+space. A sticky Header also becomes the logical block-start offset. The structural
+`--layout-header-height` and `--layout-footer-height` custom properties remain overridable by the
+adopting product. The available block size is based on `--layout-viewport-min-block-size`, preserving
+the same override boundary for full-viewport applications and constrained previews.
+
 ## Responsive behavior
 
 Shell establishes an inline-size container named `layout-shell` and uses the same `64rem` contract
@@ -35,9 +47,9 @@ When Header and Sidebar coexist, compact navigation is a closed-by-default overl
 - `aria-expanded`, `aria-controls`, labels, modal semantics and `inert` protect the compact
   accessibility contract.
 
-Desktop persistent and collapsible behavior is unchanged. A Sidebar without Header retains vertical
-compact stacking rather than becoming an inaccessible drawer. Header without Sidebar does not show
-the hamburger.
+Desktop persistent and collapsible behavior retains the independent Sidebar scroll. A Sidebar
+without Header retains vertical compact stacking rather than becoming an inaccessible drawer.
+Header without Sidebar does not show the hamburger.
 
 `--layout-viewport-min-block-size` defaults to `100dvh` and can be overridden when Shell is embedded
 in another constrained surface.
@@ -51,8 +63,8 @@ across writing directions.
 ## Builder contract
 
 The npm package exposes a serializable `layout-shell-catalog` contract. A Builder can use its
-options, defaults, conditions and standard responsive drawer metadata to render a static Layout
-Studio and serialize the official CLI flags.
+options, defaults, conditions, independent desktop Sidebar scrolling and standard responsive drawer
+metadata to render a static Layout Studio and serialize the official CLI flags.
 
 `renderContractHash` fingerprints default and configured `all` output together with representative
 `select` and `content-only` output. A Builder should pin the expected hash and require visual review

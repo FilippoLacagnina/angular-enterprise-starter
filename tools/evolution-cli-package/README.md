@@ -124,7 +124,8 @@ Raw JSON is available from:
 ```
 
 The catalog contains ordered modes, components, defaults, CLI flags, applicability conditions,
-content-only behavior and the standard responsive drawer contract. `renderContractHash`
+content-only behavior, independent desktop Sidebar scrolling and the standard responsive drawer
+contract. `renderContractHash`
 fingerprints representative generated output so a
 static preview can detect when it requires visual review. It does not expose Angular runtime
 components or source files.

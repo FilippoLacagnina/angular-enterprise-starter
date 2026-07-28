@@ -191,6 +191,7 @@ export function createLayoutShellCatalog(): LayoutShellCatalog {
       positions: ['start', 'end'],
       closeTriggers: ['button', 'backdrop', 'escape', 'navigation-end'],
       sidebarWithoutHeader: 'stacked',
+      desktopSidebarScroll: 'independent',
     },
   };
 }

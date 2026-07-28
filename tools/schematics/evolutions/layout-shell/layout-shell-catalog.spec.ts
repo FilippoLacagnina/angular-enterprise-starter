@@ -93,6 +93,7 @@ describe('Layout Shell Catalog', () => {
       positions: ['start', 'end'],
       closeTriggers: ['button', 'backdrop', 'escape', 'navigation-end'],
       sidebarWithoutHeader: 'stacked',
+      desktopSidebarScroll: 'independent',
     });
   });
 

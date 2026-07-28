@@ -53,6 +53,7 @@ describe('Layout Shell generated templates', () => {
     expect(shellTypeScript).toContain("'(document:keydown.escape)': 'closeCompactSidebar()'");
     expect(shellTemplate).toContain('[menuAvailable]="compactViewport()"');
     expect(shellTemplate).toContain('[menuExpanded]="compactSidebarOpen()"');
+    expect(shellTemplate).toContain('[attr.data-header-behavior]="config.header?.behavior"');
     expect(
       shellTemplate.match(/\[attr\.inert\]="compactSidebarOpen\(\) \? '' : null"/g),
     ).toHaveLength(3);
@@ -69,10 +70,22 @@ describe('Layout Shell generated templates', () => {
     expect(sidebarStyles).toContain(
       ":host([data-collapsed='true']:not([data-drawer-mode='true']))",
     );
+    expect(sidebarStyles.match(/box-sizing: border-box/g)).toHaveLength(2);
     expect(shellStyles).toContain('--layout-region-border-color');
     expect(shellStyles).toContain("data-sidebar-position='start'");
     expect(shellStyles).toContain("data-sidebar-position='end'");
     expect(shellStyles).toContain('--layout-viewport-min-block-size: 100dvh');
+    expect(shellStyles).toContain('--layout-sidebar-header-reserve: var(--layout-header-height)');
+    expect(shellStyles).toContain('--layout-sidebar-footer-reserve: var(--layout-footer-height)');
+    expect(shellStyles).toContain(
+      'calc(var(--layout-viewport-min-block-size) - var(--layout-sidebar-block-reserve))',
+    );
+    expect(shellStyles).toContain("data-header-behavior='sticky'");
+    expect(shellStyles).toContain('position: sticky');
+    expect(shellStyles).toContain('inset-block-start: var(--layout-sidebar-sticky-offset)');
+    expect(shellStyles).toContain('overflow-y: auto');
+    expect(shellStyles).toContain('overscroll-behavior-block: contain');
+    expect(shellStyles).toContain('scrollbar-gutter: stable');
     expect(shellStyles).toContain('container-name: layout-shell');
     expect(shellStyles).toContain('container-type: inline-size');
     expect(shellStyles).toContain('@container layout-shell (width <= 64rem)');
@@ -101,6 +114,11 @@ describe('Layout Shell generated templates', () => {
     expect(shellTemplate).not.toContain('layout-shell__backdrop');
     expect(shellTemplate).not.toContain('[drawerMode]');
     expect(shellStyles).toContain(":not([data-responsive-drawer='true'])");
+    expect(shellStyles).toContain('--layout-sidebar-header-reserve: 0rem');
+    expect(shellStyles).toContain('--layout-sidebar-footer-reserve: 0rem');
+    expect(shellStyles).toContain('position: sticky');
+    expect(shellStyles).toContain('position: static');
+    expect(shellStyles).toContain('overflow: visible');
   });
 
   it('does not generate compact navigation orchestration without Sidebar', () => {

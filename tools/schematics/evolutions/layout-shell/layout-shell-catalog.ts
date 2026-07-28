@@ -112,6 +112,7 @@ export interface LayoutShellCatalog {
     readonly positions: readonly ['start', 'end'];
     readonly closeTriggers: readonly ['button', 'backdrop', 'escape', 'navigation-end'];
     readonly sidebarWithoutHeader: 'stacked';
+    readonly desktopSidebarScroll: 'independent';
   };
 }
 
